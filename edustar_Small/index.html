@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar – Smart Learning Assistant</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ── NAVIGATION ─────────────────────────────────────────────── -->
+  <nav>
+    <div class="logo">EduStar<span> AI</span></div>
+    <div class="nav-right">
+      <div class="points-pill">⭐ <span id="nav-points">0</span> pts</div>
+      <div class="student-badge" onclick="openNameModal()">
+        <div class="level-dot" id="nav-level">1</div>
+        <span id="nav-name">Student</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ───────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-tag">🌍 Built for Every Learner in Africa</div>
+    <h1>Learn Smarter<br>with <em>AI-Powered</em><br>Education</h1>
+    <p>
+      Personalized lessons, instant AI tutoring, and adaptive quizzes —
+      helping students in rural and underserved communities access quality
+      education at their own pace.
+    </p>
+    <div class="hero-cta">
+      <button class="btn btn-primary"
+        onclick="document.getElementById('learn-section').scrollIntoView({behavior:'smooth'})">
+        🚀 Start Learning
+      </button>
+      <button class="btn btn-secondary"
+        onclick="document.getElementById('chat-anchor').scrollIntoView({behavior:'smooth'})">
+        💬 Ask AI Tutor
+      </button>
+    </div>
+  </section>
+
+  <!-- ── STATS BAR ──────────────────────────────────────────────── -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" data-count="6">0</div>
+      <div class="stat-label">Subjects</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="12">0</div>
+      <div class="stat-label">Lessons</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="40">0</div>
+      <div class="stat-label">Quiz Questions</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="1000">0</div>
+      <div class="stat-label">Students Helped</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN SECTION ───────────────────────────────────────────── -->
+  <div class="section" id="learn-section">
+
+    <!-- Progress Card -->
+    <div class="progress-card">
+      <h3>📊 Your Learning Progress</h3>
+      <div class="progress-stats">
+        <div class="progress-stat">
+          <div class="num" id="prog-points">0</div>
+          <div class="lbl">Total Points</div>
+        </div>
+        <div class="progress-stat">
+          <div class="num" id="prog-level">1</div>
+          <div class="lbl">Level</div>
+        </div>
+        <div class="progress-stat">
+          <div class="num" id="prog-lessons">0</div>
+          <div class="lbl">Lessons Done</div>
+        </div>
+        <div class="progress-stat">
+          <div class="num" id="prog-quizzes">0</div>
+          <div class="lbl">Quizzes Taken</div>
+        </div>
+      </div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar" id="xp-bar"></div>
+      </div>
+      <div class="xp-label">
+        <span id="xp-level-label">Level 1</span>
+        <span id="xp-progress-label">0 / 200 XP to next level</span>
+      </div>
+    </div>
+
+    <!-- Subjects -->
+    <div class="section-header">
+      <div class="section-title">Choose a <span>Subject</span></div>
+    </div>
+    <div class="subjects-grid" id="subjects-grid">
+      <!-- Populated by app.js -->
+    </div>
+
+    <!-- Quiz -->
+    <div class="section-header">
+      <div class="section-title">Daily <span>Quiz</span></div>
+      <span style="font-size:0.8rem;color:var(--muted)">+2 points per correct answer</span>
+    </div>
+
+    <div class="quiz-section">
+      <div id="quiz-content">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="qpf"></div>
+        </div>
+        <div class="quiz-meta" id="quiz-meta">Question 1 of 5</div>
+        <div class="quiz-question" id="quiz-q">Loading...</div>
+        <div class="quiz-options" id="quiz-opts"></div>
+        <div class="quiz-feedback" id="quiz-fb"></div>
+        <button class="btn btn-primary btn-sm" id="quiz-next"
+          onclick="nextQuestion()" style="display:none">
+          Next Question →
+        </button>
+      </div>
+
+      <div class="quiz-result" id="quiz-result">
+        <div class="score-circle" id="score-circle">
+          <div class="score-num" id="score-num">0%</div>
+        </div>
+        <div class="score-msg" id="score-msg"></div>
+        <div class="score-pts" id="score-pts"></div>
+        <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top:1rem">
+          🔄 Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- AI Tutor Chat -->
+    <div class="section-header" id="chat-anchor">
+      <div class="section-title">AI <span>Tutor Chat</span></div>
+      <span style="font-size:0.8rem;color:var(--muted)">Ask anything about your studies</span>
+    </div>
+
+    <div class="chat-section">
+      <div class="chat-header">
+        <div class="ai-avatar">🤖</div>
+        <div class="chat-header-info">
+          <h3>EduStar AI Tutor</h3>
+          <p><span class="online-dot"></span> Always here to help</p>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg ai">
+          <div class="msg-avatar ai">🤖</div>
+          <div class="msg-bubble">
+            👋 Hujambo! I'm your personal AI tutor. I can explain any topic,
+            help you understand difficult concepts, or answer your questions.
+            What are you studying today?
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-suggestions">
+        <div class="suggestion-chip" onclick="useSuggestion(this)">Explain photosynthesis</div>
+        <div class="suggestion-chip" onclick="useSuggestion(this)">How does multiplication work?</div>
+        <div class="suggestion-chip" onclick="useSuggestion(this)">What caused World War I?</div>
+        <div class="suggestion-chip" onclick="useSuggestion(this)">Help me with fractions</div>
+        <div class="suggestion-chip" onclick="useSuggestion(this)">What is the Nile River?</div>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input"
+          placeholder="Ask your question here..." rows="1"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+
+  </div><!-- end .section -->
+
+  <!-- ── FOOTER ──────────────────────────────────────────────────── -->
+  <footer>
+    <p>Built with ❤️ for students across Africa</p>
+    <p><strong>EduStar AI</strong> — Smart Learning for Everyone, Everywhere</p>
+    <p style="margin-top:0.4rem;font-size:0.75rem;opacity:0.5">Free • Accessible • Personalized</p>
+  </footer>
+
+</div><!-- end .app -->
+
+<!-- ── LESSON PANEL (modal) ────────────────────────────────────── -->
+<div class="lesson-panel" id="lesson-panel">
+  <div class="lesson-modal">
+    <button class="modal-close" onclick="closeLesson()">✕</button>
+    <div class="lesson-tag"   id="l-tag"></div>
+    <div class="lesson-nav"   id="l-nav"></div>
+    <div class="lesson-title" id="l-title"></div>
+    <div class="lesson-body"  id="l-body"></div>
+    <div class="lesson-actions">
+      <button class="btn btn-primary" onclick="completeLesson()">
+        ✅ Mark Complete (+50 pts)
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="closeLesson()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── NAME MODAL ─────────────────────────────────────────────── -->
+<div class="name-overlay" id="name-overlay">
+  <div class="name-modal">
+    <div style="font-size:3rem;margin-bottom:0.8rem">🌟</div>
+    <h2>Welcome, Learner!</h2>
+    <p>Enter your name to personalize your learning journey and track your progress.</p>
+    <input class="name-input" id="name-input" type="text"
+      placeholder="Your name..." maxlength="30">
+    <button class="btn btn-primary" style="width:100%" onclick="saveName()">
+      Let's Start Learning! 🚀
+    </button>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ────────────────────────────────────────── -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- JavaScript — loaded last so the DOM is ready -->
+<script src="app.js"></script>
+</body>
+</html>
