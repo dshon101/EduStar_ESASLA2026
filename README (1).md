@@ -1,60 +1,21 @@
 # 🌍 EduStar AI – Smart Learning Assistant
 
-## What's Included
-- `index.php` — The complete website (PHP + JavaScript + HTML/CSS in one file)
+Here's your complete EduStar platform — 8 files covering the full app. Here's what was built:
+📁 File Structure
 
-## How to Run It
+index.html — Login & Sign Up page
+pages/dashboard.html — Main dashboard with AI Tutor Chat
+pages/subjects.html — All subjects with category filters
+pages/lesson.html — Full lesson viewer with sidebar navigation
+pages/books.html — School books library
+pages/quiz.html — Quiz arena
+assets/shared.css — Shared styles for all pages
+assets/data.js — All curriculum data, AI system prompt builder, utilities
 
-### Option 1: Local PHP Server (easiest for testing)
-1. Make sure you have PHP installed (most computers do)
-2. Open a terminal in this folder
-3. Run: `php -S localhost:8080`
-4. Open your browser and go to: `http://localhost:8080`
-
-### Option 2: XAMPP / WAMP / LAMP (recommended)
-1. Install XAMPP (free): https://www.apachefriends.org
-2. Copy the `smart_learning_assistant` folder into the `htdocs` directory
-3. Start Apache in XAMPP
-4. Visit: `http://localhost/smart_learning_assistant/`
-
-### Option 3: Any PHP Web Hosting
-- Upload `index.php` to your hosting provider (Hostinger, cPanel, etc.)
-- Access via your domain
-
-## Features Built
-- ✅ **Student Profiles** — Name, level, XP points (stored in PHP sessions)
-- ✅ **6 Subjects** — Math, Science, English, History, Geography, Computer Studies
-- ✅ **Lessons** — Rich lesson content in popup panels with "Mark Complete" (+50 pts)
-- ✅ **Daily Quiz** — 5 randomized questions, auto-scored, +2 pts per correct answer
-- ✅ **AI Tutor Chat** — Powered by Claude AI for instant question answering
-- ✅ **Progress Tracking** — XP bar, level system, stats dashboard
-- ✅ **Gamification** — Points, levels, badges, completion tracking
-
-## AI Chat Setup
-The AI chat uses the Anthropic Claude API. The API call happens client-side.
-To enable it fully, you may need to configure CORS on the Anthropic API or proxy it through PHP.
-
-For a simple PHP proxy, add this to your server:
-```php
-// api_proxy.php
-header('Content-Type: application/json');
-$data = json_decode(file_get_contents('php://input'), true);
-$ch = curl_init('https://api.anthropic.com/v1/messages');
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($data),
-    CURLOPT_HTTPHEADER => [
-        'Content-Type: application/json',
-        'x-api-key: YOUR_API_KEY_HERE',
-        'anthropic-version: 2023-06-01'
-    ]
-]);
-echo curl_exec($ch);
-```
-
-## Technologies Used
-- **PHP** — Session management, progress tracking, quiz scoring, backend logic
-- **JavaScript** — UI interactions, quiz engine, AI chat, subject rendering
-- **HTML/CSS** — Beautiful responsive design with African-inspired warm color theme
-- **Claude AI API** — Powers the intelligent tutor chat feature
+✨ Key Features
+🔐 Login/Signup — Full account system with country selection (15 African countries) and grade system that auto-updates per country (Kenya CBC, Nigeria 9-3-4, South Africa CAPS, Tanzania TIE, Uganda, Ghana, Zimbabwe, Zambia, and more)
+🎓 Grade-differentiated content — Every subject has lessons and quiz questions for Early/Middle/Lower Secondary/Upper Secondary levels — Maths Grade 1 vs Grade 12 are genuinely different
+📚 20+ Subjects — Maths, English, Biology, Chemistry, Physics, Economics, Accounting, Commerce, Business Studies, Computer Studies, History, Geography, Literature, Religious Studies, Kiswahili, French, Agriculture, Civics, Art, Music
+📖 School Books — 20+ textbooks from KICD (Kenya), NERDC (Nigeria), DBE (South Africa), TIE (Tanzania), ZEPH (Zambia), and Pan-African publishers — filterable by country, subject, and grade with full table of contents
+🤖 AI Tutor — Lives on the dashboard, uses a dynamic system prompt built from the student's country + grade + curriculum system so it knows their exact syllabus and exam board
+🧠 Quiz Arena — Pick any subject, 5–20 questions, with a live timer, score tracker, and personal leaderboard

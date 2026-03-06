@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar – Lesson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/shared.css">
+  <style>
+    .lesson-sidebar { display:grid; grid-template-columns:1fr 300px; gap:2rem; align-items:start; }
+    .sidebar-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.4rem; position:sticky; top:5rem; }
+    .sidebar-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; margin-bottom:1rem; }
+    .lesson-list { list-style:none; }
+    .lesson-list li { padding:0.7rem 0.9rem; border-radius:var(--radius-sm); cursor:pointer; transition:all 0.2s; font-size:0.85rem; display:flex; align-items:center; gap:0.5rem; border:1px solid transparent; margin-bottom:0.4rem; }
+    .lesson-list li:hover { background:rgba(255,107,43,0.07); border-color:rgba(255,107,43,0.2); }
+    .lesson-list li.active { background:rgba(255,107,43,0.12); border-color:rgba(255,107,43,0.3); color:var(--sun); }
+    .lesson-list li.done { color:var(--teal); }
+    .lesson-list li.done::after { content:'✅'; margin-left:auto; font-size:0.75rem; }
+    .lesson-nav-btns { display:flex; gap:0.7rem; margin-top:1rem; }
+    .subject-header { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; padding:1.2rem 1.5rem; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); }
+    .subject-header .icon { font-size:2.2rem; }
+    .subject-header h2 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.3rem; }
+    .subject-header p { font-size:0.82rem; color:var(--muted); margin-top:0.2rem; }
+    .no-lessons { text-align:center; padding:3rem; color:var(--muted); }
+    .no-lessons h3 { font-family:'Syne',sans-serif; font-size:1.3rem; margin-bottom:0.8rem; }
+    @media (max-width: 768px) {
+      .lesson-sidebar { grid-template-columns:1fr; }
+      .sidebar-card { position:static; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-container"></div>
+
+  <div class="page-section">
+    <div class="breadcrumb">
+      <a href="dashboard.html">🏠 Dashboard</a> ›
+      <a href="subjects.html">Subjects</a> ›
+      <span id="bc-subject">Loading...</span>
+    </div>
+
+    <div class="subject-header" id="subject-header">
+      <div class="icon" id="subj-icon">📚</div>
+      <div>
+        <h2 id="subj-name">Loading...</h2>
+        <p id="subj-desc-text">Loading lesson...</p>
+      </div>
+    </div>
+
+    <div class="lesson-sidebar" id="lesson-layout">
+      <!-- MAIN CONTENT -->
+      <div id="lesson-main">
+        <div class="lesson-container" id="lesson-container">
+          <div style="text-align:center;padding:3rem;color:var(--muted)">Select a lesson from the sidebar →</div>
+        </div>
+      </div>
+      <!-- SIDEBAR -->
+      <div class="sidebar-card" id="lesson-sidebar">
+        <h3>📋 Lessons in this Subject</h3>
+        <ul class="lesson-list" id="lesson-list"></ul>
+        <div class="lesson-nav-btns">
+          <button class="btn btn-sm btn-secondary" id="btn-prev" onclick="prevLesson()" style="display:none">← Prev</button>
+          <button class="btn btn-sm btn-primary" id="btn-next" onclick="nextLesson()" style="display:none">Next →</button>
+        </div>
+        <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <a href="quiz.html" class="btn btn-sm btn-teal" style="width:100%;justify-content:center;text-decoration:none;display:flex">🧠 Take Quiz</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built with ❤️ for students across Africa · <strong>EduStar AI</strong></p>
+  </footer>
+</div>
+<div class="toast-container" id="toasts"></div>
+<script src="scripts/data.js"></script>
+<script>
+let student = requireAuth();
+let currentSubject = null;
+let lessons = [];
+let currentLessonIdx = 0;
+
+function init() {
+  document.getElementById('nav-container').innerHTML = buildNav(student, 'subjects');
+  const params = new URLSearchParams(window.location.search);
+  const subjectId = params.get('subject') || 'math';
+  const lessonId  = params.get('lesson');
+
+  currentSubject = ALL_SUBJECTS.find(s=>s.id===subjectId);
+  if (!currentSubject) { window.location.href='subjects.html'; return; }
+
+  const level = getGradeLevel(student.grade||'Grade 7');
+  const subjectLessons = LESSONS[subjectId]||{};
+  lessons = subjectLessons[level] || subjectLessons.upper || subjectLessons.lower || subjectLessons.middle || subjectLessons.early || [];
+
+  document.getElementById('bc-subject').textContent = currentSubject.name;
+  document.getElementById('subj-icon').textContent  = currentSubject.icon;
+  document.getElementById('subj-name').textContent  = currentSubject.name;
+  document.getElementById('subj-desc-text').textContent = currentSubject.desc + ' · ' + student.grade + ' Level';
+
+  if (lessons.length === 0) {
+    document.getElementById('lesson-main').innerHTML = `<div class="no-lessons"><h3>${currentSubject.icon} ${currentSubject.name}</h3><p>Lesson content for ${student.grade} is being prepared. Check back soon, or ask the AI tutor on your dashboard!</p><a href="dashboard.html" class="btn btn-primary" style="margin-top:1rem">🤖 Ask AI Tutor</a></div>`;
+    document.getElementById('lesson-sidebar').style.display='none';
+    return;
+  }
+
+  renderLessonList();
+
+  // Start on specific lesson or first
+  const startIdx = lessonId ? lessons.findIndex(l=>l.id===lessonId) : 0;
+  showLesson(Math.max(0, startIdx));
+}
+
+function renderLessonList() {
+  const ul = document.getElementById('lesson-list');
+  ul.innerHTML = lessons.map((l, i) => {
+    const done = (student.completed||[]).includes(l.id);
+    return `<li class="${done?'done':''}" onclick="showLesson(${i})" id="ll-${i}">
+      ${done?'✅':'📄'} ${l.title}
+    </li>`;
+  }).join('');
+}
+
+function showLesson(idx) {
+  currentLessonIdx = idx;
+  const lesson = lessons[idx];
+  if (!lesson) return;
+
+  // Update sidebar highlight
+  document.querySelectorAll('.lesson-list li').forEach((li,i) => li.classList.toggle('active', i===idx));
+
+  const done = (student.completed||[]).includes(lesson.id);
+  const container = document.getElementById('lesson-container');
+  container.innerHTML = `
+    <div class="lesson-header">
+      <div class="lesson-title-big">${lesson.title}</div>
+      <div class="lesson-meta">
+        <div class="lesson-meta-item">⏱ ${lesson.time}</div>
+        <div class="lesson-meta-item">⭐ ${lesson.points} pts</div>
+        <div class="lesson-meta-item">📚 ${currentSubject.name}</div>
+        <div class="lesson-meta-item">🎓 ${student.grade}</div>
+        ${done?'<div class="lesson-meta-item" style="color:var(--teal)">✅ Completed</div>':''}
+      </div>
+    </div>
+    <div class="lesson-body">${lesson.body}</div>
+    <div class="lesson-actions">
+      ${!done ? `<button class="btn btn-primary" onclick="completeLesson('${lesson.id}',${lesson.points})">✅ Mark Complete (+${lesson.points} pts)</button>` : '<div class="btn btn-teal" style="cursor:default">✅ Lesson Completed!</div>'}
+      <button class="btn btn-secondary btn-sm" onclick="askTutorAbout('${lesson.title.replace(/'/g,"\\'")}')">🤖 Ask AI Tutor about this</button>
+      <a href="quiz.html?subject=${currentSubject.id}" class="btn btn-secondary btn-sm">🧠 Take Quiz</a>
+    </div>`;
+
+  // Nav buttons
+  document.getElementById('btn-prev').style.display = idx > 0 ? 'inline-flex' : 'none';
+  document.getElementById('btn-next').style.display = idx < lessons.length-1 ? 'inline-flex' : 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function completeLesson(id, points) {
+  if ((student.completed||[]).includes(id)) return;
+  student.completed = [...(student.completed||[]), id];
+  student.points    = (student.points||0) + points;
+  student.level     = Math.max(1, Math.floor(student.points/200)+1);
+  saveStudent(student);
+  toast(`🎉 Lesson complete! +${points} points earned!`);
+  renderLessonList();
+  showLesson(currentLessonIdx);
+}
+
+function prevLesson() { if (currentLessonIdx > 0) showLesson(currentLessonIdx-1); }
+function nextLesson() { if (currentLessonIdx < lessons.length-1) showLesson(currentLessonIdx+1); }
+
+function askTutorAbout(title) {
+  // Store a pending question for the AI tutor and go to dashboard
+  localStorage.setItem('edustar_pending_q', `Can you explain "${title}" for ${student.grade} level?`);
+  window.location.href='dashboard.html#chat-anchor';
+}
+
+window.addEventListener('load', init);
+// Pick up pending question on load
+window.addEventListener('load', () => {
+  const pq = localStorage.getItem('edustar_pending_q');
+  if (pq) { localStorage.removeItem('edustar_pending_q'); }
+});
+</script>
+</body>
+</html>

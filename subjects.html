@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar – Subjects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/shared.css">
+  <style>
+    .category-tabs { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem; }
+    .cat-tab { background:var(--card); border:1px solid var(--border); color:var(--muted); border-radius:50px; padding:0.4rem 1rem; font-size:0.82rem; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+    .cat-tab.active,.cat-tab:hover { background:rgba(255,107,43,0.12); border-color:rgba(255,107,43,0.35); color:var(--sun); }
+    .subject-card .lessons-count { font-size:0.73rem; color:var(--teal); margin-top:0.5rem; }
+    .subject-card .progress-ring { width:36px; height:36px; float:right; }
+    .grade-banner { background:linear-gradient(135deg,rgba(255,107,43,0.1),rgba(0,201,167,0.08)); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem 1.5rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem; }
+    .grade-banner h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; }
+    .grade-banner p { font-size:0.83rem; color:var(--muted); margin-top:0.2rem; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-container"></div>
+
+  <section class="page-hero" style="padding-bottom:2rem">
+    <div class="hero-tag" id="hero-tag">📚 Subjects</div>
+    <h1>Choose Your <em>Subject</em></h1>
+    <p id="page-desc">Curriculum-aligned lessons for your grade level and country.</p>
+  </section>
+
+  <div class="page-section">
+    <div class="grade-banner" id="grade-banner">
+      <div>
+        <h3 id="grade-banner-title">Loading...</h3>
+        <p id="grade-banner-desc">Loading curriculum info...</p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap" id="grade-exams"></div>
+    </div>
+
+    <div class="category-tabs" id="cat-tabs">
+      <button class="cat-tab active" onclick="filterCat('all',this)">🌟 All Subjects</button>
+      <button class="cat-tab" onclick="filterCat('core',this)">📐 Core</button>
+      <button class="cat-tab" onclick="filterCat('sciences',this)">🔬 Sciences</button>
+      <button class="cat-tab" onclick="filterCat('commerce',this)">💼 Commerce</button>
+      <button class="cat-tab" onclick="filterCat('humanities',this)">🌍 Humanities</button>
+      <button class="cat-tab" onclick="filterCat('languages',this)">🗣️ Languages</button>
+      <button class="cat-tab" onclick="filterCat('tech',this)">💻 Technology</button>
+      <button class="cat-tab" onclick="filterCat('practical',this)">🌱 Practical</button>
+    </div>
+
+    <div class="subjects-grid" id="subjects-grid"></div>
+  </div>
+
+  <footer>
+    <p>Built with ❤️ for students across Africa · <strong>EduStar AI</strong></p>
+  </footer>
+</div>
+<div class="toast-container" id="toasts"></div>
+<script src="scripts/data.js"></script>
+<script>
+let student = requireAuth();
+let currentCat = 'all';
+
+function init() {
+  document.getElementById('nav-container').innerHTML = buildNav(student, 'subjects');
+  const flag = COUNTRY_FLAGS[student.country]||'🌍';
+  const country = COUNTRY_NAMES[student.country]||'Africa';
+  const curriculum = COUNTRY_CURRICULUM[student.country]||{};
+  document.getElementById('hero-tag').textContent = `${flag} ${country} · ${student.grade}`;
+  document.getElementById('page-desc').textContent = `${student.grade} level subjects aligned to the ${curriculum.system||'national curriculum'}.`;
+  document.getElementById('grade-banner-title').textContent = `${flag} ${country} — ${student.grade}`;
+  document.getElementById('grade-banner-desc').textContent = curriculum.system||'National Curriculum';
+  const examsDiv = document.getElementById('grade-exams');
+  (curriculum.keyExams||[]).forEach(e => {
+    const b = document.createElement('div');
+    b.className='subject-badge badge-gold'; b.textContent=e;
+    examsDiv.appendChild(b);
+  });
+  renderSubjects('all');
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderSubjects(cat);
+}
+
+function renderSubjects(cat) {
+  const filtered = cat==='all' ? ALL_SUBJECTS : ALL_SUBJECTS.filter(s=>s.category===cat);
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = filtered.map(s => {
+    const subjectLessons = LESSONS[s.id]||{};
+    const level = getGradeLevel(student.grade||'Grade 7');
+    const lessons = subjectLessons[level]||subjectLessons.middle||subjectLessons.lower||subjectLessons.upper||subjectLessons.early||[];
+    const completed = (student.completed||[]).filter(c=>c.startsWith(s.id)).length;
+    return `<a href="lesson.html?subject=${s.id}" class="subject-card">
+      <div class="subject-icon">${s.icon}</div>
+      <div class="subject-name">${s.name}</div>
+      <div class="subject-desc">${s.desc}</div>
+      <div class="lessons-count">${lessons.length} lesson${lessons.length!==1?'s':''} for your grade ${completed>0?`· ✅ ${completed} done`:''}</div>
+      <div class="subject-badge ${s.badge.cls}">${s.badge.text}</div>
+    </a>`;
+  }).join('');
+  if (filtered.length===0) grid.innerHTML = '<p style="color:var(--muted);padding:2rem">No subjects in this category yet.</p>';
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

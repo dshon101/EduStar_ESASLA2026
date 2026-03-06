@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar – Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/shared.css">
+  <style>
+    .quiz-setup { max-width: 600px; margin: 0 auto; }
+    .quiz-setup-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; margin-bottom:1.5rem; }
+    .quiz-setup-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.2rem; margin-bottom:1.2rem; }
+    .subject-selector { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:0.7rem; margin-bottom:1rem; }
+    .subj-btn { background:var(--card); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:0.8rem; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; font-size:0.82rem; text-align:center; }
+    .subj-btn:hover { border-color:rgba(255,107,43,0.35); background:rgba(255,107,43,0.07); }
+    .subj-btn.selected { border-color:var(--sun); background:rgba(255,107,43,0.12); color:var(--sun); }
+    .subj-btn .s-icon { font-size:1.5rem; display:block; margin-bottom:0.3rem; }
+    .count-select { display:flex; gap:0.7rem; flex-wrap:wrap; }
+    .count-btn { background:var(--card); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:0.55rem 1.2rem; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.85rem; transition:all 0.2s; }
+    .count-btn.selected { border-color:var(--sun); background:rgba(255,107,43,0.12); color:var(--sun); }
+    .quiz-main { max-width:680px; margin:0 auto; display:none; }
+    .quiz-header-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.8rem; }
+    .quiz-timer { background:rgba(255,107,43,0.12); border:1px solid rgba(255,107,43,0.25); border-radius:50px; padding:0.3rem 1rem; font-size:0.85rem; color:var(--sun); font-family:'Syne',sans-serif; font-weight:700; }
+    .quiz-score-live { background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.25); border-radius:50px; padding:0.3rem 1rem; font-size:0.85rem; color:var(--teal); }
+    .result-actions { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1.5rem; }
+    .leaderboard { margin-top:2rem; }
+    .lb-item { display:flex; align-items:center; gap:1rem; padding:0.8rem 1rem; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:0.5rem; }
+    .lb-rank { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; min-width:2rem; }
+    .lb-name { flex:1; font-size:0.9rem; }
+    .lb-pts { color:var(--gold); font-family:'Syne',sans-serif; font-weight:700; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-container"></div>
+
+  <section class="page-hero" style="padding-bottom:2rem">
+    <div class="hero-tag">🧠 Quiz Arena</div>
+    <h1>Test Your <em>Knowledge</em></h1>
+    <p id="hero-desc">Grade-appropriate questions aligned to your curriculum.</p>
+  </section>
+
+  <div class="page-section">
+    <!-- SETUP -->
+    <div class="quiz-setup" id="quiz-setup">
+      <div class="quiz-setup-card">
+        <h3>📚 Choose Subject</h3>
+        <div class="subject-selector" id="subject-selector"></div>
+      </div>
+      <div class="quiz-setup-card">
+        <h3>🔢 Number of Questions</h3>
+        <div class="count-select">
+          <button class="count-btn selected" onclick="selectCount(5,this)">5 Questions</button>
+          <button class="count-btn" onclick="selectCount(10,this)">10 Questions</button>
+          <button class="count-btn" onclick="selectCount(15,this)">15 Questions</button>
+          <button class="count-btn" onclick="selectCount(20,this)">20 Questions</button>
+        </div>
+      </div>
+      <div class="quiz-setup-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+        <div>
+          <h3 style="margin-bottom:0.3rem">🎓 Your Grade Level</h3>
+          <p style="font-size:0.82rem;color:var(--muted)" id="grade-display">Loading...</p>
+        </div>
+        <button class="btn btn-primary" id="start-btn" onclick="startQuiz()">🚀 Start Quiz</button>
+      </div>
+    </div>
+
+    <!-- QUIZ MAIN -->
+    <div class="quiz-main" id="quiz-main">
+      <div class="quiz-header-bar">
+        <button class="btn btn-sm btn-secondary" onclick="exitQuiz()">← Back to Setup</button>
+        <div class="quiz-timer" id="quiz-timer">⏱ 0:00</div>
+        <div class="quiz-score-live" id="score-live">✅ 0 correct</div>
+      </div>
+      <div class="quiz-container" id="quiz-container">
+        <!-- questions rendered here -->
+      </div>
+      <!-- Result -->
+      <div class="quiz-container quiz-result" id="quiz-result">
+        <div class="score-circle" id="score-circle">
+          <div class="score-num" id="score-num">0%</div>
+        </div>
+        <div class="score-msg" id="score-msg"></div>
+        <div class="score-pts" id="score-pts"></div>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="restartQuiz()">🔄 Try Again</button>
+          <button class="btn btn-secondary" onclick="exitQuiz()">⚙️ Change Subject</button>
+          <a href="dashboard.html#chat-anchor" class="btn btn-teal">🤖 Ask AI Tutor</a>
+        </div>
+        <div class="leaderboard">
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">🏆 Your Best Scores</h3>
+          <div id="leaderboard-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <footer><p>Built with ❤️ for students across Africa · <strong>EduStar AI</strong></p></footer>
+</div>
+<div class="toast-container" id="toasts"></div>
+<script src="scripts/data.js"></script>
+<script>
+let student = requireAuth();
+let selectedSubject = null;
+let selectedCount   = 5;
+let quiz = null;
+let timerInterval  = null;
+let timerSeconds   = 0;
+let liveCorrect    = 0;
+
+const QUIZ_SUBJECTS = ['math','english','science','biology','chemistry','physics','history','geography','economics','accounting','computer','literature'];
+
+function init() {
+  document.getElementById('nav-container').innerHTML = buildNav(student, 'quiz');
+  const flag = COUNTRY_FLAGS[student.country]||'🌍';
+  document.getElementById('hero-desc').textContent = `${flag} ${COUNTRY_NAMES[student.country]||'Africa'} · ${student.grade} curriculum questions · +2 pts per correct answer`;
+  document.getElementById('grade-display').textContent = `${student.grade} · ${COUNTRY_NAMES[student.country]||'Africa'} · Level ${student.level||1}`;
+  renderSubjectSelector();
+  // Check URL param
+  const params = new URLSearchParams(window.location.search);
+  const qs = params.get('subject');
+  if (qs) {
+    const btn = document.querySelector(`[data-subj="${qs}"]`);
+    if (btn) { selectSubject(qs, btn); }
+  }
+}
+
+function renderSubjectSelector() {
+  const sel = document.getElementById('subject-selector');
+  const subjects = ALL_SUBJECTS.filter(s => QUIZ_SUBJECTS.includes(s.id));
+  sel.innerHTML = subjects.map(s => `
+    <button class="subj-btn" onclick="selectSubject('${s.id}',this)" data-subj="${s.id}">
+      <span class="s-icon">${s.icon}</span>${s.name}
+    </button>`).join('');
+}
+
+function selectSubject(id, el) {
+  selectedSubject = id;
+  document.querySelectorAll('.subj-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectCount(n, el) {
+  selectedCount = n;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function startQuiz() {
+  if (!selectedSubject) { toast('⚠️ Please select a subject first!', 'error'); return; }
+  const questions = getQuizQuestionsForStudent(student, selectedSubject, selectedCount);
+  if (questions.length === 0) { toast('⚠️ No questions available for this subject/grade yet!', 'error'); return; }
+  quiz = { questions, current:0, score:0, answered:false };
+  liveCorrect = 0;
+  timerSeconds = 0;
+
+  document.getElementById('quiz-setup').style.display = 'none';
+  document.getElementById('quiz-main').style.display  = 'block';
+  document.getElementById('quiz-result').classList.remove('show');
+  document.getElementById('quiz-container').style.display = 'block';
+  document.getElementById('score-live').textContent = '✅ 0 correct';
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = Math.floor(timerSeconds/60);
+    const s = timerSeconds % 60;
+    document.getElementById('quiz-timer').textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+  }, 1000);
+
+  renderQuestion();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderQuestion() {
+  const q = quiz.questions[quiz.current];
+  const total = quiz.questions.length;
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = `
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="qpf" style="width:${(quiz.current/total)*100}%"></div></div>
+    <div class="quiz-meta">Question ${quiz.current+1} of ${total} · ${(ALL_SUBJECTS.find(s=>s.id===selectedSubject)||{icon:'📚',name:'General'}).icon} ${(ALL_SUBJECTS.find(s=>s.id===selectedSubject)||{name:'General'}).name}</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options" id="quiz-opts">
+      ${q.opts.map((opt,i)=>`<button class="quiz-option" onclick="answer(${i})">${opt}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+    <button class="btn btn-primary btn-sm" id="quiz-next" onclick="nextQuestion()" style="display:none">
+      ${quiz.current < total-1 ? 'Next Question →' : '🏆 Finish Quiz'}
+    </button>`;
+  quiz.answered = false;
+}
+
+function answer(idx) {
+  if (quiz.answered) return;
+  quiz.answered = true;
+  const q = quiz.questions[quiz.current];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(b => b.onclick = null);
+  opts[q.ans].classList.add('correct');
+  if (idx !== q.ans) opts[idx].classList.add('wrong');
+  const ok = idx === q.ans;
+  if (ok) { quiz.score++; liveCorrect++; }
+  document.getElementById('score-live').textContent = `✅ ${liveCorrect} correct`;
+  const fb = document.getElementById('quiz-fb');
+  fb.textContent = ok ? `✅ Correct! ${q.explain}` : `❌ The correct answer is: ${q.opts[q.ans]}. ${q.explain}`;
+  fb.className = `quiz-feedback show ${ok?'correct-fb':'wrong-fb'}`;
+  document.getElementById('quiz-next').style.display = 'inline-flex';
+}
+
+function nextQuestion() {
+  quiz.current++;
+  if (quiz.current >= quiz.questions.length) finishQuiz();
+  else renderQuestion();
+}
+
+function finishQuiz() {
+  clearInterval(timerInterval);
+  const pct = Math.round((quiz.score/quiz.questions.length)*100);
+  const deg = (pct/100)*360;
+  const pts = quiz.score * 2;
+
+  document.getElementById('quiz-container').style.display='none';
+  document.getElementById('quiz-result').classList.add('show');
+  document.getElementById('score-circle').style.setProperty('--deg', deg+'deg');
+  document.getElementById('score-num').textContent  = pct+'%';
+  document.getElementById('score-msg').textContent  = pct>=80?'🌟 Excellent Work!':pct>=60?'👍 Good Job!':'💪 Keep Practicing!';
+  document.getElementById('score-pts').textContent  = `+${pts} points · ${quiz.score}/${quiz.questions.length} correct · ⏱ ${Math.floor(timerSeconds/60)}:${(timerSeconds%60).toString().padStart(2,'0')}`;
+
+  student.points      = (student.points||0) + pts;
+  student.level       = Math.max(1, Math.floor(student.points/200)+1);
+  student.quizzesTaken= (student.quizzesTaken||0)+1;
+  saveStudent(student);
+
+  // Save to leaderboard
+  saveScore(pct, pts);
+  renderLeaderboard();
+  document.getElementById('nav-points').textContent = student.points;
+  toast(`🎉 Quiz done! +${pts} points earned!`);
+}
+
+function saveScore(pct, pts) {
+  const key = `edustar_scores_${student.email}`;
+  let scores = [];
+  try { scores = JSON.parse(localStorage.getItem(key)||'[]'); } catch {}
+  const subj = ALL_SUBJECTS.find(s=>s.id===selectedSubject)||{};
+  scores.push({ subject: subj.name||selectedSubject, icon:subj.icon||'📚', pct, pts, date:new Date().toLocaleDateString(), time:timerSeconds });
+  scores.sort((a,b)=>b.pct-a.pct);
+  localStorage.setItem(key, JSON.stringify(scores.slice(0,10)));
+}
+
+function renderLeaderboard() {
+  const key = `edustar_scores_${student.email}`;
+  let scores = [];
+  try { scores = JSON.parse(localStorage.getItem(key)||'[]'); } catch {}
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('leaderboard-list').innerHTML = scores.map((s,i) => `
+    <div class="lb-item">
+      <div class="lb-rank">${medals[i]||'#'+(i+1)}</div>
+      <div>${s.icon} <strong>${s.subject}</strong></div>
+      <div class="lb-pts">${s.pct}% · +${s.pts}pts · ${s.date}</div>
+    </div>`).join('');
+}
+
+function restartQuiz() {
+  clearInterval(timerInterval);
+  document.getElementById('quiz-result').classList.remove('show');
+  document.getElementById('quiz-container').style.display='block';
+  startQuiz();
+}
+
+function exitQuiz() {
+  clearInterval(timerInterval);
+  document.getElementById('quiz-setup').style.display='block';
+  document.getElementById('quiz-main').style.display='none';
+  document.getElementById('quiz-result').classList.remove('show');
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
