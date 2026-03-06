@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar – School Books</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/shared.css">
+  <style>
+    .filter-row { display:flex; flex-wrap:wrap; gap:0.7rem; margin-bottom:2rem; align-items:center; }
+    .filter-select { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0.55rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; outline:none; min-width:160px; }
+    .filter-select:focus { border-color:rgba(255,107,43,0.5); }
+    .filter-select option { background:var(--sky); }
+    .book-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all 0.25s; cursor:pointer; }
+    .book-card:hover { border-color:rgba(0,201,167,0.4); transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.38); }
+    .book-cover { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-size:4rem; position:relative; overflow:hidden; }
+    .book-spine { position:absolute; left:0; top:0; width:8px; height:100%; }
+    .book-info { padding:1.1rem; }
+    .book-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.92rem; margin-bottom:0.3rem; line-height:1.3; }
+    .book-meta { font-size:0.73rem; color:var(--muted); line-height:1.6; }
+    .book-actions { padding:0 1.1rem 1.1rem; display:flex; gap:0.5rem; }
+    .book-modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1.5rem; display:none; }
+    .book-modal.show { display:flex; }
+    .book-modal-inner { background:var(--sky); border:1px solid var(--border); border-radius:24px; padding:2rem; max-width:700px; width:100%; max-height:85vh; overflow-y:auto; animation:slideUp 0.3s ease; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .book-modal-header { display:flex; gap:1.2rem; margin-bottom:1.5rem; }
+    .book-modal-cover { width:100px; min-width:100px; aspect-ratio:3/4; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:3rem; }
+    .book-modal-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; margin-bottom:0.4rem; }
+    .book-modal-close { float:right; background:none; border:none; color:var(--muted); font-size:1.4rem; cursor:pointer; }
+    .chapter-list { list-style:none; }
+    .chapter-item { padding:0.8rem 1rem; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:0.5rem; cursor:pointer; transition:all 0.2s; }
+    .chapter-item:hover { border-color:rgba(255,107,43,0.4); background:rgba(255,107,43,0.05); }
+    .chapter-item h4 { font-family:'Syne',sans-serif; font-weight:600; font-size:0.9rem; margin-bottom:0.2rem; }
+    .chapter-item p { font-size:0.78rem; color:var(--muted); }
+    .search-box { flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; padding:0.55rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; outline:none; min-width:200px; }
+    .search-box:focus { border-color:rgba(255,107,43,0.5); }
+    .search-box::placeholder { color:var(--muted); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-container"></div>
+
+  <section class="page-hero" style="padding-bottom:2rem">
+    <div class="hero-tag">📖 School Books</div>
+    <h1>African School <em>Textbooks</em></h1>
+    <p>Access curriculum-aligned textbooks and study materials from across Africa, organised by country and grade.</p>
+  </section>
+
+  <div class="page-section">
+    <div class="filter-row">
+      <input class="search-box" type="text" id="search-input" placeholder="🔍 Search books..." oninput="filterBooks()">
+      <select class="filter-select" id="filter-country" onchange="filterBooks()">
+        <option value="">🌍 All Countries</option>
+        <option value="KE">🇰🇪 Kenya</option>
+        <option value="NG">🇳🇬 Nigeria</option>
+        <option value="ZA">🇿🇦 South Africa</option>
+        <option value="TZ">🇹🇿 Tanzania</option>
+        <option value="UG">🇺🇬 Uganda</option>
+        <option value="GH">🇬🇭 Ghana</option>
+        <option value="ZW">🇿🇼 Zimbabwe</option>
+        <option value="ZM">🇿🇲 Zambia</option>
+        <option value="continental">🌍 Pan-African</option>
+      </select>
+      <select class="filter-select" id="filter-subject" onchange="filterBooks()">
+        <option value="">📚 All Subjects</option>
+        <option value="math">Mathematics</option>
+        <option value="english">English</option>
+        <option value="science">Science</option>
+        <option value="biology">Biology</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="physics">Physics</option>
+        <option value="history">History</option>
+        <option value="geography">Geography</option>
+        <option value="economics">Economics</option>
+        <option value="accounting">Accounting</option>
+        <option value="commerce">Commerce</option>
+        <option value="business">Business Studies</option>
+        <option value="kiswahili">Kiswahili</option>
+        <option value="computer">Computer Studies</option>
+        <option value="agriculture">Agriculture</option>
+      </select>
+      <select class="filter-select" id="filter-grade" onchange="filterBooks()">
+        <option value="">🎓 All Grades</option>
+        <option value="lower_primary">Lower Primary (G1-4)</option>
+        <option value="upper_primary">Upper Primary (G5-8)</option>
+        <option value="lower_secondary">Lower Secondary (G9-10/Form 1-2)</option>
+        <option value="upper_secondary">Upper Secondary (G11-12/Form 3+)</option>
+      </select>
+    </div>
+
+    <div class="books-grid" id="books-grid"></div>
+    <div id="no-results" style="display:none;text-align:center;padding:3rem;color:var(--muted)">
+      <div style="font-size:3rem;margin-bottom:1rem">📚</div>
+      <h3 style="font-family:'Syne',sans-serif">No books found</h3>
+      <p>Try adjusting your filters, or <a href="dashboard.html" style="color:var(--sun)">ask the AI Tutor</a> for help.</p>
+    </div>
+  </div>
+
+  <footer><p>Built with ❤️ for students across Africa · <strong>EduStar AI</strong></p></footer>
+</div>
+
+<!-- BOOK DETAIL MODAL -->
+<div class="book-modal" id="book-modal" onclick="closeBookModal(event)">
+  <div class="book-modal-inner" id="book-modal-inner">
+    <button class="book-modal-close" onclick="closeBookModal()">✕</button>
+    <div id="book-modal-content"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="scripts/data.js"></script>
+<script>
+let student = requireAuth();
+
+// BOOKS DATABASE
+const BOOKS = [
+  // KENYA
+  { id:'ke-m7', title:'Mathematics Grade 7', subject:'math', country:'KE', gradeRange:'lower_secondary', color:'#FF6B2B', icon:'📐', publisher:'Kenya Institute of Curriculum Development (KICD)', year:2022, curriculum:'CBC', chapters:[
+    {ch:'Chapter 1: Numbers',topics:['Integers','Fractions','Decimals','Percentages']},
+    {ch:'Chapter 2: Algebra',topics:['Algebraic expressions','Linear equations','Word problems']},
+    {ch:'Chapter 3: Geometry',topics:['Angles','Triangles','Circles','Area and Perimeter']},
+    {ch:'Chapter 4: Statistics',topics:['Data collection','Bar graphs','Pie charts','Mean, Mode, Median']},
+  ]},
+  { id:'ke-eng7', title:'English Language & Literature Grade 7', subject:'english', country:'KE', gradeRange:'lower_secondary', color:'#00C9A7', icon:'📖', publisher:'KICD', year:2022, curriculum:'CBC', chapters:[
+    {ch:'Chapter 1: Reading & Comprehension',topics:['Intensive reading','Extensive reading','Inference skills']},
+    {ch:'Chapter 2: Grammar',topics:['Parts of speech','Tenses','Sentence construction']},
+    {ch:'Chapter 3: Writing Skills',topics:['Compositions','Letters','Reports']},
+    {ch:'Chapter 4: Oral Skills',topics:['Public speaking','Drama','Oral literature']},
+  ]},
+  { id:'ke-sci7', title:'Integrated Science Grade 7', subject:'science', country:'KE', gradeRange:'lower_secondary', color:'#7C3AED', icon:'🔬', publisher:'KICD', year:2022, curriculum:'CBC', chapters:[
+    {ch:'Unit 1: Living Things',topics:['Cell biology','Classification of organisms','Ecosystems']},
+    {ch:'Unit 2: Physical Sciences',topics:['Matter and its properties','Forces and motion','Energy']},
+    {ch:'Unit 3: Earth Sciences',topics:['Weather and climate','Rocks and soil','Water cycle']},
+  ]},
+  { id:'ke-kis7', title:'Kiswahili Darasa la Saba', subject:'kiswahili', country:'KE', gradeRange:'lower_secondary', color:'#F5A623', icon:'🗣️', publisher:'KICD', year:2022, curriculum:'CBC', chapters:[
+    {ch:'Sehemu 1: Sarufi',topics:['Ngeli za nomino','Vitenzi','Vivumishi']},
+    {ch:'Sehemu 2: Insha',topics:['Insha za masimulizi','Insha za maelezo','Barua']},
+    {ch:'Sehemu 3: Fasihi',topics:['Hadithi fupi','Mashairi','Methali na vitendawili']},
+  ]},
+  { id:'ke-m12', title:'Mathematics Form 4 (KCSE Prep)', subject:'math', country:'KE', gradeRange:'upper_secondary', color:'#FF6B2B', icon:'∑', publisher:'KICD / Longhorn', year:2023, curriculum:'8-4-4/CBC', chapters:[
+    {ch:'Chapter 1: Quadratic Expressions & Equations',topics:['Factorisation','Quadratic formula','Completing the square']},
+    {ch:'Chapter 2: Circles',topics:['Theorems','Tangents','Arc length and sector area']},
+    {ch:'Chapter 3: Matrices & Transformations',topics:['Matrix operations','Determinants','Transformation geometry']},
+    {ch:'Chapter 4: Statistics & Probability',topics:['Frequency distribution','Measures of dispersion','Basic probability']},
+  ]},
+  // NIGERIA
+  { id:'ng-math-jss1', title:'New General Mathematics JSS 1', subject:'math', country:'NG', gradeRange:'lower_secondary', color:'#1E88E5', icon:'📐', publisher:'Longman Nigeria', year:2021, curriculum:'9-3-4', chapters:[
+    {ch:'Chapter 1: Whole Numbers & Decimals',topics:['Place value','Rounding','Operations']},
+    {ch:'Chapter 2: Fractions & Percentages',topics:['Types of fractions','Operations','Applications']},
+    {ch:'Chapter 3: Basic Algebra',topics:['Algebraic notation','Simple equations']},
+    {ch:'Chapter 4: Introduction to Geometry',topics:['Lines and angles','Triangles','Polygons']},
+  ]},
+  { id:'ng-eng-sss2', title:'English Studies SSS 2', subject:'english', country:'NG', gradeRange:'upper_secondary', color:'#00C9A7', icon:'📖', publisher:'NERDC Nigeria', year:2020, curriculum:'9-3-4', chapters:[
+    {ch:'Chapter 1: Literature Comprehension',topics:['Prose analysis','Poetry analysis']},
+    {ch:'Chapter 2: Writing',topics:['Essay writing','Report writing','Letter writing']},
+    {ch:'Chapter 3: Grammar',topics:['Complex sentences','Modal auxiliaries','Reported speech']},
+  ]},
+  // SOUTH AFRICA
+  { id:'za-maths-gr10', title:'Mathematics Grade 10', subject:'math', country:'ZA', gradeRange:'upper_secondary', color:'#FF6B2B', icon:'📐', publisher:'Department of Basic Education (DBE)', year:2023, curriculum:'CAPS', chapters:[
+    {ch:'Chapter 1: Algebra',topics:['Algebraic manipulation','Exponents','Surds']},
+    {ch:'Chapter 2: Equations & Inequalities',topics:['Quadratic equations','Simultaneous equations','Number line']},
+    {ch:'Chapter 3: Euclidean Geometry',topics:['Circle geometry theorems','Triangles','Polygons']},
+    {ch:'Chapter 4: Trigonometry',topics:['Trig ratios','Trig identities','Solving triangles']},
+    {ch:'Chapter 5: Statistics',topics:['Frequency tables','Box and whisker plots','Histograms']},
+  ]},
+  { id:'za-eco-gr11', title:'Economics Grade 11', subject:'economics', country:'ZA', gradeRange:'upper_secondary', color:'#43A047', icon:'📈', publisher:'DBE South Africa', year:2023, curriculum:'CAPS', chapters:[
+    {ch:'Chapter 1: Microeconomics',topics:['Demand and supply','Elasticity','Market structures']},
+    {ch:'Chapter 2: Macroeconomics',topics:['National accounts','Business cycle','Inflation']},
+    {ch:'Chapter 3: Contemporary Issues',topics:['Poverty','Inequality','Environmental economics']},
+  ]},
+  // TANZANIA
+  { id:'tz-bio-f3', title:'Biology Form 3', subject:'biology', country:'TZ', gradeRange:'upper_secondary', color:'#27AE60', icon:'🧬', publisher:'Tanzania Institute of Education (TIE)', year:2021, curriculum:'TIE', chapters:[
+    {ch:'Chapter 1: Cell Biology',topics:['Cell structure','Cell division','Genetics intro']},
+    {ch:'Chapter 2: Transport in Organisms',topics:['Circulatory system','Lymphatic system']},
+    {ch:'Chapter 3: Excretion',topics:['Kidney structure','Osmoregulation']},
+    {ch:'Chapter 4: Nervous System',topics:['Neurons','Brain structure','Reflex arcs']},
+  ]},
+  // ZAMBIA
+  { id:'zm-acc-g12', title:'Accounts Grade 12', subject:'accounting', country:'ZM', gradeRange:'upper_secondary', color:'#E67E22', icon:'🧾', publisher:'Zambia Educational Publishing House', year:2022, curriculum:'Zambia School Curriculum', chapters:[
+    {ch:'Chapter 1: Partnership Accounts',topics:['Partnership agreement','Profit sharing','Goodwill']},
+    {ch:'Chapter 2: Company Accounts',topics:['Share capital','Debentures','Final accounts']},
+    {ch:'Chapter 3: Ratio Analysis',topics:['Profitability ratios','Liquidity ratios','Efficiency ratios']},
+  ]},
+  // PAN-AFRICAN
+  { id:'af-hist', title:"African History — The Continent's Story", subject:'history', country:'continental', gradeRange:'upper_secondary', color:'#8E44AD', icon:'🏛️', publisher:'Africa Educational Trust', year:2022, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Ancient African Civilisations',topics:['Ancient Egypt','Kingdom of Kush','Great Zimbabwe','Mali Empire']},
+    {ch:'Chapter 2: The Slave Trade',topics:['Transatlantic slave trade','Arab slave trade','Resistance and abolition']},
+    {ch:'Chapter 3: Colonialism',topics:['The Scramble for Africa','Colonial administration','Resistance movements']},
+    {ch:'Chapter 4: Independence Movements',topics:['Pan-Africanism','Country-by-country independence','Cold War in Africa']},
+    {ch:'Chapter 5: Post-Independence Africa',topics:['Nation building','Conflicts','African Union and regional bodies']},
+  ]},
+  { id:'af-geo', title:"Geography of Africa — A Comprehensive Guide", subject:'geography', country:'continental', gradeRange:'lower_secondary', color:'#16A085', icon:'🌍', publisher:'Africa Educational Trust', year:2022, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Physical Geography',topics:["Africa's landforms","Rivers and lakes","Climate zones","Biomes"]},
+    {ch:'Chapter 2: Human Geography',topics:['Population patterns','Urbanisation','Migration']},
+    {ch:'Chapter 3: Economic Geography',topics:['Agriculture','Mining and resources','Trade and development']},
+    {ch:'Chapter 4: Environmental Issues',topics:['Climate change in Africa','Deforestation','Water scarcity']},
+  ]},
+  { id:'af-comp', title:'ICT & Computer Studies for African Schools', subject:'computer', country:'continental', gradeRange:'lower_secondary', color:'#2980B9', icon:'💻', publisher:'AfriLearn Digital Press', year:2023, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Computer Fundamentals',topics:['Hardware components','Operating systems','File management']},
+    {ch:'Chapter 2: The Internet & Digital Literacy',topics:['World Wide Web','Email','Social media safety','Cybersecurity']},
+    {ch:'Chapter 3: Introduction to Programming',topics:['Python basics','Algorithms','Scratch visual programming']},
+    {ch:'Chapter 4: Spreadsheets & Databases',topics:['Microsoft Excel / LibreOffice Calc','Data management','SQL basics']},
+  ]},
+  { id:'af-biol-adv', title:'Advanced Biology for African Students', subject:'biology', country:'continental', gradeRange:'upper_secondary', color:'#27AE60', icon:'🧬', publisher:'AfriLearn Press', year:2023, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Molecular Biology',topics:['DNA replication','Protein synthesis','Gene expression']},
+    {ch:'Chapter 2: Genetics',topics:['Mendelian genetics','Non-Mendelian inheritance','Mutations']},
+    {ch:'Chapter 3: Ecology',topics:['Ecosystems','Food webs','Nutrient cycles','Conservation in Africa']},
+    {ch:'Chapter 4: Evolution',topics:["Darwin's theory","Natural selection","Human evolution in Africa"]},
+  ]},
+  { id:'af-chem-adv', title:'Advanced Chemistry', subject:'chemistry', country:'continental', gradeRange:'upper_secondary', color:'#E74C3C', icon:'⚗️', publisher:'AfriLearn Press', year:2023, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Organic Chemistry',topics:['Hydrocarbons','Functional groups','Reaction mechanisms']},
+    {ch:'Chapter 2: Electrochemistry',topics:['Redox reactions','Galvanic cells','Electrolysis']},
+    {ch:'Chapter 3: Chemical Equilibrium',topics:["Le Chatelier's principle",'Kc and Kp','Acid-base equilibria']},
+    {ch:'Chapter 4: Industrial Chemistry',topics:['Haber process','Contact process','African mineral processing']},
+  ]},
+  { id:'af-econ', title:'Economics for African Secondary Schools', subject:'economics', country:'continental', gradeRange:'upper_secondary', color:'#2ECC71', icon:'📈', publisher:'East African Educational Publishers', year:2022, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Microeconomics',topics:['Demand and supply','Elasticity','Consumer theory','Market structures']},
+    {ch:'Chapter 2: Macroeconomics',topics:['GDP and national income','Monetary policy','Fiscal policy','Inflation']},
+    {ch:'Chapter 3: Development Economics',topics:['Poverty and inequality','Industrialisation','Aid vs trade','SAPs']},
+    {ch:'Chapter 4: African Trade',topics:['Regional economic communities','AfCFTA','Trade barriers','Balance of payments']},
+  ]},
+  { id:'af-bus', title:'Business Studies for African Schools', subject:'business', country:'continental', gradeRange:'upper_secondary', color:'#F39C12', icon:'💼', publisher:'AfriLearn Press', year:2023, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Business Environment',topics:['Types of business','Business ethics','Corporate social responsibility']},
+    {ch:'Chapter 2: Entrepreneurship',topics:['Identifying opportunities','Business plan','African startups']},
+    {ch:'Chapter 3: Marketing',topics:['Marketing mix (4Ps)','Market research','Digital marketing in Africa']},
+    {ch:'Chapter 4: Human Resources',topics:['Recruitment','Training and development','Labour relations']},
+  ]},
+  { id:'af-lit', title:'African Literature Anthology', subject:'english', country:'continental', gradeRange:'upper_secondary', color:'#9B59B6', icon:'📚', publisher:'Heinemann African Writers Series', year:2021, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: West African Literature',topics:["Chinua Achebe: Things Fall Apart",'Wole Soyinka','Ama Ata Aidoo']},
+    {ch:'Chapter 2: East African Literature',topics:["Ngũgĩ wa Thiong'o",'Grace Ogot','Okot p\'Bitek']},
+    {ch:'Chapter 3: Southern African Literature',topics:['Nadine Gordimer','Bessie Head','Chenjerai Hove']},
+    {ch:'Chapter 4: Poetry from Africa',topics:['Oral poetry traditions','Modern African poetry','Praise poetry']},
+  ]},
+  { id:'af-agric', title:'Agriculture for Secondary Schools in Africa', subject:'agriculture', country:'continental', gradeRange:'lower_secondary', color:'#27AE60', icon:'🌱', publisher:'Macmillan Africa', year:2022, curriculum:'Pan-African', chapters:[
+    {ch:'Chapter 1: Soil Science',topics:['Soil types','Soil fertility','Erosion and conservation']},
+    {ch:'Chapter 2: Crop Production',topics:['Seed selection','Planting seasons','Pest and disease management']},
+    {ch:'Chapter 3: Livestock Farming',topics:['Cattle husbandry','Poultry','Fish farming (aquaculture)']},
+    {ch:'Chapter 4: Modern Farming',topics:['Irrigation systems','Organic farming','AgriTech in Africa']},
+  ]},
+];
+
+let allBooks = [...BOOKS];
+
+function init() {
+  document.getElementById('nav-container').innerHTML = buildNav(student, 'books');
+  // Pre-select student's country
+  const countrySelect = document.getElementById('filter-country');
+  countrySelect.value = student.country || '';
+  filterBooks();
+}
+
+function filterBooks() {
+  const search   = document.getElementById('search-input').value.toLowerCase();
+  const country  = document.getElementById('filter-country').value;
+  const subject  = document.getElementById('filter-subject').value;
+  const grade    = document.getElementById('filter-grade').value;
+
+  let filtered = BOOKS.filter(b => {
+    if (country && b.country !== country && b.country !== 'continental') return false;
+    if (subject && b.subject !== subject) return false;
+    if (grade && b.gradeRange !== grade) return false;
+    if (search && !b.title.toLowerCase().includes(search) && !b.subject.includes(search)) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('books-grid');
+  const noRes = document.getElementById('no-results');
+
+  if (filtered.length === 0) { grid.innerHTML=''; noRes.style.display='block'; return; }
+  noRes.style.display='none';
+
+  const FLAG = {KE:'🇰🇪',NG:'🇳🇬',ZA:'🇿🇦',TZ:'🇹🇿',UG:'🇺🇬',GH:'🇬🇭',ZW:'🇿🇼',ZM:'🇿🇲',ET:'🇪🇹',RW:'🇷🇼',continental:'🌍'};
+  const GRADE_LBL = {lower_primary:'Lower Primary',upper_primary:'Upper Primary',lower_secondary:'Lower Secondary',upper_secondary:'Upper Secondary'};
+
+  grid.innerHTML = filtered.map(b => `
+    <div class="book-card" onclick="openBook('${b.id}')">
+      <div class="book-cover" style="background:linear-gradient(145deg,${b.color}22,${b.color}44)">
+        <div class="book-spine" style="background:${b.color}"></div>
+        <span style="font-size:3.5rem">${b.icon}</span>
+      </div>
+      <div class="book-info">
+        <div class="book-title">${b.title}</div>
+        <div class="book-meta">
+          ${FLAG[b.country]||'🌍'} ${b.country==='continental'?'Pan-African':(COUNTRY_NAMES[b.country]||b.country)}<br>
+          📚 ${GRADE_LBL[b.gradeRange]||b.gradeRange} · ${b.year}<br>
+          ${b.curriculum} · ${b.publisher.split('(')[0].trim()}
+        </div>
+      </div>
+      <div class="book-actions">
+        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openBook('${b.id}')">📖 View Book</button>
+        <button class="btn btn-sm btn-teal" onclick="event.stopPropagation();studyBook('${b.id}')">📝 Study</button>
+      </div>
+    </div>`).join('');
+}
+
+function openBook(id) {
+  const b = BOOKS.find(x=>x.id===id);
+  if (!b) return;
+  const FLAG = {KE:'🇰🇪',NG:'🇳🇬',ZA:'🇿🇦',TZ:'🇹🇿',UG:'🇺🇬',GH:'🇬🇭',ZW:'🇿🇼',ZM:'🇿🇲',ET:'🇪🇹',RW:'🇷🇼',continental:'🌍'};
+  const modal = document.getElementById('book-modal');
+  document.getElementById('book-modal-content').innerHTML = `
+    <div class="book-modal-header">
+      <div class="book-modal-cover" style="background:linear-gradient(145deg,${b.color}33,${b.color}55)"><span>${b.icon}</span></div>
+      <div>
+        <div class="book-modal-title">${b.title}</div>
+        <div style="font-size:0.82rem;color:var(--muted);line-height:1.8">
+          ${FLAG[b.country]||'🌍'} ${b.country==='continental'?'Pan-African':(COUNTRY_NAMES[b.country]||b.country)}<br>
+          📋 ${b.curriculum} · ${b.year}<br>
+          🏛️ ${b.publisher}
+        </div>
+        <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-sm btn-primary" onclick="studyBook('${b.id}')">📝 Study This Book</button>
+          <button class="btn btn-sm btn-teal" onclick="askTutorBook('${b.title.replace(/'/g,"\\'")}')" >🤖 Ask AI Tutor</button>
+        </div>
+      </div>
+    </div>
+    <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">📋 Table of Contents</h3>
+    <ul class="chapter-list">
+      ${b.chapters.map((c,i) => `
+        <li class="chapter-item">
+          <h4>${i+1}. ${c.ch}</h4>
+          <p>${c.topics.join(' · ')}</p>
+        </li>`).join('')}
+    </ul>`;
+  modal.classList.add('show');
+}
+
+function closeBookModal(e) {
+  if (!e || e.target === document.getElementById('book-modal')) {
+    document.getElementById('book-modal').classList.remove('show');
+  }
+}
+
+function studyBook(id) {
+  const b = BOOKS.find(x=>x.id===id);
+  if (!b) return;
+  document.getElementById('book-modal').classList.remove('show');
+  // Map book subject to lesson page
+  window.location.href = `lesson.html?subject=${b.subject}`;
+}
+
+function askTutorBook(title) {
+  localStorage.setItem('edustar_pending_q', `I want to study "${title}". Can you guide me through the key topics and help me understand the important concepts?`);
+  window.location.href = 'dashboard.html#chat-anchor';
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
