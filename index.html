@@ -6,9 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EduStar – Smart Learning for Africa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/normalize.css">
   <style>
     :root {
       --sun: #FF6B2B;
@@ -620,56 +619,89 @@
       setTimeout(() => el.classList.remove('show'), 4000);
     }
 
-    // Simulated user storage (localStorage for demo)
-    function getUsers() {
-      try { return JSON.parse(localStorage.getItem('edustar_users') || '[]'); } catch { return []; }
-    }
-    function saveUsers(users) { localStorage.setItem('edustar_users', JSON.stringify(users)); }
+    // ── API helpers ──────────────────────────────────────────────
+    const API = '/edustar/api';
 
-    function doLogin() {
+    async function apiFetch(method, path, data) {
+      const token = localStorage.getItem('edustar_token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res  = await fetch(API + path, { method, headers, body: data ? JSON.stringify(data) : undefined });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'Server error');
+      return json;
+    }
+
+    function cacheUser(token, user) {
+      localStorage.setItem('edustar_token', token);
+      localStorage.setItem('edustar_current', JSON.stringify({
+        name: user.name, email: user.email, country: user.country,
+        grade: user.grade, points: user.points || 0, level: user.level || 1,
+        completed: user.completed || [], quizzesTaken: user.quizzesTaken || 0,
+        isAdmin: user.isAdmin || false, joinDate: user.joinDate || ''
+      }));
+    }
+
+    async function doLogin() {
       const email = document.getElementById('login-email').value.trim();
-      const pw = document.getElementById('login-pw').value;
+      const pw    = document.getElementById('login-pw').value;
       if (!email || !pw) { showError('login-error', '⚠️ Please fill in all fields.'); return; }
-      const users = getUsers();
-      const user = users.find(u => u.email === email && u.password === pw);
-      if (!user) { showError('login-error', '❌ Invalid email or password.'); return; }
-      localStorage.setItem('edustar_current', JSON.stringify(user));
-      window.location.href = 'dashboard.html';
+      try {
+        const data = await apiFetch('POST', '/auth.php?action=login', { email, password: pw });
+        cacheUser(data.token, data.user);
+        window.location.href = '/edustar/dashboard.html';
+      } catch (e) {
+        showError('login-error', '❌ ' + e.message);
+      }
     }
 
     function guestLogin() {
-      const guest = { name: 'Guest Student', email: 'guest@edustar.ai', country: 'KE', grade: 'Grade 7', points: 0, level: 1, completed: [], quizzesTaken: 0, isGuest: true };
+      const guest = { name: 'Guest Student', email: 'guest@edustar.ai', country: 'KE',
+                      grade: 'Grade 7', points: 0, level: 1, completed: [], quizzesTaken: 0, isGuest: true };
       localStorage.setItem('edustar_current', JSON.stringify(guest));
-      window.location.href = 'dashboard.html';
+      window.location.href = '/edustar/dashboard.html';
     }
 
-    function doSignup() {
-      const fname = document.getElementById('su-fname').value.trim();
-      const lname = document.getElementById('su-lname').value.trim();
-      const email = document.getElementById('su-email').value.trim();
+    async function doSignup() {
+      const fname   = document.getElementById('su-fname').value.trim();
+      const lname   = document.getElementById('su-lname').value.trim();
+      const email   = document.getElementById('su-email').value.trim();
       const country = document.getElementById('su-country').value;
-      const grade = document.getElementById('su-grade').value;
-      const pw = document.getElementById('su-pw').value;
-      const pw2 = document.getElementById('su-pw2').value;
+      const grade   = document.getElementById('su-grade').value;
+      const pw      = document.getElementById('su-pw').value;
+      const pw2     = document.getElementById('su-pw2').value;
 
-      if (!fname || !lname || !email || !country || !grade || !pw) { showError('signup-error', '⚠️ Please fill in all fields.'); return; }
+      if (!fname || !lname || !email || !country || !grade || !pw)
+        { showError('signup-error', '⚠️ Please fill in all fields.'); return; }
       if (pw !== pw2) { showError('signup-error', '❌ Passwords do not match.'); return; }
       if (pw.length < 6) { showError('signup-error', '⚠️ Password must be at least 6 characters.'); return; }
 
-      const users = getUsers();
-      if (users.find(u => u.email === email)) { showError('signup-error', '❌ An account with this email already exists.'); return; }
-
-      const newUser = { name: fname + ' ' + lname, email, country, grade, password: pw, points: 0, level: 1, completed: [], quizzesTaken: 0, joinDate: new Date().toISOString() };
-      users.push(newUser);
-      saveUsers(users);
-      localStorage.setItem('edustar_current', JSON.stringify(newUser));
-      window.location.href = 'dashboard.html';
+      try {
+        const data = await apiFetch('POST', '/auth.php?action=register',
+          { name: fname + ' ' + lname, email, country, grade, password: pw });
+        cacheUser(data.token, data.user);
+        window.location.href = '/edustar/dashboard.html';
+      } catch (e) {
+        showError('signup-error', '❌ ' + e.message);
+      }
     }
 
-    // Auto-redirect if already logged in
-    window.addEventListener('load', () => {
-      const current = localStorage.getItem('edustar_current');
-      if (current) window.location.href = 'dashboard.html';
+    // Auto-redirect if already logged in and token is valid
+    window.addEventListener('load', async () => {
+      const token = localStorage.getItem('edustar_token');
+      if (token) {
+        try {
+          const data = await apiFetch('GET', '/auth.php?action=me');
+          cacheUser(token, data.user);
+          window.location.href = '/edustar/dashboard.html';
+        } catch (e) {
+          localStorage.removeItem('edustar_token');
+          localStorage.removeItem('edustar_current');
+        }
+      } else if (localStorage.getItem('edustar_current')) {
+        // Legacy: already had localStorage session (guest or old session)
+        window.location.href = '/edustar/dashboard.html';
+      }
     });
   </script>
 </body>

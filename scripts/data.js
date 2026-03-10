@@ -396,13 +396,13 @@ function buildNav(student, activePage) {
   const country = COUNTRY_NAMES[student.country] || '';
   return `
   <nav>
-    <a href="dashboard.html" class="logo">EduStar<span> AI</span></a>
+    <a href="/edustar/dashboard.html" class="logo">EduStar<span> AI</span></a>
     <div class="nav-right">
       <div class="nav-pill">${flag} ${country} · ${student.grade}</div>
       <div class="nav-pill">⭐ <span id="nav-points">${student.points || 0}</span> pts</div>
-      <a href="subjects.html" class="nav-btn${activePage==='subjects'?' primary':''}">📚 Subjects</a>
-      <a href="books.html" class="nav-btn${activePage==='books'?' primary':''}">📖 Books</a>
-      <a href="quiz.html" class="nav-btn${activePage==='quiz'?' primary':''}">🧠 Quiz</a>
+      <a href="/edustar/subjects.html" class="nav-btn${activePage==='subjects'?' primary':''}">📚 Subjects</a>
+      <a href="/edustar/books.html" class="nav-btn${activePage==='books'?' primary':''}">📖 Books</a>
+      <a href="/edustar/quiz.html" class="nav-btn${activePage==='quiz'?' primary':''}">🧠 Quiz</a>
       <div class="student-badge">
         <div class="level-dot" id="nav-level">${student.level || 1}</div>
         <span>${student.name.split(' ')[0]}</span>

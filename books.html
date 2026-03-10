@@ -6,6 +6,7 @@
   <title>EduStar – School Books</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/shared.css">
   <style>
     .filter-row { display:flex; flex-wrap:wrap; gap:0.7rem; margin-bottom:2rem; align-items:center; }
@@ -94,7 +95,7 @@
     <div id="no-results" style="display:none;text-align:center;padding:3rem;color:var(--muted)">
       <div style="font-size:3rem;margin-bottom:1rem">📚</div>
       <h3 style="font-family:'Syne',sans-serif">No books found</h3>
-      <p>Try adjusting your filters, or <a href="dashboard.html" style="color:var(--sun)">ask the AI Tutor</a> for help.</p>
+      <p>Try adjusting your filters, or <a href="/edustar/dashboard.html" style="color:var(--sun)">ask the AI Tutor</a> for help.</p>
     </div>
   </div>
 
@@ -111,6 +112,7 @@
 
 <div class="toast-container" id="toasts"></div>
 <script src="scripts/data.js"></script>
+<script src="scripts/api.js"></script>
 <script>
 let student = requireAuth();
 
@@ -291,6 +293,7 @@ function filterBooks() {
       <div class="book-actions">
         <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openBook('${b.id}')">📖 View Book</button>
         <button class="btn btn-sm btn-teal" onclick="event.stopPropagation();studyBook('${b.id}')">📝 Study</button>
+        <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();apiDownloadBook('${b.id}')" title="Download PDF">⬇️</button>
       </div>
     </div>`).join('');
 }
@@ -313,6 +316,7 @@ function openBook(id) {
         <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
           <button class="btn btn-sm btn-primary" onclick="studyBook('${b.id}')">📝 Study This Book</button>
           <button class="btn btn-sm btn-teal" onclick="askTutorBook('${b.title.replace(/'/g,"\\'")}')" >🤖 Ask AI Tutor</button>
+          <button class="btn btn-sm btn-secondary" onclick="apiDownloadBook('${b.id}')">⬇️ Download PDF</button>
         </div>
       </div>
     </div>

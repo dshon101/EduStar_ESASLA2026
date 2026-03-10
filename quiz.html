@@ -6,6 +6,7 @@
   <title>EduStar – Quiz</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/shared.css">
   <style>
     .quiz-setup { max-width: 600px; margin: 0 auto; }
@@ -100,6 +101,7 @@
 </div>
 <div class="toast-container" id="toasts"></div>
 <script src="scripts/data.js"></script>
+<script src="scripts/api.js"></script>
 <script>
 let student = requireAuth();
 let selectedSubject = null;
@@ -231,6 +233,11 @@ function finishQuiz() {
   student.level       = Math.max(1, Math.floor(student.points/200)+1);
   student.quizzesTaken= (student.quizzesTaken||0)+1;
   saveStudent(student);
+
+  // Save score to backend
+  const subj = ALL_SUBJECTS.find(s=>s.id===selectedSubject)||{};
+  apiSaveQuizScore(selectedSubject, subj.name||selectedSubject,
+    pct, pts, quiz.score, quiz.questions.length, timerSeconds).catch(()=>{});
 
   // Save to leaderboard
   saveScore(pct, pts);

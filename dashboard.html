@@ -6,6 +6,7 @@
   <title>EduStar – Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/shared.css">
 </head>
 <body>
@@ -18,9 +19,9 @@
     <h1 id="hero-title">Welcome back!<br><em id="hero-name">Student</em></h1>
     <p id="hero-desc">Your personalised learning dashboard. Continue where you left off.</p>
     <div class="hero-cta" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
-      <a href="subjects.html" class="btn btn-primary">📚 Browse Subjects</a>
-      <a href="quiz.html" class="btn btn-secondary">🧠 Take a Quiz</a>
-      <a href="books.html" class="btn btn-teal">📖 School Books</a>
+      <a href="/edustar/subjects.html" class="btn btn-primary">📚 Browse Subjects</a>
+      <a href="/edustar/quiz.html" class="btn btn-secondary">🧠 Take a Quiz</a>
+      <a href="/edustar/books.html" class="btn btn-teal">📖 School Books</a>
     </div>
   </section>
 
@@ -53,7 +54,7 @@
     <!-- Quick Subjects -->
     <div class="section-header">
       <div class="section-title">Popular <span>Subjects</span></div>
-      <a href="subjects.html" class="btn btn-sm btn-secondary">View All →</a>
+      <a href="/edustar/subjects.html" class="btn btn-sm btn-secondary">View All →</a>
     </div>
     <div class="subjects-grid" id="subjects-grid"></div>
 
@@ -96,6 +97,7 @@
 <div class="toast-container" id="toasts"></div>
 
 <script src="scripts/data.js"></script>
+<script src="scripts/api.js"></script>
 <script>
 let student = requireAuth();
 let chatHistory = [];

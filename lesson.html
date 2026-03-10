@@ -6,6 +6,7 @@
   <title>EduStar – Lesson</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/normalize.css">
   <link rel="stylesheet" href="styles/shared.css">
   <style>
     .lesson-sidebar { display:grid; grid-template-columns:1fr 300px; gap:2rem; align-items:start; }
@@ -36,8 +37,8 @@
 
   <div class="page-section">
     <div class="breadcrumb">
-      <a href="dashboard.html">🏠 Dashboard</a> ›
-      <a href="subjects.html">Subjects</a> ›
+      <a href="/edustar/dashboard.html">🏠 Dashboard</a> ›
+      <a href="/edustar/subjects.html">Subjects</a> ›
       <span id="bc-subject">Loading...</span>
     </div>
 
@@ -65,7 +66,7 @@
           <button class="btn btn-sm btn-primary" id="btn-next" onclick="nextLesson()" style="display:none">Next →</button>
         </div>
         <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border)">
-          <a href="quiz.html" class="btn btn-sm btn-teal" style="width:100%;justify-content:center;text-decoration:none;display:flex">🧠 Take Quiz</a>
+          <a href="/edustar/quiz.html" class="btn btn-sm btn-teal" style="width:100%;justify-content:center;text-decoration:none;display:flex">🧠 Take Quiz</a>
         </div>
       </div>
     </div>
@@ -77,6 +78,7 @@
 </div>
 <div class="toast-container" id="toasts"></div>
 <script src="scripts/data.js"></script>
+<script src="scripts/api.js"></script>
 <script>
 let student = requireAuth();
 let currentSubject = null;
@@ -90,7 +92,7 @@ function init() {
   const lessonId  = params.get('lesson');
 
   currentSubject = ALL_SUBJECTS.find(s=>s.id===subjectId);
-  if (!currentSubject) { window.location.href='subjects.html'; return; }
+  if (!currentSubject) { window.location.href='/edustar/subjects.html'; return; }
 
   const level = getGradeLevel(student.grade||'Grade 7');
   const subjectLessons = LESSONS[subjectId]||{};
@@ -102,7 +104,7 @@ function init() {
   document.getElementById('subj-desc-text').textContent = currentSubject.desc + ' · ' + student.grade + ' Level';
 
   if (lessons.length === 0) {
-    document.getElementById('lesson-main').innerHTML = `<div class="no-lessons"><h3>${currentSubject.icon} ${currentSubject.name}</h3><p>Lesson content for ${student.grade} is being prepared. Check back soon, or ask the AI tutor on your dashboard!</p><a href="dashboard.html" class="btn btn-primary" style="margin-top:1rem">🤖 Ask AI Tutor</a></div>`;
+    document.getElementById('lesson-main').innerHTML = `<div class="no-lessons"><h3>${currentSubject.icon} ${currentSubject.name}</h3><p>Lesson content for ${student.grade} is being prepared. Check back soon, or ask the AI tutor on your dashboard!</p><a href="/edustar/dashboard.html" class="btn btn-primary" style="margin-top:1rem">🤖 Ask AI Tutor</a></div>`;
     document.getElementById('lesson-sidebar').style.display='none';
     return;
   }
@@ -164,6 +166,8 @@ function completeLesson(id, points) {
   student.points    = (student.points||0) + points;
   student.level     = Math.max(1, Math.floor(student.points/200)+1);
   saveStudent(student);
+  // Persist to backend
+  apiCompleteLesson(id, currentSubject.id, points).catch(()=>{});
   toast(`🎉 Lesson complete! +${points} points earned!`);
   renderLessonList();
   showLesson(currentLessonIdx);
@@ -175,7 +179,7 @@ function nextLesson() { if (currentLessonIdx < lessons.length-1) showLesson(curr
 function askTutorAbout(title) {
   // Store a pending question for the AI tutor and go to dashboard
   localStorage.setItem('edustar_pending_q', `Can you explain "${title}" for ${student.grade} level?`);
-  window.location.href='dashboard.html#chat-anchor';
+  window.location.href='/edustar/dashboard.html#chat-anchor';
 }
 
 window.addEventListener('load', init);
