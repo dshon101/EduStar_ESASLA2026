@@ -6,8 +6,8 @@
   <title>EduStar – Subjects</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/normalize.css">
-  <link rel="stylesheet" href="styles/shared.css">
+  <link rel="stylesheet" href="/styles/normalize.css">
+  <link rel="stylesheet" href="/styles/shared.css">
   <style>
     .category-tabs { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem; }
     .cat-tab { background:var(--card); border:1px solid var(--border); color:var(--muted); border-radius:50px; padding:0.4rem 1rem; font-size:0.82rem; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
@@ -57,13 +57,15 @@
   </footer>
 </div>
 <div class="toast-container" id="toasts"></div>
-<script src="scripts/data.js"></script>
-<script src="scripts/api.js"></script>
+<script src="/scripts/data.js"></script>
+<script src="/scripts/api.js"></script>
 <script>
-let student = requireAuth();
+let student = null;
 let currentCat = 'all';
 
 function init() {
+  student = requireAuth();
+  if (!student) { window.location.href = '/index.html'; return; }
   document.getElementById('nav-container').innerHTML = buildNav(student, 'subjects');
   const flag = COUNTRY_FLAGS[student.country]||'🌍';
   const country = COUNTRY_NAMES[student.country]||'Africa';
@@ -96,7 +98,7 @@ function renderSubjects(cat) {
     const level = getGradeLevel(student.grade||'Grade 7');
     const lessons = subjectLessons[level]||subjectLessons.middle||subjectLessons.lower||subjectLessons.upper||subjectLessons.early||[];
     const completed = (student.completed||[]).filter(c=>c.startsWith(s.id)).length;
-    return `<a href="lesson.html?subject=${s.id}" class="subject-card">
+    return `<a href="/lesson.html?subject=${s.id}" class="subject-card">
       <div class="subject-icon">${s.icon}</div>
       <div class="subject-name">${s.name}</div>
       <div class="subject-desc">${s.desc}</div>

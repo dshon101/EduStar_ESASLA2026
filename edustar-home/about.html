@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn about EduStar — the free AI-powered learning platform built to bring quality education to every student across Africa.">
+  <meta name="author" content="Demetrious Shoniwa">
+  <meta property="og:title" content="About EduStar – Our Mission and Story">
+  <meta property="og:description" content="EduStar is a free AI-powered education platform for African students, supporting 10+ countries and 20+ curricula.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://[username].github.io/wdd231/final/about.html">
+  <title>EduStar – About Us</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    /* ── HERO BANNER ─────────────────────────────────── */
+    .about-hero {
+      position: relative;
+      z-index: 1;
+      padding: 5rem 0 4rem;
+      text-align: center;
+    }
+
+    .about-hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 1.2rem;
+    }
+
+    .about-hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .about-hero p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.8;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    /* ── MISSION BLOCK ───────────────────────────────── */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .mission-text h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+    }
+
+    .mission-text h2 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .mission-text p {
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
+
+    .mission-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .mission-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      text-align: center;
+    }
+
+    .mission-stat .num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .mission-stat .lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* ── CURRICULA TABLE ─────────────────────────────── */
+    .curricula-section {
+      background: linear-gradient(135deg, rgba(255,107,43,0.06), rgba(0,201,167,0.04));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+    }
+
+    .curricula-section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .curricula-section h2 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .curricula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .curriculum-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .curriculum-card:hover {
+      border-color: rgba(255,107,43,0.35);
+      background: rgba(255,107,43,0.06);
+    }
+
+    .curriculum-flag { font-size: 1.5rem; flex-shrink: 0; }
+
+    .curriculum-info strong {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .curriculum-info span {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── HOW IT WORKS ────────────────────────────────── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      position: relative;
+    }
+
+    .step-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, rgba(255,107,43,0.2), rgba(245,166,35,0.2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    .step-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-card p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+
+    /* ── SOURCES / PARTNERS ──────────────────────────── */
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .source-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      text-align: center;
+      transition: all 0.25s;
+    }
+
+    .source-card:hover {
+      border-color: rgba(255,107,43,0.35);
+      transform: translateY(-3px);
+    }
+
+    .source-card .source-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .source-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .source-card p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .source-card a {
+      display: inline-block;
+      margin-top: 0.8rem;
+      font-size: 0.78rem;
+      color: var(--sun);
+      text-decoration: none;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 800px) {
+      .mission-grid { grid-template-columns: 1fr; }
+      .mission-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 500px) {
+      .curricula-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <a class="nav-logo" href="index.html" aria-label="EduStar home">⚡ EduStar</a>
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">☰</button>
+    <div class="nav-links" id="main-nav" role="list">
+      <a href="index.html" data-page="home" role="listitem">Home</a>
+      <a href="books.html" data-page="books" role="listitem">Books</a>
+      <a href="join.html" data-page="join" role="listitem">Join</a>
+      <a href="about.html" data-page="about" role="listitem">About</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- HERO -->
+    <section class="about-hero" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="section-label">Our Story</div>
+        <h1 id="about-heading">Education for <em>every</em><br>African student</h1>
+        <p>EduStar was built on a simple belief: every student in Africa deserves access to quality learning resources, regardless of where they live or what they can afford.</p>
+        <a href="join.html" class="btn btn-primary">✨ Join for Free</a>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section class="section" aria-labelledby="mission-heading">
+      <div class="container">
+        <div class="mission-grid">
+          <div class="mission-text">
+            <div class="section-label">Mission</div>
+            <h2 id="mission-heading">Bridging the<br><em>education gap</em></h2>
+            <p>Millions of students across Africa prepare for critical national examinations each year — often without access to reliable textbooks, professional tutors, or quality study materials. EduStar exists to change that.</p>
+            <p>By combining a curated library of free, legal textbooks with AI-powered lessons and a peer-learning community, EduStar empowers students to take control of their education — at no cost.</p>
+          </div>
+          <div class="mission-stats" aria-label="Platform statistics">
+            <div class="mission-stat">
+              <div class="num" id="stat-1">30+</div>
+              <div class="lbl">Free Books</div>
+            </div>
+            <div class="mission-stat">
+              <div class="num">10+</div>
+              <div class="lbl">Countries</div>
+            </div>
+            <div class="mission-stat">
+              <div class="num">20+</div>
+              <div class="lbl">Subjects</div>
+            </div>
+            <div class="mission-stat">
+              <div class="num">5+</div>
+              <div class="lbl">Exam Boards</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CURRICULA -->
+    <section class="section" aria-labelledby="curricula-heading">
+      <div class="container">
+        <div class="curricula-section">
+          <h2 id="curricula-heading">Supported <em>Curricula</em></h2>
+          <div class="curricula-grid" id="curricula-grid" aria-label="Supported countries and exam boards">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" aria-labelledby="how-heading">
+      <div class="container">
+        <div style="text-align:center; margin-bottom:2.5rem;">
+          <div class="section-label">Getting Started</div>
+          <h2 class="section-title" id="how-heading">How <em>EduStar</em> works</h2>
+        </div>
+        <div class="steps-grid" aria-label="Steps to get started">
+          <div class="step-card">
+            <div class="step-number" aria-hidden="true">01</div>
+            <h3>Create your account</h3>
+            <p>Sign up for free. Tell us your country, grade, and subjects so we can personalise your experience.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number" aria-hidden="true">02</div>
+            <h3>Browse your books</h3>
+            <p>Access 30+ free, curriculum-aligned textbooks filtered specifically for your country and grade level.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number" aria-hidden="true">03</div>
+            <h3>Learn with AI</h3>
+            <p>Use AI-powered lessons and adaptive quizzes to understand topics and track your progress.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number" aria-hidden="true">04</div>
+            <h3>Connect with peers</h3>
+            <p>Join the EduStar community to ask questions, share notes, and support fellow students across Africa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOURCES -->
+    <section class="section" aria-labelledby="sources-heading">
+      <div class="container">
+        <div style="text-align:center; margin-bottom:2.5rem;">
+          <div class="section-label">Book Providers</div>
+          <h2 class="section-title" id="sources-heading">Where our books<br><em>come from</em></h2>
+          <p class="section-sub" style="margin: 0 auto;">All books on EduStar are sourced from reputable open-access publishers and are free, legal, and openly licensed.</p>
+        </div>
+        <div class="sources-grid" aria-label="Content providers">
+          <div class="source-card">
+            <div class="source-icon" aria-hidden="true">📘</div>
+            <h3>Siyavula</h3>
+            <p>South Africa-based publisher of openly licensed Mathematics and Science textbooks used across SADC countries.</p>
+            <a href="https://www.siyavula.com" target="_blank" rel="noopener">Visit Siyavula ↗</a>
+          </div>
+          <div class="source-card">
+            <div class="source-icon" aria-hidden="true">📗</div>
+            <h3>OpenStax</h3>
+            <p>Peer-reviewed, openly licensed textbooks from Rice University — free to access, download, and print.</p>
+            <a href="https://openstax.org" target="_blank" rel="noopener">Visit OpenStax ↗</a>
+          </div>
+          <div class="source-card">
+            <div class="source-icon" aria-hidden="true">📙</div>
+            <h3>Maktaba / TESSA</h3>
+            <p>Open educational resources written specifically for East and Central African secondary school curricula.</p>
+            <a href="https://www.maktaba.org" target="_blank" rel="noopener">Visit Maktaba ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section">
+      <div class="container">
+        <div style="background:linear-gradient(135deg,rgba(255,107,43,0.08),rgba(0,201,167,0.05)); border:1px solid var(--border); border-radius:24px; padding:3rem; text-align:center;">
+          <div class="section-label">Get Started</div>
+          <h2 class="section-title">Ready to <em>learn?</em></h2>
+          <p class="section-sub" style="margin: 0 auto 2rem;">EduStar is completely free. No subscriptions, no hidden fees — just quality education for every African student.</p>
+          <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <a href="join.html" class="btn btn-primary">✨ Join for Free</a>
+            <a href="books.html" class="btn btn-secondary">📚 Browse Books</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="books.html">Books</a>
+      <a href="join.html">Join</a>
+      <a href="about.html">About</a>
+      <a href="attributions.html">Attributions</a>
+    </div>
+    <p><strong>EduStar</strong> — Smart Learning for Africa &copy; 2026</p>
+    <p>Textbook sources: <a href="https://www.siyavula.com" target="_blank" rel="noopener">Siyavula</a> · <a href="https://openstax.org" target="_blank" rel="noopener">OpenStax</a> · <a href="https://www.maktaba.org" target="_blank" rel="noopener">Maktaba</a></p>
+    <p><a href="https://youtu.be/placeholder" target="_blank" rel="noopener">📹 Project Demo Video</a></p>
+  </footer>
+
+  <div class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+  (function initNav(activePage) {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      if (link.dataset.page === activePage) { link.classList.add('active'); link.setAttribute('aria-current','page'); }
+    });
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => { const open = navLinks.classList.toggle('open'); hamburger.setAttribute('aria-expanded', open); });
+      document.addEventListener('click', (e) => { if (!e.target.closest('.site-nav')) { navLinks.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); } });
+    }
+  })('about');
+    initNav('about');
+
+    // ── Curricula list — rendered with template literals + map ──
+    const CURRICULA = [
+      { flag:'🇰🇪', country:'Kenya',        board:'CBC / KCSE' },
+      { flag:'🇳🇬', country:'Nigeria',       board:'WAEC / NECO' },
+      { flag:'🇿🇦', country:'South Africa',  board:'CAPS / NSC' },
+      { flag:'🇹🇿', country:'Tanzania',      board:'NECTA' },
+      { flag:'🇺🇬', country:'Uganda',        board:'UNEB' },
+      { flag:'🇬🇭', country:'Ghana',         board:'WASSCE' },
+      { flag:'🇿🇼', country:'Zimbabwe',      board:'ZIMSEC' },
+      { flag:'🇿🇲', country:'Zambia',        board:'ECZ' },
+      { flag:'🇪🇹', country:'Ethiopia',      board:'MoE Curriculum' },
+      { flag:'🇷🇼', country:'Rwanda',        board:'REB' },
+      { flag:'🇲🇼', country:'Malawi',        board:'MANEB' },
+      { flag:'🇧🇼', country:'Botswana',      board:'BGCSE' },
+    ];
+
+    const grid = document.getElementById('curricula-grid');
+    if (grid) {
+      grid.innerHTML = CURRICULA.map(c => `
+        <div class="curriculum-card">
+          <span class="curriculum-flag" aria-hidden="true">${c.flag}</span>
+          <div class="curriculum-info">
+            <strong>${c.country}</strong>
+            <span>${c.board}</span>
+          </div>
+        </div>`).join('');
+    }
+
+    // ── Track last page ──────────────────────────────────────
+    localStorage.setItem('edustar_last_page', 'about');
+  </script>
+</body>
+
+</html>

@@ -3,354 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EduStar – School Books</title>
+  <title>EduStar – Books Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/normalize.css">
-  <link rel="stylesheet" href="styles/shared.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/shared.css">
   <style>
-    .filter-row { display:flex; flex-wrap:wrap; gap:0.7rem; margin-bottom:2rem; align-items:center; }
-    .filter-select { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0.55rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; outline:none; min-width:160px; }
-    .filter-select:focus { border-color:rgba(255,107,43,0.5); }
-    .filter-select option { background:var(--sky); }
-    .book-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all 0.25s; cursor:pointer; }
-    .book-card:hover { border-color:rgba(0,201,167,0.4); transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.38); }
-    .book-cover { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-size:4rem; position:relative; overflow:hidden; }
-    .book-spine { position:absolute; left:0; top:0; width:8px; height:100%; }
-    .book-info { padding:1.1rem; }
-    .book-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.92rem; margin-bottom:0.3rem; line-height:1.3; }
-    .book-meta { font-size:0.73rem; color:var(--muted); line-height:1.6; }
-    .book-actions { padding:0 1.1rem 1.1rem; display:flex; gap:0.5rem; }
-    .book-modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1.5rem; display:none; }
-    .book-modal.show { display:flex; }
-    .book-modal-inner { background:var(--sky); border:1px solid var(--border); border-radius:24px; padding:2rem; max-width:700px; width:100%; max-height:85vh; overflow-y:auto; animation:slideUp 0.3s ease; }
-    @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-    .book-modal-header { display:flex; gap:1.2rem; margin-bottom:1.5rem; }
-    .book-modal-cover { width:100px; min-width:100px; aspect-ratio:3/4; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:3rem; }
-    .book-modal-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; margin-bottom:0.4rem; }
-    .book-modal-close { float:right; background:none; border:none; color:var(--muted); font-size:1.4rem; cursor:pointer; }
-    .chapter-list { list-style:none; }
-    .chapter-item { padding:0.8rem 1rem; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:0.5rem; cursor:pointer; transition:all 0.2s; }
-    .chapter-item:hover { border-color:rgba(255,107,43,0.4); background:rgba(255,107,43,0.05); }
-    .chapter-item h4 { font-family:'Syne',sans-serif; font-weight:600; font-size:0.9rem; margin-bottom:0.2rem; }
-    .chapter-item p { font-size:0.78rem; color:var(--muted); }
-    .search-box { flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; padding:0.55rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85rem; outline:none; min-width:200px; }
-    .search-box:focus { border-color:rgba(255,107,43,0.5); }
-    .search-box::placeholder { color:var(--muted); }
+    :root {--bg:#0D0D1A;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--text:#F0F0FF;--muted:#8888AA;--sun:#FF6B2B;--gold:#F5A623;--teal:#00C9A7;--sky:#1A1A2E}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--deep,var(--bg));color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+    nav{background:rgba(13,13,26,0.97);border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--sun),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+    .nav-links{display:flex;gap:1.5rem;align-items:center}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:0.9rem;transition:color .2s}
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+    h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:0.5rem}
+    h1 span{background:linear-gradient(135deg,var(--sun),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .subtitle{color:var(--muted);margin-bottom:2rem;font-size:0.95rem}
+    .country-hero{background:linear-gradient(135deg,rgba(255,107,43,0.12),rgba(245,166,35,0.08));border:1px solid rgba(255,107,43,0.2);border-radius:16px;padding:1.2rem 1.5rem;margin-bottom:2rem;display:none;align-items:center;gap:1rem}
+    .country-hero.show{display:flex}
+    .country-flag{font-size:2.5rem}
+    .country-hero h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700}
+    .country-hero p{color:var(--muted);font-size:0.85rem}
+    .filters{display:flex;flex-wrap:wrap;gap:0.7rem;margin-bottom:2rem;align-items:center}
+    .search-box{flex:1;min-width:200px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:0.6rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none}
+    .search-box:focus{border-color:rgba(255,107,43,0.5)}
+    select{background:#1a1a2e;border:1px solid var(--border);border-radius:10px;padding:0.6rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;min-width:150px}select option{background:#1a1a2e;color:var(--text)}select:focus{border-color:rgba(255,107,43,0.5)}
+    select:focus{border-color:rgba(255,107,43,0.5)}
+    .btn-clear{background:rgba(255,107,43,0.1);border:1px solid rgba(255,107,43,0.3);border-radius:10px;padding:0.6rem 1.2rem;color:var(--sun);font-size:0.85rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+    .book-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;transition:border-color .2s,transform .2s;display:flex;flex-direction:column;gap:0.8rem}
+    .book-card:hover{border-color:rgba(255,107,43,0.3);transform:translateY(-2px)}
+    .book-card-top{display:flex;gap:1rem;align-items:flex-start}
+    .book-icon{font-size:2.2rem;flex-shrink:0}
+    .book-meta{flex:1}
+    .book-title{font-weight:600;font-size:0.95rem;line-height:1.4;margin-bottom:0.3rem}
+    .book-badges{display:flex;flex-wrap:wrap;gap:0.4rem}
+    .badge{padding:0.25rem 0.6rem;border-radius:20px;font-size:0.72rem;font-weight:500}
+    .badge-country{background:rgba(0,201,167,0.1);color:var(--teal);border:1px solid rgba(0,201,167,0.2)}
+    .badge-grade{background:rgba(245,166,35,0.1);color:var(--gold);border:1px solid rgba(245,166,35,0.2)}
+    .badge-subject{background:rgba(255,107,43,0.1);color:var(--sun);border:1px solid rgba(255,107,43,0.2)}
+    .badge-source{background:rgba(124,58,237,0.1);color:#A78BFA;border:1px solid rgba(124,58,237,0.2)}
+    .book-desc{color:var(--muted);font-size:0.82rem;line-height:1.5}
+    .book-actions{display:flex;gap:0.7rem;margin-top:auto}
+    .btn{padding:0.55rem 1.1rem;border-radius:50px;font-size:0.82rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;border:none;transition:opacity .2s}
+    .btn:hover{opacity:0.85}
+    .btn-primary{background:linear-gradient(135deg,var(--sun),var(--gold));color:#fff}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+    .empty{text-align:center;padding:4rem 2rem;color:var(--muted)}
+    .empty-icon{font-size:3rem;margin-bottom:1rem}
+    .results-count{color:var(--muted);font-size:0.85rem;margin-bottom:1rem}
+    .toast{position:fixed;bottom:2rem;right:2rem;background:rgba(0,201,167,0.15);border:1px solid rgba(0,201,167,0.3);color:var(--teal);padding:0.8rem 1.5rem;border-radius:12px;font-size:0.9rem;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s}
+    .toast.show{opacity:1;transform:translateY(0)}
   </style>
 </head>
 <body>
-<div class="app">
-  <div id="nav-container"></div>
+<nav>
+  <a class="nav-logo" href="/dashboard.html">⚡ EduStar</a>
+  <div class="nav-links" id="nav-links"></div>
+</nav>
+<main>
+  <h1>📚 <span>Books</span> Library</h1>
+  <p class="subtitle" id="lib-subtitle">Free, legal textbooks from across Africa — filtered for your country and curriculum.</p>
 
-  <section class="page-hero" style="padding-bottom:2rem">
-    <div class="hero-tag">📖 School Books</div>
-    <h1>African School <em>Textbooks</em></h1>
-    <p>Access curriculum-aligned textbooks and study materials from across Africa, organised by country and grade.</p>
-  </section>
-
-  <div class="page-section">
-    <div class="filter-row">
-      <input class="search-box" type="text" id="search-input" placeholder="🔍 Search books..." oninput="filterBooks()">
-      <select class="filter-select" id="filter-country" onchange="filterBooks()">
-        <option value="">🌍 All Countries</option>
-        <option value="KE">🇰🇪 Kenya</option>
-        <option value="NG">🇳🇬 Nigeria</option>
-        <option value="ZA">🇿🇦 South Africa</option>
-        <option value="TZ">🇹🇿 Tanzania</option>
-        <option value="UG">🇺🇬 Uganda</option>
-        <option value="GH">🇬🇭 Ghana</option>
-        <option value="ZW">🇿🇼 Zimbabwe</option>
-        <option value="ZM">🇿🇲 Zambia</option>
-        <option value="continental">🌍 Pan-African</option>
-      </select>
-      <select class="filter-select" id="filter-subject" onchange="filterBooks()">
-        <option value="">📚 All Subjects</option>
-        <option value="math">Mathematics</option>
-        <option value="english">English</option>
-        <option value="science">Science</option>
-        <option value="biology">Biology</option>
-        <option value="chemistry">Chemistry</option>
-        <option value="physics">Physics</option>
-        <option value="history">History</option>
-        <option value="geography">Geography</option>
-        <option value="economics">Economics</option>
-        <option value="accounting">Accounting</option>
-        <option value="commerce">Commerce</option>
-        <option value="business">Business Studies</option>
-        <option value="kiswahili">Kiswahili</option>
-        <option value="computer">Computer Studies</option>
-        <option value="agriculture">Agriculture</option>
-      </select>
-      <select class="filter-select" id="filter-grade" onchange="filterBooks()">
-        <option value="">🎓 All Grades</option>
-        <option value="lower_primary">Lower Primary (G1-4)</option>
-        <option value="upper_primary">Upper Primary (G5-8)</option>
-        <option value="lower_secondary">Lower Secondary (G9-10/Form 1-2)</option>
-        <option value="upper_secondary">Upper Secondary (G11-12/Form 3+)</option>
-      </select>
-    </div>
-
-    <div class="books-grid" id="books-grid"></div>
-    <div id="no-results" style="display:none;text-align:center;padding:3rem;color:var(--muted)">
-      <div style="font-size:3rem;margin-bottom:1rem">📚</div>
-      <h3 style="font-family:'Syne',sans-serif">No books found</h3>
-      <p>Try adjusting your filters, or <a href="/edustar/dashboard.html" style="color:var(--sun)">ask the AI Tutor</a> for help.</p>
+  <div class="country-hero" id="country-hero">
+    <div class="country-flag" id="hero-flag">🌍</div>
+    <div>
+      <h2 id="hero-title">Your Country's Books</h2>
+      <p id="hero-sub">Showing books matched to your curriculum</p>
     </div>
   </div>
 
-  <footer><p>Built with ❤️ for students across Africa · <strong>EduStar AI</strong></p></footer>
-</div>
-
-<!-- BOOK DETAIL MODAL -->
-<div class="book-modal" id="book-modal" onclick="closeBookModal(event)">
-  <div class="book-modal-inner" id="book-modal-inner">
-    <button class="book-modal-close" onclick="closeBookModal()">✕</button>
-    <div id="book-modal-content"></div>
+  <div class="filters">
+    <input class="search-box" type="text" id="search-input" placeholder="🔍 Search books, subjects, grades..." oninput="applyFilters()">
+    <select id="filter-country" onchange="applyFilters()">
+      <option value="">🌍 All Countries</option>
+        <option value="All Africa">All Africa</option>
+        <option value="Ghana">Ghana</option>
+        <option value="Kenya">Kenya</option>
+        <option value="Nigeria">Nigeria</option>
+        <option value="South Africa">South Africa</option>
+        <option value="Tanzania">Tanzania</option>
+        <option value="Uganda">Uganda</option>
+        <option value="Zambia">Zambia</option>
+        <option value="Zimbabwe">Zimbabwe</option>
+    </select>
+    <select id="filter-subject" onchange="applyFilters()">
+      <option value="">📚 All Subjects</option>
+        <option value="Commerce">Commerce</option>
+        <option value="English">English</option>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Science">Science</option>
+        <option value="Technology">Technology</option>
+    </select>
+    <button class="btn-clear" onclick="clearFilters()">✕ Clear</button>
   </div>
-</div>
 
-<div class="toast-container" id="toasts"></div>
-<script src="scripts/data.js"></script>
-<script src="scripts/api.js"></script>
+  <div class="results-count" id="results-count"></div>
+  <div class="books-grid" id="books-grid"></div>
+  <div class="empty" id="empty-state" style="display:none">
+    <div class="empty-icon">📭</div>
+    <p>No books found. Try adjusting your filters or <a href="/dashboard.html" style="color:var(--sun)">ask the AI Tutor</a>!</p>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="/scripts/api.js"></script>
+<script src="/scripts/data.js"></script>
 <script>
-let student = requireAuth();
-
-// BOOKS DATABASE
-const BOOKS = [
-  // KENYA
-  { id:'ke-m7', title:'Mathematics Grade 7', subject:'math', country:'KE', gradeRange:'lower_secondary', color:'#FF6B2B', icon:'📐', publisher:'Kenya Institute of Curriculum Development (KICD)', year:2022, curriculum:'CBC', chapters:[
-    {ch:'Chapter 1: Numbers',topics:['Integers','Fractions','Decimals','Percentages']},
-    {ch:'Chapter 2: Algebra',topics:['Algebraic expressions','Linear equations','Word problems']},
-    {ch:'Chapter 3: Geometry',topics:['Angles','Triangles','Circles','Area and Perimeter']},
-    {ch:'Chapter 4: Statistics',topics:['Data collection','Bar graphs','Pie charts','Mean, Mode, Median']},
-  ]},
-  { id:'ke-eng7', title:'English Language & Literature Grade 7', subject:'english', country:'KE', gradeRange:'lower_secondary', color:'#00C9A7', icon:'📖', publisher:'KICD', year:2022, curriculum:'CBC', chapters:[
-    {ch:'Chapter 1: Reading & Comprehension',topics:['Intensive reading','Extensive reading','Inference skills']},
-    {ch:'Chapter 2: Grammar',topics:['Parts of speech','Tenses','Sentence construction']},
-    {ch:'Chapter 3: Writing Skills',topics:['Compositions','Letters','Reports']},
-    {ch:'Chapter 4: Oral Skills',topics:['Public speaking','Drama','Oral literature']},
-  ]},
-  { id:'ke-sci7', title:'Integrated Science Grade 7', subject:'science', country:'KE', gradeRange:'lower_secondary', color:'#7C3AED', icon:'🔬', publisher:'KICD', year:2022, curriculum:'CBC', chapters:[
-    {ch:'Unit 1: Living Things',topics:['Cell biology','Classification of organisms','Ecosystems']},
-    {ch:'Unit 2: Physical Sciences',topics:['Matter and its properties','Forces and motion','Energy']},
-    {ch:'Unit 3: Earth Sciences',topics:['Weather and climate','Rocks and soil','Water cycle']},
-  ]},
-  { id:'ke-kis7', title:'Kiswahili Darasa la Saba', subject:'kiswahili', country:'KE', gradeRange:'lower_secondary', color:'#F5A623', icon:'🗣️', publisher:'KICD', year:2022, curriculum:'CBC', chapters:[
-    {ch:'Sehemu 1: Sarufi',topics:['Ngeli za nomino','Vitenzi','Vivumishi']},
-    {ch:'Sehemu 2: Insha',topics:['Insha za masimulizi','Insha za maelezo','Barua']},
-    {ch:'Sehemu 3: Fasihi',topics:['Hadithi fupi','Mashairi','Methali na vitendawili']},
-  ]},
-  { id:'ke-m12', title:'Mathematics Form 4 (KCSE Prep)', subject:'math', country:'KE', gradeRange:'upper_secondary', color:'#FF6B2B', icon:'∑', publisher:'KICD / Longhorn', year:2023, curriculum:'8-4-4/CBC', chapters:[
-    {ch:'Chapter 1: Quadratic Expressions & Equations',topics:['Factorisation','Quadratic formula','Completing the square']},
-    {ch:'Chapter 2: Circles',topics:['Theorems','Tangents','Arc length and sector area']},
-    {ch:'Chapter 3: Matrices & Transformations',topics:['Matrix operations','Determinants','Transformation geometry']},
-    {ch:'Chapter 4: Statistics & Probability',topics:['Frequency distribution','Measures of dispersion','Basic probability']},
-  ]},
-  // NIGERIA
-  { id:'ng-math-jss1', title:'New General Mathematics JSS 1', subject:'math', country:'NG', gradeRange:'lower_secondary', color:'#1E88E5', icon:'📐', publisher:'Longman Nigeria', year:2021, curriculum:'9-3-4', chapters:[
-    {ch:'Chapter 1: Whole Numbers & Decimals',topics:['Place value','Rounding','Operations']},
-    {ch:'Chapter 2: Fractions & Percentages',topics:['Types of fractions','Operations','Applications']},
-    {ch:'Chapter 3: Basic Algebra',topics:['Algebraic notation','Simple equations']},
-    {ch:'Chapter 4: Introduction to Geometry',topics:['Lines and angles','Triangles','Polygons']},
-  ]},
-  { id:'ng-eng-sss2', title:'English Studies SSS 2', subject:'english', country:'NG', gradeRange:'upper_secondary', color:'#00C9A7', icon:'📖', publisher:'NERDC Nigeria', year:2020, curriculum:'9-3-4', chapters:[
-    {ch:'Chapter 1: Literature Comprehension',topics:['Prose analysis','Poetry analysis']},
-    {ch:'Chapter 2: Writing',topics:['Essay writing','Report writing','Letter writing']},
-    {ch:'Chapter 3: Grammar',topics:['Complex sentences','Modal auxiliaries','Reported speech']},
-  ]},
-  // SOUTH AFRICA
-  { id:'za-maths-gr10', title:'Mathematics Grade 10', subject:'math', country:'ZA', gradeRange:'upper_secondary', color:'#FF6B2B', icon:'📐', publisher:'Department of Basic Education (DBE)', year:2023, curriculum:'CAPS', chapters:[
-    {ch:'Chapter 1: Algebra',topics:['Algebraic manipulation','Exponents','Surds']},
-    {ch:'Chapter 2: Equations & Inequalities',topics:['Quadratic equations','Simultaneous equations','Number line']},
-    {ch:'Chapter 3: Euclidean Geometry',topics:['Circle geometry theorems','Triangles','Polygons']},
-    {ch:'Chapter 4: Trigonometry',topics:['Trig ratios','Trig identities','Solving triangles']},
-    {ch:'Chapter 5: Statistics',topics:['Frequency tables','Box and whisker plots','Histograms']},
-  ]},
-  { id:'za-eco-gr11', title:'Economics Grade 11', subject:'economics', country:'ZA', gradeRange:'upper_secondary', color:'#43A047', icon:'📈', publisher:'DBE South Africa', year:2023, curriculum:'CAPS', chapters:[
-    {ch:'Chapter 1: Microeconomics',topics:['Demand and supply','Elasticity','Market structures']},
-    {ch:'Chapter 2: Macroeconomics',topics:['National accounts','Business cycle','Inflation']},
-    {ch:'Chapter 3: Contemporary Issues',topics:['Poverty','Inequality','Environmental economics']},
-  ]},
-  // TANZANIA
-  { id:'tz-bio-f3', title:'Biology Form 3', subject:'biology', country:'TZ', gradeRange:'upper_secondary', color:'#27AE60', icon:'🧬', publisher:'Tanzania Institute of Education (TIE)', year:2021, curriculum:'TIE', chapters:[
-    {ch:'Chapter 1: Cell Biology',topics:['Cell structure','Cell division','Genetics intro']},
-    {ch:'Chapter 2: Transport in Organisms',topics:['Circulatory system','Lymphatic system']},
-    {ch:'Chapter 3: Excretion',topics:['Kidney structure','Osmoregulation']},
-    {ch:'Chapter 4: Nervous System',topics:['Neurons','Brain structure','Reflex arcs']},
-  ]},
-  // ZAMBIA
-  { id:'zm-acc-g12', title:'Accounts Grade 12', subject:'accounting', country:'ZM', gradeRange:'upper_secondary', color:'#E67E22', icon:'🧾', publisher:'Zambia Educational Publishing House', year:2022, curriculum:'Zambia School Curriculum', chapters:[
-    {ch:'Chapter 1: Partnership Accounts',topics:['Partnership agreement','Profit sharing','Goodwill']},
-    {ch:'Chapter 2: Company Accounts',topics:['Share capital','Debentures','Final accounts']},
-    {ch:'Chapter 3: Ratio Analysis',topics:['Profitability ratios','Liquidity ratios','Efficiency ratios']},
-  ]},
-  // PAN-AFRICAN
-  { id:'af-hist', title:"African History — The Continent's Story", subject:'history', country:'continental', gradeRange:'upper_secondary', color:'#8E44AD', icon:'🏛️', publisher:'Africa Educational Trust', year:2022, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Ancient African Civilisations',topics:['Ancient Egypt','Kingdom of Kush','Great Zimbabwe','Mali Empire']},
-    {ch:'Chapter 2: The Slave Trade',topics:['Transatlantic slave trade','Arab slave trade','Resistance and abolition']},
-    {ch:'Chapter 3: Colonialism',topics:['The Scramble for Africa','Colonial administration','Resistance movements']},
-    {ch:'Chapter 4: Independence Movements',topics:['Pan-Africanism','Country-by-country independence','Cold War in Africa']},
-    {ch:'Chapter 5: Post-Independence Africa',topics:['Nation building','Conflicts','African Union and regional bodies']},
-  ]},
-  { id:'af-geo', title:"Geography of Africa — A Comprehensive Guide", subject:'geography', country:'continental', gradeRange:'lower_secondary', color:'#16A085', icon:'🌍', publisher:'Africa Educational Trust', year:2022, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Physical Geography',topics:["Africa's landforms","Rivers and lakes","Climate zones","Biomes"]},
-    {ch:'Chapter 2: Human Geography',topics:['Population patterns','Urbanisation','Migration']},
-    {ch:'Chapter 3: Economic Geography',topics:['Agriculture','Mining and resources','Trade and development']},
-    {ch:'Chapter 4: Environmental Issues',topics:['Climate change in Africa','Deforestation','Water scarcity']},
-  ]},
-  { id:'af-comp', title:'ICT & Computer Studies for African Schools', subject:'computer', country:'continental', gradeRange:'lower_secondary', color:'#2980B9', icon:'💻', publisher:'AfriLearn Digital Press', year:2023, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Computer Fundamentals',topics:['Hardware components','Operating systems','File management']},
-    {ch:'Chapter 2: The Internet & Digital Literacy',topics:['World Wide Web','Email','Social media safety','Cybersecurity']},
-    {ch:'Chapter 3: Introduction to Programming',topics:['Python basics','Algorithms','Scratch visual programming']},
-    {ch:'Chapter 4: Spreadsheets & Databases',topics:['Microsoft Excel / LibreOffice Calc','Data management','SQL basics']},
-  ]},
-  { id:'af-biol-adv', title:'Advanced Biology for African Students', subject:'biology', country:'continental', gradeRange:'upper_secondary', color:'#27AE60', icon:'🧬', publisher:'AfriLearn Press', year:2023, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Molecular Biology',topics:['DNA replication','Protein synthesis','Gene expression']},
-    {ch:'Chapter 2: Genetics',topics:['Mendelian genetics','Non-Mendelian inheritance','Mutations']},
-    {ch:'Chapter 3: Ecology',topics:['Ecosystems','Food webs','Nutrient cycles','Conservation in Africa']},
-    {ch:'Chapter 4: Evolution',topics:["Darwin's theory","Natural selection","Human evolution in Africa"]},
-  ]},
-  { id:'af-chem-adv', title:'Advanced Chemistry', subject:'chemistry', country:'continental', gradeRange:'upper_secondary', color:'#E74C3C', icon:'⚗️', publisher:'AfriLearn Press', year:2023, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Organic Chemistry',topics:['Hydrocarbons','Functional groups','Reaction mechanisms']},
-    {ch:'Chapter 2: Electrochemistry',topics:['Redox reactions','Galvanic cells','Electrolysis']},
-    {ch:'Chapter 3: Chemical Equilibrium',topics:["Le Chatelier's principle",'Kc and Kp','Acid-base equilibria']},
-    {ch:'Chapter 4: Industrial Chemistry',topics:['Haber process','Contact process','African mineral processing']},
-  ]},
-  { id:'af-econ', title:'Economics for African Secondary Schools', subject:'economics', country:'continental', gradeRange:'upper_secondary', color:'#2ECC71', icon:'📈', publisher:'East African Educational Publishers', year:2022, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Microeconomics',topics:['Demand and supply','Elasticity','Consumer theory','Market structures']},
-    {ch:'Chapter 2: Macroeconomics',topics:['GDP and national income','Monetary policy','Fiscal policy','Inflation']},
-    {ch:'Chapter 3: Development Economics',topics:['Poverty and inequality','Industrialisation','Aid vs trade','SAPs']},
-    {ch:'Chapter 4: African Trade',topics:['Regional economic communities','AfCFTA','Trade barriers','Balance of payments']},
-  ]},
-  { id:'af-bus', title:'Business Studies for African Schools', subject:'business', country:'continental', gradeRange:'upper_secondary', color:'#F39C12', icon:'💼', publisher:'AfriLearn Press', year:2023, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Business Environment',topics:['Types of business','Business ethics','Corporate social responsibility']},
-    {ch:'Chapter 2: Entrepreneurship',topics:['Identifying opportunities','Business plan','African startups']},
-    {ch:'Chapter 3: Marketing',topics:['Marketing mix (4Ps)','Market research','Digital marketing in Africa']},
-    {ch:'Chapter 4: Human Resources',topics:['Recruitment','Training and development','Labour relations']},
-  ]},
-  { id:'af-lit', title:'African Literature Anthology', subject:'english', country:'continental', gradeRange:'upper_secondary', color:'#9B59B6', icon:'📚', publisher:'Heinemann African Writers Series', year:2021, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: West African Literature',topics:["Chinua Achebe: Things Fall Apart",'Wole Soyinka','Ama Ata Aidoo']},
-    {ch:'Chapter 2: East African Literature',topics:["Ngũgĩ wa Thiong'o",'Grace Ogot','Okot p\'Bitek']},
-    {ch:'Chapter 3: Southern African Literature',topics:['Nadine Gordimer','Bessie Head','Chenjerai Hove']},
-    {ch:'Chapter 4: Poetry from Africa',topics:['Oral poetry traditions','Modern African poetry','Praise poetry']},
-  ]},
-  { id:'af-agric', title:'Agriculture for Secondary Schools in Africa', subject:'agriculture', country:'continental', gradeRange:'lower_secondary', color:'#27AE60', icon:'🌱', publisher:'Macmillan Africa', year:2022, curriculum:'Pan-African', chapters:[
-    {ch:'Chapter 1: Soil Science',topics:['Soil types','Soil fertility','Erosion and conservation']},
-    {ch:'Chapter 2: Crop Production',topics:['Seed selection','Planting seasons','Pest and disease management']},
-    {ch:'Chapter 3: Livestock Farming',topics:['Cattle husbandry','Poultry','Fish farming (aquaculture)']},
-    {ch:'Chapter 4: Modern Farming',topics:['Irrigation systems','Organic farming','AgriTech in Africa']},
-  ]},
+const BOOKS_DB = [
+  {id:0,country:"Zimbabwe",subject:"Mathematics",title:"Mathematics Grade 10",grade:"Form 4",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Full Grade 10 Maths textbook \u2014 algebra, geometry, trigonometry, statistics. Aligned with Cambridge/ZIMSEC.",icon:"\ud83d\udcd0"},
+  {id:1,country:"Zimbabwe",subject:"Mathematics",title:"Mathematics Grade 11",grade:"Form 5",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-11",description:"Grade 11 Maths covering functions, polynomials, analytical geometry and probability.",icon:"\ud83d\udcd0"},
+  {id:2,country:"Zimbabwe",subject:"Mathematics",title:"Mathematics Grade 12",grade:"Form 6",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-12",description:"Advanced Grade 12 Maths \u2014 calculus, statistics, complex numbers, exam prep.",icon:"\ud83d\udcd0"},
+  {id:3,country:"Zimbabwe",subject:"Science",title:"Physical Sciences Grade 10",grade:"Form 4",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-10",description:"Physics and Chemistry for Grade 10 \u2014 mechanics, waves, chemical bonds, reactions.",icon:"\u2697\ufe0f"},
+  {id:4,country:"Zimbabwe",subject:"Science",title:"Physical Sciences Grade 11",grade:"Form 5",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-11",description:"Advanced Physics and Chemistry for Form 5 \u2014 electrostatics, electrochemistry, organic chemistry.",icon:"\u2697\ufe0f"},
+  {id:5,country:"Zimbabwe",subject:"Science",title:"Physical Sciences Grade 12",grade:"Form 6",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-12",description:"Final year Physics and Chemistry. Full exam preparation for A-Level / ZIMSEC.",icon:"\u2697\ufe0f"},
+  {id:6,country:"Zimbabwe",subject:"Science",title:"Life Sciences Grade 10",grade:"Form 4",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-10",description:"Biology for Grade 10 \u2014 cells, genetics, evolution, ecology, human biology.",icon:"\ud83e\uddec"},
+  {id:7,country:"Zimbabwe",subject:"Science",title:"Natural Sciences Grade 8",grade:"Form 2",source:"Siyavula",url:"https://www.siyavula.com/read/natural-science/grade-8",description:"Integrated science for Form 2 \u2014 matter, energy, ecosystems, earth science.",icon:"\ud83d\udd2c"},
+  {id:8,country:"Zimbabwe",subject:"Mathematics",title:"Natural Sciences & Maths Grade 7",grade:"Form 1",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-7",description:"Foundation maths for Form 1 \u2014 numbers, fractions, basic geometry, data.",icon:"\ud83d\udcd0"},
+  {id:9,country:"Zambia",subject:"Mathematics",title:"Mathematics Grade 10",grade:"Grade 10",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Aligned with Zambia ECZ curriculum. Covers algebra, geometry, trigonometry and statistics.",icon:"\ud83d\udcd0"},
+  {id:10,country:"Zambia",subject:"Mathematics",title:"Mathematics Grade 11",grade:"Grade 11",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-11",description:"Grade 11 Mathematics for Zambia \u2014 functions, sequences, analytical geometry.",icon:"\ud83d\udcd0"},
+  {id:11,country:"Zambia",subject:"Mathematics",title:"Mathematics Grade 12",grade:"Grade 12",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-12",description:"Final year Mathematics for Zambia ECZ exams. Calculus, statistics, complex numbers.",icon:"\ud83d\udcd0"},
+  {id:12,country:"Zambia",subject:"Science",title:"Physical Sciences Grade 10",grade:"Grade 10",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-10",description:"Physics and Chemistry for Zambia Grade 10. Mechanics, waves, chemical reactions.",icon:"\u2697\ufe0f"},
+  {id:13,country:"Zambia",subject:"Science",title:"Physical Sciences Grade 12",grade:"Grade 12",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-12",description:"Advanced Physics and Chemistry for Zambia Grade 12 ECZ exams.",icon:"\u2697\ufe0f"},
+  {id:14,country:"Zambia",subject:"Science",title:"Secondary Science (TESSA)",grade:"Grade 8-10",source:"Maktaba / TESSA",url:"https://www.maktaba.org/browse/books/Zambia",description:"Open educational science resources written specifically for Zambia secondary curriculum.",icon:"\ud83d\udd2c"},
+  {id:15,country:"Zambia",subject:"English",title:"English Language Skills",grade:"Grade 8-12",source:"Maktaba",url:"https://www.maktaba.org/browse/books/secondary",description:"Comprehensive English language and communication skills for Zambian secondary schools.",icon:"\ud83d\udcd6"},
+  {id:16,country:"Zambia",subject:"Mathematics",title:"Grade 8 Mathematics",grade:"Grade 8",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-8",description:"Grade 8 Maths \u2014 integers, algebra, geometry, data handling.",icon:"\ud83d\udcd0"},
+  {id:17,country:"Kenya",subject:"Mathematics",title:"Mathematics Grade 9 (CBC)",grade:"Grade 9",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-9",description:"Mathematics aligned with Kenya CBC Grade 9. Algebra, geometry, statistics and probability.",icon:"\ud83d\udcd0"},
+  {id:18,country:"Kenya",subject:"Mathematics",title:"Mathematics Grade 10",grade:"Form 2",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Senior secondary Mathematics for Kenya \u2014 aligned with KICD curriculum.",icon:"\ud83d\udcd0"},
+  {id:19,country:"Kenya",subject:"Science",title:"Natural Sciences Grade 7",grade:"Grade 7",source:"Siyavula",url:"https://www.siyavula.com/read/natural-science/grade-7",description:"Integrated Science for Kenya Grade 7 CBC \u2014 matter, living things, energy, earth.",icon:"\ud83d\udd2c"},
+  {id:20,country:"Kenya",subject:"Science",title:"Natural Sciences Grade 8",grade:"Grade 8",source:"Siyavula",url:"https://www.siyavula.com/read/natural-science/grade-8",description:"Integrated Science for Kenya Grade 8 \u2014 ecosystems, chemistry basics, physics concepts.",icon:"\ud83d\udd2c"},
+  {id:21,country:"Kenya",subject:"Science",title:"Natural Sciences Grade 9",grade:"Grade 9",source:"Siyavula",url:"https://www.siyavula.com/read/natural-science/grade-9",description:"Science for Kenya Grade 9 \u2014 prepares for senior secondary sciences.",icon:"\ud83d\udd2c"},
+  {id:22,country:"Kenya",subject:"English",title:"Free Kenyan School Books",grade:"All Grades",source:"Maktaba",url:"https://www.maktaba.org/browse/books/Kenya",description:"Collection of free educational books for Kenyan students \u2014 various subjects and levels.",icon:"\ud83d\udcd6"},
+  {id:23,country:"Kenya",subject:"Science",title:"Biology Grade 10",grade:"Form 2",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-10",description:"Life Sciences / Biology for Kenya Form 2 \u2014 cells, genetics, ecology, human biology.",icon:"\ud83e\uddec"},
+  {id:24,country:"Kenya",subject:"Technology",title:"Computer Applications Technology Gr 10",grade:"Form 2",source:"Siyavula",url:"https://www.siyavula.com/read/cat/grade-10",description:"Introduction to computers, spreadsheets, databases, and internet for secondary students.",icon:"\ud83d\udcbb"},
+  {id:25,country:"Nigeria",subject:"Mathematics",title:"Mathematics Grade 10 (SS1)",grade:"SS1",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Senior Secondary 1 Mathematics. Fully covers algebra, trigonometry, and geometry for WAEC/NECO prep.",icon:"\ud83d\udcd0"},
+  {id:26,country:"Nigeria",subject:"Mathematics",title:"Mathematics Grade 12 (SS3)",grade:"SS3",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-12",description:"SS3 Mathematics for WAEC exam preparation. Calculus, statistics, probability.",icon:"\ud83d\udcd0"},
+  {id:27,country:"Nigeria",subject:"Science",title:"Physics SS1-SS3",grade:"SS1-SS3",source:"OpenStax",url:"https://openstax.org/details/books/university-physics-volume-1",description:"Comprehensive Physics textbook. Mechanics, waves, thermodynamics. Free PDF download.",icon:"\u2697\ufe0f"},
+  {id:28,country:"Nigeria",subject:"Science",title:"Chemistry for Secondary Schools",grade:"SS1-SS3",source:"OpenStax",url:"https://openstax.org/details/books/chemistry-2e",description:"Full Chemistry textbook \u2014 atomic structure, bonding, reactions, organic chemistry. WAEC aligned.",icon:"\u2697\ufe0f"},
+  {id:29,country:"Nigeria",subject:"Science",title:"Biology SS1-SS3",grade:"SS1-SS3",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-12",description:"Life Sciences covering cells, genetics, ecology, evolution. Aligned with WAEC Biology syllabus.",icon:"\ud83e\uddec"},
+  {id:30,country:"Nigeria",subject:"English",title:"English Language & Communication",grade:"SS1-SS3",source:"Maktaba",url:"https://www.maktaba.org/browse/books/secondary",description:"English Language skills \u2014 comprehension, essay writing, oral English, literature.",icon:"\ud83d\udcd6"},
+  {id:31,country:"Nigeria",subject:"Commerce",title:"Introduction to Economics",grade:"SS1-SS3",source:"OpenStax",url:"https://openstax.org/details/books/principles-economics-3e",description:"Economics principles covering micro and macroeconomics. Free download. WAEC Economics aligned.",icon:"\ud83d\udcb0"},
+  {id:32,country:"South Africa",subject:"Mathematics",title:"Mathematics Grade 10",grade:"Grade 10",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Official CAPS-aligned Grade 10 Mathematics. Free download, openly licensed.",icon:"\ud83d\udcd0"},
+  {id:33,country:"South Africa",subject:"Mathematics",title:"Mathematics Grade 11",grade:"Grade 11",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-11",description:"Grade 11 Mathematics \u2014 functions, finance, trigonometry, probability. CAPS aligned.",icon:"\ud83d\udcd0"},
+  {id:34,country:"South Africa",subject:"Mathematics",title:"Mathematics Grade 12",grade:"Grade 12",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-12",description:"Matric Mathematics. Complete exam preparation for the National Senior Certificate.",icon:"\ud83d\udcd0"},
+  {id:35,country:"South Africa",subject:"Science",title:"Physical Sciences Grade 10",grade:"Grade 10",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-10",description:"CAPS Grade 10 Physics and Chemistry. Mechanics, waves, reactions. Free PDF.",icon:"\u2697\ufe0f"},
+  {id:36,country:"South Africa",subject:"Science",title:"Physical Sciences Grade 11",grade:"Grade 11",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-11",description:"Grade 11 Physics and Chemistry \u2014 electrostatics, organic chemistry, electrodynamics.",icon:"\u2697\ufe0f"},
+  {id:37,country:"South Africa",subject:"Science",title:"Physical Sciences Grade 12",grade:"Grade 12",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-12",description:"Matric Physical Sciences. Full exam prep for the NSC. Free download.",icon:"\u2697\ufe0f"},
+  {id:38,country:"South Africa",subject:"Science",title:"Life Sciences Grade 10",grade:"Grade 10",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-10",description:"CAPS Biology Grade 10 \u2014 cells, genetics, ecology, human biology.",icon:"\ud83e\uddec"},
+  {id:39,country:"South Africa",subject:"Science",title:"Life Sciences Grade 12",grade:"Grade 12",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-12",description:"Matric Life Sciences \u2014 evolution, genetics, human systems. NSC exam prep.",icon:"\ud83e\uddec"},
+  {id:40,country:"South Africa",subject:"Mathematics",title:"Mathematical Literacy Grade 10",grade:"Grade 10",source:"Siyavula",url:"https://www.siyavula.com/read/maths-literacy/grade-10",description:"Mathematical Literacy for practical life skills \u2014 finance, measurement, data.",icon:"\ud83d\udcca"},
+  {id:41,country:"South Africa",subject:"Technology",title:"Computer Applications Technology Gr 12",grade:"Grade 12",source:"Siyavula",url:"https://www.siyavula.com/read/cat/grade-12",description:"CAT Grade 12 \u2014 spreadsheets, databases, internet, HTML, problem solving.",icon:"\ud83d\udcbb"},
+  {id:42,country:"Tanzania",subject:"Science",title:"Form I Biology (TESSA)",grade:"Form 1",source:"Maktaba",url:"https://www.maktaba.org/browse/books/Tanzania",description:"Tanzania Form I Biology \u2014 written in accessible English to support CBC transition students.",icon:"\ud83e\uddec"},
+  {id:43,country:"Tanzania",subject:"Mathematics",title:"Mathematics Grade 9",grade:"Form 3",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-9",description:"Secondary Mathematics for Tanzania Form 3 \u2014 algebra, geometry, trigonometry.",icon:"\ud83d\udcd0"},
+  {id:44,country:"Tanzania",subject:"Mathematics",title:"Mathematics Grade 10",grade:"Form 4",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Form 4 Mathematics for NECTA exam preparation. Functions, statistics, calculus intro.",icon:"\ud83d\udcd0"},
+  {id:45,country:"Tanzania",subject:"English",title:"Free Tanzanian School Books",grade:"All Grades",source:"Maktaba",url:"https://www.maktaba.org/browse/books/Tanzania",description:"Free books for Tanzanian students \u2014 English and Kiswahili. Various subjects.",icon:"\ud83d\udcd6"},
+  {id:46,country:"Tanzania",subject:"Science",title:"Physical Sciences Grade 11",grade:"Form 5",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-11",description:"Physics and Chemistry for Tanzania Form 5 / Advanced Secondary.",icon:"\u2697\ufe0f"},
+  {id:47,country:"Ghana",subject:"Mathematics",title:"Mathematics SHS Grade 1",grade:"SHS1",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"Senior High School Mathematics for Ghana SHS1. Algebra, geometry, trigonometry. WAEC aligned.",icon:"\ud83d\udcd0"},
+  {id:48,country:"Ghana",subject:"Mathematics",title:"Mathematics SHS Grade 3",grade:"SHS3",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-12",description:"SHS3 Mathematics for WASSCE exam prep. Calculus, statistics, vectors.",icon:"\ud83d\udcd0"},
+  {id:49,country:"Ghana",subject:"Science",title:"Core Science SHS",grade:"SHS1-SHS3",source:"Siyavula",url:"https://www.siyavula.com/read/science/grade-10",description:"Integrated Science for Ghana Senior High School \u2014 physics, chemistry, biology concepts.",icon:"\ud83d\udd2c"},
+  {id:50,country:"Ghana",subject:"Science",title:"Biology SHS",grade:"SHS1-SHS3",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-10",description:"Biology for Ghana SHS \u2014 genetics, ecology, evolution, human systems. WAEC aligned.",icon:"\ud83e\uddec"},
+  {id:51,country:"Ghana",subject:"Commerce",title:"Economics for SHS",grade:"SHS1-SHS3",source:"OpenStax",url:"https://openstax.org/details/books/principles-economics-3e",description:"Economics for Ghana SHS \u2014 micro and macroeconomics, trade, development.",icon:"\ud83d\udcb0"},
+  {id:52,country:"Uganda",subject:"Mathematics",title:"Mathematics Senior 1-4",grade:"S1-S4",source:"Siyavula",url:"https://www.siyavula.com/read/maths/grade-10",description:"UCE Mathematics preparation. Algebra, geometry, statistics, trigonometry. UNEB aligned.",icon:"\ud83d\udcd0"},
+  {id:53,country:"Uganda",subject:"Science",title:"Physics Senior 5-6",grade:"S5-S6",source:"OpenStax",url:"https://openstax.org/details/books/university-physics-volume-1",description:"Advanced Level Physics for Uganda S5-S6. UACE preparation. Free download.",icon:"\u2697\ufe0f"},
+  {id:54,country:"Uganda",subject:"Science",title:"Biology Senior 1-4",grade:"S1-S4",source:"Siyavula",url:"https://www.siyavula.com/read/life-science/grade-10",description:"Biology for Uganda UCE \u2014 cells, genetics, ecology, human biology.",icon:"\ud83e\uddec"},
+  {id:55,country:"Uganda",subject:"Science",title:"Chemistry Senior 1-4",grade:"S1-S4",source:"OpenStax",url:"https://openstax.org/details/books/chemistry-2e",description:"Chemistry for Uganda \u2014 atomic theory, bonding, reactions, organic chemistry.",icon:"\u2697\ufe0f"},
+  {id:56,country:"Uganda",subject:"English",title:"Free Uganda School Books",grade:"S1-S6",source:"Maktaba",url:"https://www.maktaba.org/browse/books/education",description:"Educational resources for Ugandan students \u2014 English, social studies and more.",icon:"\ud83d\udcd6"},
+  {id:57,country:"All Africa",subject:"Mathematics",title:"Algebra & Trigonometry (OpenStax)",grade:"All Grades",source:"OpenStax",url:"https://openstax.org/details/books/algebra-and-trigonometry-2e",description:"Free university-level Algebra and Trigonometry. Perfect for Form 5/6 or A-Level students.",icon:"\ud83d\udcd0"},
+  {id:58,country:"All Africa",subject:"Science",title:"Concepts of Biology (OpenStax)",grade:"All Grades",source:"OpenStax",url:"https://openstax.org/details/books/concepts-biology",description:"Comprehensive Biology textbook \u2014 cells, genetics, evolution, ecology. Free PDF.",icon:"\ud83e\uddec"},
+  {id:59,country:"All Africa",subject:"Science",title:"Chemistry: Atoms First (OpenStax)",grade:"A-Level",source:"OpenStax",url:"https://openstax.org/details/books/chemistry-atoms-first-2e",description:"University-level Chemistry starting from atomic structure. Ideal for A-Level prep.",icon:"\u2697\ufe0f"},
+  {id:60,country:"All Africa",subject:"Commerce",title:"Principles of Accounting (OpenStax)",grade:"All Grades",source:"OpenStax",url:"https://openstax.org/details/books/principles-financial-accounting",description:"Financial and managerial accounting principles. Free download.",icon:"\ud83d\udcb0"},
+  {id:61,country:"All Africa",subject:"Technology",title:"Introduction to Computer Science",grade:"All Grades",source:"OpenStax",url:"https://openstax.org/details/books/introduction-computer-science",description:"Computer science fundamentals \u2014 programming, algorithms, data structures.",icon:"\ud83d\udcbb"}
 ];
 
-let allBooks = [...BOOKS];
+const FLAGS = {
+  'Zimbabwe':'🇿🇼','Zambia':'🇿🇲','Kenya':'🇰🇪','Nigeria':'🇳🇬',
+  'South Africa':'🇿🇦','Tanzania':'🇹🇿','Ghana':'🇬🇭','Uganda':'🇺🇬','All Africa':'🌍'
+};
+
+let student = null;
+let downloads = JSON.parse(localStorage.getItem('edu_book_downloads') || '{}');
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
 
 function init() {
-  document.getElementById('nav-container').innerHTML = buildNav(student, 'books');
-  // Pre-select student's country
-  const countrySelect = document.getElementById('filter-country');
-  countrySelect.value = student.country || '';
-  filterBooks();
+  student = requireAuth();
+  if (!student) return;
+  buildNav(student);
+
+  // Auto-set country filter from student profile
+  const country = student.country || '';
+  const mapped = mapCountry(country);
+  if (mapped) {
+    document.getElementById('filter-country').value = mapped;
+    // Show hero banner
+    const hero = document.getElementById('country-hero');
+    document.getElementById('hero-flag').textContent = FLAGS[mapped] || '🌍';
+    document.getElementById('hero-title').textContent = `${mapped} Textbooks`;
+    document.getElementById('hero-sub').textContent = `Showing free books matched to the ${mapped} curriculum`;
+    hero.classList.add('show');
+  }
+
+  applyFilters();
 }
 
-function filterBooks() {
-  const search   = document.getElementById('search-input').value.toLowerCase();
-  const country  = document.getElementById('filter-country').value;
-  const subject  = document.getElementById('filter-subject').value;
-  const grade    = document.getElementById('filter-grade').value;
+function mapCountry(c) {
+  if (!c) return '';
+  const m = c.toUpperCase();
+  if (m.includes('ZIM') || m === 'ZW') return 'Zimbabwe';
+  if (m.includes('ZAM') || m === 'ZM') return 'Zambia';
+  if (m.includes('KEN') || m === 'KE') return 'Kenya';
+  if (m.includes('NIG') || m === 'NG') return 'Nigeria';
+  if (m.includes('SOUTH') || m.includes('RSA') || m === 'ZA') return 'South Africa';
+  if (m.includes('TAN') || m === 'TZ') return 'Tanzania';
+  if (m.includes('GHA') || m === 'GH') return 'Ghana';
+  if (m.includes('UGA') || m === 'UG') return 'Uganda';
+  return '';
+}
 
-  let filtered = BOOKS.filter(b => {
-    if (country && b.country !== country && b.country !== 'continental') return false;
-    if (subject && b.subject !== subject) return false;
-    if (grade && b.gradeRange !== grade) return false;
-    if (search && !b.title.toLowerCase().includes(search) && !b.subject.includes(search)) return false;
-    return true;
+function applyFilters() {
+  const q       = document.getElementById('search-input').value.toLowerCase();
+  const country = document.getElementById('filter-country').value;
+  const subject = document.getElementById('filter-subject').value;
+
+  let filtered = BOOKS_DB.filter(b => {
+    const matchCountry = !country || b.country === country || b.country === 'All Africa';
+    const matchSubject = !subject || b.subject === subject;
+    const matchSearch  = !q || b.title.toLowerCase().includes(q) || b.subject.toLowerCase().includes(q) || b.grade.toLowerCase().includes(q) || b.description.toLowerCase().includes(q);
+    return matchCountry && matchSubject && matchSearch;
   });
 
-  const grid = document.getElementById('books-grid');
-  const noRes = document.getElementById('no-results');
+  renderBooks(filtered);
+  document.getElementById('results-count').textContent = `Showing ${filtered.length} of ${BOOKS_DB.length} books`;
+}
 
-  if (filtered.length === 0) { grid.innerHTML=''; noRes.style.display='block'; return; }
-  noRes.style.display='none';
+function clearFilters() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('filter-country').value = '';
+  document.getElementById('filter-subject').value = '';
+  document.getElementById('country-hero').classList.remove('show');
+  applyFilters();
+}
 
-  const FLAG = {KE:'🇰🇪',NG:'🇳🇬',ZA:'🇿🇦',TZ:'🇹🇿',UG:'🇺🇬',GH:'🇬🇭',ZW:'🇿🇼',ZM:'🇿🇲',ET:'🇪🇹',RW:'🇷🇼',continental:'🌍'};
-  const GRADE_LBL = {lower_primary:'Lower Primary',upper_primary:'Upper Primary',lower_secondary:'Lower Secondary',upper_secondary:'Upper Secondary'};
-
-  grid.innerHTML = filtered.map(b => `
-    <div class="book-card" onclick="openBook('${b.id}')">
-      <div class="book-cover" style="background:linear-gradient(145deg,${b.color}22,${b.color}44)">
-        <div class="book-spine" style="background:${b.color}"></div>
-        <span style="font-size:3.5rem">${b.icon}</span>
-      </div>
-      <div class="book-info">
-        <div class="book-title">${b.title}</div>
+function renderBooks(list) {
+  const grid  = document.getElementById('books-grid');
+  const empty = document.getElementById('empty-state');
+  if (!list.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = list.map(b => {
+    const dlCount = downloads[b.id] || 0;
+    const isAll   = b.country === 'All Africa';
+    return `<div class="book-card">
+      <div class="book-card-top">
+        <div class="book-icon">${b.icon}</div>
         <div class="book-meta">
-          ${FLAG[b.country]||'🌍'} ${b.country==='continental'?'Pan-African':(COUNTRY_NAMES[b.country]||b.country)}<br>
-          📚 ${GRADE_LBL[b.gradeRange]||b.gradeRange} · ${b.year}<br>
-          ${b.curriculum} · ${b.publisher.split('(')[0].trim()}
+          <div class="book-title">${b.title}</div>
+          <div class="book-badges">
+            <span class="badge badge-country">${FLAGS[b.country] || '🌍'} ${b.country}</span>
+            <span class="badge badge-grade">${b.grade}</span>
+            <span class="badge badge-subject">${b.subject}</span>
+            <span class="badge badge-source">${b.source}</span>
+          </div>
         </div>
       </div>
+      <div class="book-desc">${b.description}</div>
       <div class="book-actions">
-        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();openBook('${b.id}')">📖 View Book</button>
-        <button class="btn btn-sm btn-teal" onclick="event.stopPropagation();studyBook('${b.id}')">📝 Study</button>
-        <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();apiDownloadBook('${b.id}')" title="Download PDF">⬇️</button>
+        <a class="btn btn-primary" href="${b.url}" target="_blank" onclick="trackDownload(${b.id})">
+          📥 Open / Download
+        </a>
+        <span style="margin-left:auto;color:var(--muted);font-size:0.78rem;align-self:center">
+          ${dlCount > 0 ? '⬇️ ' + dlCount + ' downloads' : ''}
+        </span>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-function openBook(id) {
-  const b = BOOKS.find(x=>x.id===id);
-  if (!b) return;
-  const FLAG = {KE:'🇰🇪',NG:'🇳🇬',ZA:'🇿🇦',TZ:'🇹🇿',UG:'🇺🇬',GH:'🇬🇭',ZW:'🇿🇼',ZM:'🇿🇲',ET:'🇪🇹',RW:'🇷🇼',continental:'🌍'};
-  const modal = document.getElementById('book-modal');
-  document.getElementById('book-modal-content').innerHTML = `
-    <div class="book-modal-header">
-      <div class="book-modal-cover" style="background:linear-gradient(145deg,${b.color}33,${b.color}55)"><span>${b.icon}</span></div>
-      <div>
-        <div class="book-modal-title">${b.title}</div>
-        <div style="font-size:0.82rem;color:var(--muted);line-height:1.8">
-          ${FLAG[b.country]||'🌍'} ${b.country==='continental'?'Pan-African':(COUNTRY_NAMES[b.country]||b.country)}<br>
-          📋 ${b.curriculum} · ${b.year}<br>
-          🏛️ ${b.publisher}
-        </div>
-        <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
-          <button class="btn btn-sm btn-primary" onclick="studyBook('${b.id}')">📝 Study This Book</button>
-          <button class="btn btn-sm btn-teal" onclick="askTutorBook('${b.title.replace(/'/g,"\\'")}')" >🤖 Ask AI Tutor</button>
-          <button class="btn btn-sm btn-secondary" onclick="apiDownloadBook('${b.id}')">⬇️ Download PDF</button>
-        </div>
-      </div>
-    </div>
-    <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">📋 Table of Contents</h3>
-    <ul class="chapter-list">
-      ${b.chapters.map((c,i) => `
-        <li class="chapter-item">
-          <h4>${i+1}. ${c.ch}</h4>
-          <p>${c.topics.join(' · ')}</p>
-        </li>`).join('')}
-    </ul>`;
-  modal.classList.add('show');
+function trackDownload(id) {
+  downloads[id] = (downloads[id] || 0) + 1;
+  localStorage.setItem('edustar_book_downloads', JSON.stringify(downloads));
+  // Also ping server to track — fixed token key to edustar_token
+  const book = BOOKS_DB[id];
+  fetch('/api/books.php?action=track', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Authorization':'Bearer ' + (localStorage.getItem('edustar_token')||'')},
+    body: JSON.stringify({title: book.title, country: book.country, subject: book.subject, source: book.source})
+  }).catch(() => {});
+  toast('📥 Opening book — enjoy studying!');
 }
 
-function closeBookModal(e) {
-  if (!e || e.target === document.getElementById('book-modal')) {
-    document.getElementById('book-modal').classList.remove('show');
-  }
-}
-
-function studyBook(id) {
-  const b = BOOKS.find(x=>x.id===id);
-  if (!b) return;
-  document.getElementById('book-modal').classList.remove('show');
-  // Map book subject to lesson page
-  window.location.href = `lesson.html?subject=${b.subject}`;
-}
-
-function askTutorBook(title) {
-  localStorage.setItem('edustar_pending_q', `I want to study "${title}". Can you guide me through the key topics and help me understand the important concepts?`);
-  window.location.href = 'dashboard.html#chat-anchor';
-}
-
-window.addEventListener('load', init);
+window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>

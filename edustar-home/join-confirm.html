@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your EduStar account registration has been received. Welcome to the platform!">
+  <meta name="author" content="Demetrious Shoniwa">
+  <title>EduStar – Registration Confirmed</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    .confirm-wrap {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100vh - 65px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .confirm-card {
+      background: rgba(26, 26, 46, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .confirm-icon {
+      font-size: 4rem;
+      margin-bottom: 1.2rem;
+      animation: pop 0.5s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .confirm-card h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .confirm-card h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .confirm-card > p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .data-table {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .data-table h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .data-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 0.5rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .data-row:last-child {
+      border-bottom: none;
+    }
+
+    .data-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      align-self: center;
+    }
+
+    .data-value {
+      font-weight: 500;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 500px) {
+      .confirm-card { padding: 2rem 1.5rem; }
+      .data-row { grid-template-columns: 1fr; gap: 0.2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <a class="nav-logo" href="index.html" aria-label="EduStar home">⚡ EduStar</a>
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">☰</button>
+    <div class="nav-links" id="main-nav" role="list">
+      <a href="index.html" data-page="home" role="listitem">Home</a>
+      <a href="books.html" data-page="books" role="listitem">Books</a>
+      <a href="join.html" data-page="join" role="listitem">Join</a>
+      <a href="about.html" data-page="about" role="listitem">About</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="confirm-wrap">
+      <div class="confirm-card">
+        <div class="confirm-icon" aria-hidden="true">🎉</div>
+        <h1>Welcome to <em>EduStar!</em></h1>
+        <p>Your registration details have been received. Here is a summary of what you submitted. You can now start exploring free books and learning resources.</p>
+
+        <div class="data-table" aria-label="Your submitted registration details">
+          <h2>Your Registration Details</h2>
+          <div id="data-output">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <a href="books.html" class="btn btn-primary">📚 Browse Books</a>
+          <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="books.html">Books</a>
+      <a href="join.html">Join</a>
+      <a href="about.html">About</a>
+      <a href="attributions.html">Attributions</a>
+    </div>
+    <p><strong>EduStar</strong> — Smart Learning for Africa &copy; 2026</p>
+    <p><a href="https://youtu.be/placeholder" target="_blank" rel="noopener">📹 Project Demo Video</a></p>
+  </footer>
+
+  <div class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+  function showToast(message, icon) {
+    icon = icon || '✅';
+    var wrap = document.querySelector('.toast-wrap');
+    if (!wrap) return;
+    var toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = '<span>' + icon + '</span> ' + message;
+    wrap.appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 3500);
+  }
+  (function initNav(activePage) {
+    document.querySelectorAll('.nav-links a').forEach(function(link) {
+      if (link.dataset.page === activePage) { link.classList.add('active'); link.setAttribute('aria-current','page'); }
+    });
+    var hamburger = document.querySelector('.hamburger');
+    var navLinks  = document.querySelector('.nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() { var open = navLinks.classList.toggle('open'); hamburger.setAttribute('aria-expanded', open); });
+      document.addEventListener('click', function(e) { if (!e.target.closest('.site-nav')) { navLinks.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); } });
+    }
+  })('join');
+    initNav('join');
+
+    const COUNTRY_NAMES = {
+      KE:'🇰🇪 Kenya', NG:'🇳🇬 Nigeria', ZA:'🇿🇦 South Africa',
+      TZ:'🇹🇿 Tanzania', UG:'🇺🇬 Uganda', GH:'🇬🇭 Ghana',
+      ZW:'🇿🇼 Zimbabwe', ZM:'🇿🇲 Zambia', ET:'🇪🇹 Ethiopia',
+      RW:'🇷🇼 Rwanda', MW:'🇲🇼 Malawi', BW:'🇧🇼 Botswana', MZ:'🇲🇿 Mozambique'
+    };
+
+    // ── Parse query string ───────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+
+    const fname   = params.get('fname')   || '';
+    const lname   = params.get('lname')   || '';
+    const email   = params.get('email')   || '';
+    const country = params.get('country') || '';
+    const grade   = params.get('grade')   || '';
+    const subject = params.get('subject') || '';
+
+    const fields = [
+      { label: 'Full Name',  value: `${fname} ${lname}`.trim() || '—' },
+      { label: 'Email',      value: email   || '—' },
+      { label: 'Country',    value: COUNTRY_NAMES[country] || country || '—' },
+      { label: 'Grade',      value: grade   || '—' },
+      { label: 'Subject',    value: subject || '—' },
+      { label: 'Registered', value: new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) },
+    ];
+
+    const output = document.getElementById('data-output');
+    output.innerHTML = fields.map(f => `
+      <div class="data-row">
+        <span class="data-label">${f.label}</span>
+        <span class="data-value">${f.value}</span>
+      </div>`).join('');
+
+    showToast('Registration received!', '🎉');
+  </script>
+</body>
+
+</html>

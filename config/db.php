@@ -1,31 +1,24 @@
 <?php
 // ================================================================
-// EduStar — Database Configuration
-// Copy this file and update values for your environment.
+// EduStar — Database Configuration (InfinityFree)
 // ================================================================
 
-define('DB_HOST',   getenv('DB_HOST')   ?: 'localhost');
-define('DB_PORT',   getenv('DB_PORT')   ?: '3306');
-define('DB_NAME',   getenv('DB_NAME')   ?: 'edustar');
-define('DB_USER',   getenv('DB_USER')   ?: 'root');
-define('DB_PASS',   getenv('DB_PASS')   ?: '');
-define('DB_CHARSET','utf8mb4');
+define('DB_HOST',    'sql303.infinityfree.com');
+define('DB_PORT',    '3306');
+define('DB_NAME',    'if0_41350612_edustar');
+define('DB_USER',    'if0_41350612');
+define('DB_PASS',    '0EPfOPRSTK');
+define('DB_CHARSET', 'utf8mb4');
 
-// JWT-style session secret — change this to a long random string
-define('APP_SECRET', getenv('APP_SECRET') ?: 'CHANGE_THIS_SECRET_IN_PRODUCTION_abc123xyz');
+define('APP_SECRET', 'EduStar_ShonZ_2026_xK9mP3qR7vL2nW8jT5yB4cD6fH1sA0');
 
-// File upload settings
 define('UPLOAD_DIR',      __DIR__ . '/../uploads/books/');
 define('UPLOAD_URL_BASE', '/uploads/books/');
-define('MAX_FILE_BYTES',  50 * 1024 * 1024);   // 50 MB
+define('MAX_FILE_BYTES',  50 * 1024 * 1024);
 define('ALLOWED_TYPES',   ['application/pdf', 'image/jpeg', 'image/png', 'image/gif']);
 
-// CORS — set to your frontend domain in production
-define('CORS_ORIGIN', getenv('CORS_ORIGIN') ?: '*');
+define('CORS_ORIGIN', 'https://shonz.great-site.net');
 
-/**
- * Return a connected PDO instance (singleton).
- */
 function db(): PDO {
     static $pdo = null;
     if ($pdo === null) {

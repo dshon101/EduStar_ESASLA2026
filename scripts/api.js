@@ -4,7 +4,7 @@
 // Drop this AFTER data.js in every HTML page.
 // ================================================================
 
-const EDUSTAR_API = '/edustar/api'; // Change to full URL if on different domain
+const EDUSTAR_API = '/api'; // Change to full URL if on different domain
 
 // ── TOKEN MANAGEMENT ─────────────────────────────────────────────
 function getToken()        { return localStorage.getItem('edustar_token'); }
@@ -15,7 +15,19 @@ function clearToken()      { localStorage.removeItem('edustar_token'); }
 async function apiFetch(method, path, data, isForm) {
     const token = getToken();
     const headers = {};
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        headers['X-Auth-Token']  = token;
+        // Inject token into URL — most reliable method for LiteSpeed hosting
+        const sep = path.includes('?') ? '&' : '?';
+        path = path + sep + '_token=' + encodeURIComponent(token);
+        // Inject into body for POST/PUT
+        if (data && !isForm) {
+            data._token = token;
+        } else if (!data && method !== 'GET') {
+            data = { _token: token };
+        }
+    }
 
     const opts = { method, headers };
     if (data && !isForm) {
@@ -106,7 +118,7 @@ logout = function() {
     apiFetch('POST', '/auth.php?action=logout').catch(() => {});
     clearToken();
     localStorage.removeItem('edustar_current');
-    window.location.href = '/edustar/index.html';
+    window.location.href = '/index.html';
 };
 
 // ── MARK LESSON COMPLETE (also hits API) ─────────────────────────
@@ -190,7 +202,7 @@ window.addEventListener('load', async () => {
             clearToken();
             if (!window.location.pathname.endsWith('index.html') &&
                 !window.location.pathname.endsWith('/')) {
-                window.location.href = '/edustar/index.html';
+                window.location.href = '/index.html';
             }
         }
     }

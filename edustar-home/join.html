@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Join EduStar for free — create your student account and access curriculum-aligned books, AI lessons, and a peer community across Africa.">
+  <meta name="author" content="Demetrious Shoniwa">
+  <meta property="og:title" content="Join EduStar – Create Your Free Student Account">
+  <meta property="og:description" content="Sign up for free and start accessing free textbooks, AI lessons, and the EduStar peer community today.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://[username].github.io/wdd231/final/join.html">
+  <title>EduStar – Join for Free</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    /* ── JOIN LAYOUT ─────────────────────────────────── */
+    .join-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      min-height: calc(100vh - 65px);
+    }
+
+    /* ── LEFT PANEL ──────────────────────────────────── */
+    .join-left {
+      background: linear-gradient(145deg, rgba(255,107,43,0.12), rgba(0,201,167,0.06));
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 3rem;
+    }
+
+    .join-left h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .join-left h2 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .join-left p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      max-width: 380px;
+      margin-bottom: 2rem;
+    }
+
+    .perks {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .perk {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+
+    .perk-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .perk-text strong {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .perk-text span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── RIGHT: FORM PANEL ───────────────────────────── */
+    .join-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .join-card {
+      background: rgba(26, 26, 46, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      backdrop-filter: blur(20px);
+    }
+
+    .join-card h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+
+    .join-subtitle {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    /* ── FORM SPECIFICS ──────────────────────────────── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .error-msg {
+      background: rgba(255, 71, 87, 0.1);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+      color: #ff6b7a;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    .grade-hint {
+      background: rgba(0, 201, 167, 0.08);
+      border: 1px solid rgba(0, 201, 167, 0.2);
+      border-radius: 10px;
+      padding: 0.7rem 1rem;
+      font-size: 0.78rem;
+      color: var(--teal);
+      margin-top: 0.5rem;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .grade-hint.show { display: block; }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+      accent-color: var(--sun);
+    }
+
+    .checkbox-row label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+
+    .checkbox-row label a {
+      color: var(--sun);
+      text-decoration: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      color: white;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.3rem;
+      transition: all 0.25s;
+      box-shadow: 0 4px 20px rgba(255, 107, 43, 0.35);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 107, 43, 0.5);
+    }
+
+    .already-link {
+      text-align: center;
+      margin-top: 1.2rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .already-link a {
+      color: var(--sun);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 800px) {
+      .join-wrap { grid-template-columns: 1fr; }
+      .join-left { display: none; }
+      .join-right { padding: 2rem 1.2rem; }
+      .join-card { padding: 2rem; border-radius: 20px; }
+    }
+
+    @media (max-width: 400px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <a class="nav-logo" href="index.html" aria-label="EduStar home">⚡ EduStar</a>
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">☰</button>
+    <div class="nav-links" id="main-nav" role="list">
+      <a href="index.html" data-page="home" role="listitem">Home</a>
+      <a href="books.html" data-page="books" role="listitem">Books</a>
+      <a href="join.html" data-page="join" role="listitem">Join</a>
+      <a href="about.html" data-page="about" role="listitem">About</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="join-wrap">
+
+      <!-- LEFT PANEL -->
+      <aside class="join-left" aria-label="Why join EduStar">
+        <div class="section-label">Free Forever</div>
+        <h2>Start your learning<br><em>journey today</em></h2>
+        <p>Join thousands of students across Africa who are using EduStar to study smarter, access free books, and achieve better results.</p>
+        <div class="perks">
+          <div class="perk">
+            <span class="perk-icon" aria-hidden="true">📚</span>
+            <div class="perk-text">
+              <strong>30+ Free Textbooks</strong>
+              <span>Curriculum-aligned books from Siyavula, OpenStax, and Maktaba</span>
+            </div>
+          </div>
+          <div class="perk">
+            <span class="perk-icon" aria-hidden="true">🤖</span>
+            <div class="perk-text">
+              <strong>AI-Powered Lessons</strong>
+              <span>Personalised explanations tailored to your grade and country</span>
+            </div>
+          </div>
+          <div class="perk">
+            <span class="perk-icon" aria-hidden="true">💬</span>
+            <div class="perk-text">
+              <strong>Peer Community</strong>
+              <span>Ask questions and study with students across Africa</span>
+            </div>
+          </div>
+          <div class="perk">
+            <span class="perk-icon" aria-hidden="true">📊</span>
+            <div class="perk-text">
+              <strong>Progress Tracking</strong>
+              <span>Track your XP, completed lessons, and quiz scores</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT: FORM -->
+      <main class="join-right">
+        <div class="join-card">
+          <h1>Create your account ✨</h1>
+          <p class="join-subtitle">Fill in your details to get started — it's completely free.</p>
+
+          <div class="error-msg" id="error-msg" role="alert" aria-live="polite"></div>
+
+          <form id="join-form" novalidate action="join-confirm.html" method="get">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" name="fname" placeholder="First name" autocomplete="given-name" required>
+              </div>
+              <div class="form-group">
+                <label for="last-name">Last Name</label>
+                <input type="text" id="last-name" name="lname" placeholder="Last name" autocomplete="family-name" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="country">Country</label>
+              <select id="country" name="country" required>
+                <option value="">Select your country…</option>
+                <option value="KE">🇰🇪 Kenya</option>
+                <option value="NG">🇳🇬 Nigeria</option>
+                <option value="ZA">🇿🇦 South Africa</option>
+                <option value="TZ">🇹🇿 Tanzania</option>
+                <option value="UG">🇺🇬 Uganda</option>
+                <option value="GH">🇬🇭 Ghana</option>
+                <option value="ZW">🇿🇼 Zimbabwe</option>
+                <option value="ZM">🇿🇲 Zambia</option>
+                <option value="ET">🇪🇹 Ethiopia</option>
+                <option value="RW">🇷🇼 Rwanda</option>
+                <option value="MW">🇲🇼 Malawi</option>
+                <option value="BW">🇧🇼 Botswana</option>
+                <option value="MZ">🇲🇿 Mozambique</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="grade">Grade / Year Level</label>
+              <select id="grade" name="grade" required disabled>
+                <option value="">Select your country first…</option>
+              </select>
+              <div class="grade-hint" id="grade-hint"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Primary Subject of Interest</label>
+              <select id="subject" name="subject" required>
+                <option value="">Select a subject…</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science (Physics/Chemistry/Biology)</option>
+                <option value="English">English Language</option>
+                <option value="Commerce">Commerce / Economics</option>
+                <option value="Technology">Computer Science / Technology</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <div class="checkbox-row">
+                <input type="checkbox" id="agree" name="agree" required>
+                <label for="agree">
+                  I agree to EduStar's <a href="about.html">Terms of Use</a> and confirm that the information I have provided is accurate.
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn">🚀 Create My Free Account</button>
+          </form>
+
+          <p class="already-link">Already have an account? <a href="index.html">Log in here</a></p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="books.html">Books</a>
+      <a href="join.html">Join</a>
+      <a href="about.html">About</a>
+      <a href="attributions.html">Attributions</a>
+    </div>
+    <p><strong>EduStar</strong> — Smart Learning for Africa &copy; 2026</p>
+    <p><a href="https://youtu.be/placeholder" target="_blank" rel="noopener">📹 Project Demo Video</a></p>
+  </footer>
+
+  <div class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+  (function initNav(activePage) {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      if (link.dataset.page === activePage) { link.classList.add('active'); link.setAttribute('aria-current','page'); }
+    });
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => { const open = navLinks.classList.toggle('open'); hamburger.setAttribute('aria-expanded', open); });
+      document.addEventListener('click', (e) => { if (!e.target.closest('.site-nav')) { navLinks.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); } });
+    }
+  })('join');
+    initNav('join');
+
+    // ── Grade systems by country ─────────────────────────────
+    const GRADE_SYSTEMS = {
+      KE: { hint: 'Kenya CBC: Pre-Primary (PP1–PP2), Primary (Grade 1–6), Junior Secondary (Grade 7–9), Senior Secondary (Grade 10–12)', grades: ['PP1','PP2','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'] },
+      NG: { hint: 'Nigeria: Primary (1–6), Junior Secondary (JSS1–3), Senior Secondary (SS1–3)', grades: ['Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','Primary 6','JSS 1','JSS 2','JSS 3','SS 1','SS 2','SS 3'] },
+      ZA: { hint: 'South Africa CAPS: Foundation (Gr1–3), Intermediate (Gr4–6), Senior (Gr7–9), FET (Gr10–12)', grades: ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'] },
+      TZ: { hint: 'Tanzania: Primary (Std 1–7), O-Level (Form 1–4), A-Level (Form 5–6)', grades: ['Standard 1','Standard 2','Standard 3','Standard 4','Standard 5','Standard 6','Standard 7','Form 1','Form 2','Form 3','Form 4','Form 5','Form 6'] },
+      UG: { hint: 'Uganda: Primary (P1–P7), O-Level (S1–S4), A-Level (S5–S6)', grades: ['P1','P2','P3','P4','P5','P6','P7','S1','S2','S3','S4','S5','S6'] },
+      GH: { hint: 'Ghana: Basic (Class 1–6, JHS 1–3), Senior High (SHS 1–3)', grades: ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6','JHS 1','JHS 2','JHS 3','SHS 1','SHS 2','SHS 3'] },
+      ZW: { hint: 'Zimbabwe: Primary (Grade 1–7), Secondary (Form 1–6) — ZIMSEC curriculum', grades: ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Form 1','Form 2','Form 3','Form 4','Form 5','Form 6'] },
+      ZM: { hint: 'Zambia: Primary (Grade 1–9), Secondary (Grade 10–12) — ECZ curriculum', grades: ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'] },
+      ET: { hint: 'Ethiopia: Primary (Grade 1–8), Secondary (Grade 9–12)', grades: ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'] },
+      RW: { hint: 'Rwanda: Primary (P1–P6), Secondary (S1–S6) — REB curriculum', grades: ['P1','P2','P3','P4','P5','P6','S1','S2','S3','S4','S5','S6'] },
+      MW: { hint: 'Malawi: Primary (Std 1–8), Secondary (Form 1–4)', grades: ['Standard 1','Standard 2','Standard 3','Standard 4','Standard 5','Standard 6','Standard 7','Standard 8','Form 1','Form 2','Form 3','Form 4'] },
+      BW: { hint: 'Botswana: Primary (Std 1–7), Secondary (Form 1–5)', grades: ['Standard 1','Standard 2','Standard 3','Standard 4','Standard 5','Standard 6','Standard 7','Form 1','Form 2','Form 3','Form 4','Form 5'] },
+      MZ: { hint: 'Mozambique: Primary (Grade 1–7), Secondary (Grade 8–12)', grades: ['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'] },
+    };
+
+    // ── DOM references ───────────────────────────────────────
+    const countryEl  = document.getElementById('country');
+    const gradeEl    = document.getElementById('grade');
+    const gradeHint  = document.getElementById('grade-hint');
+    const errorMsg   = document.getElementById('error-msg');
+    const form       = document.getElementById('join-form');
+
+    // ── Update grade options when country changes ────────────
+    countryEl.addEventListener('change', () => {
+      const code = countryEl.value;
+      gradeEl.innerHTML = '<option value="">Select your grade…</option>';
+
+      if (!code || !GRADE_SYSTEMS[code]) {
+        gradeEl.disabled = true;
+        gradeHint.classList.remove('show');
+        return;
+      }
+
+      const sys = GRADE_SYSTEMS[code];
+
+      // template literal + map to build options
+      gradeEl.innerHTML = '<option value="">Select your grade…</option>' +
+        sys.grades.map(g => `<option value="${g}">${g}</option>`).join('');
+
+      gradeEl.disabled = false;
+      gradeHint.textContent = `📚 ${sys.hint}`;
+      gradeHint.classList.add('show');
+
+      // Save country preference
+      localStorage.setItem('edustar_pref_country', code);
+    });
+
+    // ── Show error helper ────────────────────────────────────
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('show');
+      errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      setTimeout(() => errorMsg.classList.remove('show'), 5000);
+    }
+
+    // ── Form validation & submission ─────────────────────────
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const fname   = document.getElementById('first-name').value.trim();
+      const lname   = document.getElementById('last-name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const country = countryEl.value;
+      const grade   = gradeEl.value;
+      const subject = document.getElementById('subject').value;
+      const agree   = document.getElementById('agree').checked;
+
+      // Validation checks
+      if (!fname || !lname)      return showError('⚠️ Please enter your first and last name.');
+      if (!email || !email.includes('@')) return showError('⚠️ Please enter a valid email address.');
+      if (!country)              return showError('⚠️ Please select your country.');
+      if (!grade)                return showError('⚠️ Please select your grade level.');
+      if (!subject)              return showError('⚠️ Please select your primary subject.');
+      if (!agree)                return showError('⚠️ You must agree to the Terms of Use to continue.');
+
+      // Save to localStorage
+      const student = { fname, lname, email, country, grade, subject, joined: new Date().toISOString() };
+      localStorage.setItem('edustar_pending_student', JSON.stringify(student));
+
+      // Submit — pass data via query string to confirmation page
+      const params = new URLSearchParams({ fname, lname, email, country, grade, subject });
+      window.location.href = `join-confirm.html?${params.toString()}`;
+    });
+
+    // ── Track last page ──────────────────────────────────────
+    localStorage.setItem('edustar_last_page', 'join');
+  </script>
+</body>
+
+</html>

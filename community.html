@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar — Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/shared.css">
+  <style>
+    .comm-layout { max-width:1100px; margin:0 auto; padding:2rem; display:grid; grid-template-columns:240px 1fr; gap:2rem; }
+    @media(max-width:750px){ .comm-layout{grid-template-columns:1fr} .comm-sidebar{display:none} }
+
+    /* Sidebar */
+    .comm-sidebar { position:sticky; top:74px; height:fit-content; align-self:start; }
+    .sidebar-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; margin-bottom:1rem; }
+    .sidebar-card h4 { font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; margin-bottom:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+    .cat-btn { display:flex; align-items:center; gap:0.5rem; width:100%; padding:0.5rem 0.7rem; border-radius:var(--radius-sm); font-size:0.85rem; color:var(--muted); cursor:pointer; border:none; background:transparent; text-align:left; transition:all 0.18s; font-family:'DM Sans',sans-serif; }
+    .cat-btn:hover { background:rgba(255,255,255,0.05); color:var(--text); }
+    .cat-btn.active { background:rgba(255,107,43,0.1); color:var(--sun); }
+
+    /* Header bar */
+    .comm-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.8rem; }
+    .comm-header h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; }
+    .comm-header h1 span { background:linear-gradient(135deg,var(--sun),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .search-row { display:flex; gap:0.7rem; margin-bottom:1.2rem; }
+    .search-row input { flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.65rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none; }
+    .search-row input:focus { border-color:rgba(255,107,43,0.5); }
+
+    /* Post card */
+    .post-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.4rem; margin-bottom:1rem; cursor:pointer; transition:all 0.2s; }
+    .post-card:hover { border-color:rgba(255,107,43,0.3); transform:translateY(-1px); }
+    .post-card.pinned { border-color:rgba(245,166,35,0.35); background:rgba(245,166,35,0.04); }
+    .post-top { display:flex; align-items:flex-start; gap:0.9rem; }
+    .post-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--sun),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .post-meta { flex:1; min-width:0; }
+    .post-title { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .post-preview { color:var(--muted); font-size:0.82rem; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .post-footer { display:flex; align-items:center; gap:1rem; margin-top:0.8rem; flex-wrap:wrap; }
+    .post-author { font-size:0.75rem; color:var(--muted); }
+    .post-stats { display:flex; gap:0.7rem; margin-left:auto; }
+    .post-stat { font-size:0.75rem; color:var(--muted); display:flex; align-items:center; gap:0.25rem; }
+    .cat-tag { display:inline-block; padding:0.18rem 0.6rem; border-radius:20px; font-size:0.7rem; font-weight:600; background:rgba(255,107,43,0.1); color:var(--sun); border:1px solid rgba(255,107,43,0.2); }
+
+    /* NEW POST MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.72); z-index:600; display:none; align-items:center; justify-content:center; padding:1rem; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:var(--sky); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; max-width:560px; width:100%; max-height:90vh; overflow-y:auto; }
+    .modal-box h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.2rem; margin-bottom:1.2rem; }
+    .field { margin-bottom:1rem; }
+    .field label { display:block; font-size:0.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:0.4rem; font-weight:600; }
+    .field input, .field select, .field textarea { width:100%; background:#1A1A2E; border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.75rem 1rem; color:#F0EDE8; font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; }
+    .field input:focus,.field select:focus,.field textarea:focus { border-color:rgba(255,107,43,0.5); }
+    .field select { background:#1A1A2E; color:#F0EDE8; cursor:pointer; }
+    .field select option { background:#1A1A2E !important; color:#F0EDE8 !important; padding:0.5rem; }
+    .field select option:hover { background:#FF6B2B !important; }
+    .field textarea { min-height:120px; resize:vertical; background:rgba(255,255,255,0.05); }
+    .modal-row { display:flex; gap:0.8rem; justify-content:flex-end; margin-top:1rem; }
+
+    /* POST DETAIL VIEW */
+    .post-detail { display:none; }
+    .post-detail.open { display:block; }
+    .posts-list { }
+    .posts-list.hide { display:none; }
+    .back-btn { display:inline-flex; align-items:center; gap:0.4rem; color:var(--muted); font-size:0.85rem; cursor:pointer; margin-bottom:1.2rem; padding:0.4rem 0.8rem; border-radius:var(--radius-sm); border:1px solid var(--border); background:transparent; transition:all 0.18s; }
+    .back-btn:hover { border-color:rgba(255,107,43,0.3); color:var(--sun); }
+    .detail-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.8rem; margin-bottom:1rem; }
+    .detail-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; margin-bottom:0.7rem; }
+    .detail-body { color:rgba(240,237,232,0.85); line-height:1.75; font-size:0.93rem; white-space:pre-wrap; }
+    .detail-meta { display:flex; gap:1rem; align-items:center; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+    .like-btn { display:inline-flex; align-items:center; gap:0.4rem; padding:0.45rem 1rem; border-radius:50px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:0.82rem; cursor:pointer; transition:all 0.18s; font-family:'DM Sans',sans-serif; }
+    .like-btn:hover,.like-btn.liked { background:rgba(255,107,43,0.1); border-color:rgba(255,107,43,0.3); color:var(--sun); }
+
+    /* Replies */
+    .replies-section { }
+    .replies-section h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; margin-bottom:1rem; }
+    .reply-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1.1rem 1.2rem; margin-bottom:0.7rem; }
+    .reply-top { display:flex; gap:0.7rem; align-items:flex-start; }
+    .reply-avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,var(--teal),#00B4D8); display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
+    .reply-body { color:rgba(240,237,232,0.85); line-height:1.65; font-size:0.88rem; white-space:pre-wrap; }
+    .reply-meta { font-size:0.73rem; color:var(--muted); margin-top:0.4rem; }
+    .reply-form { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; margin-top:1rem; }
+    .reply-form h4 { font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; margin-bottom:0.8rem; }
+    .reply-form textarea { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.75rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none; min-height:90px; resize:vertical; }
+    .reply-form textarea:focus { border-color:rgba(255,107,43,0.5); }
+    .alert { border-radius:var(--radius-sm); padding:0.7rem 1rem; font-size:0.83rem; margin-bottom:0.8rem; display:none; }
+    .alert.show { display:block; }
+    .alert-error { background:rgba(255,71,87,0.1); border:1px solid rgba(255,71,87,0.3); color:#FF6B7A; }
+    .loading-state { text-align:center; padding:3rem; color:var(--muted); }
+    .empty-state { text-align:center; padding:3rem 2rem; color:var(--muted); }
+    .empty-state .icon { font-size:2.5rem; margin-bottom:0.8rem; }
+    .pagination { display:flex; gap:0.5rem; margin-top:1.5rem; justify-content:center; }
+    .page-btn { width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:transparent; color:var(--text); font-size:0.85rem; cursor:pointer; transition:all 0.18s; font-family:'DM Sans',sans-serif; }
+    .page-btn:hover,.page-btn.active { background:rgba(255,107,43,0.12); border-color:rgba(255,107,43,0.3); color:var(--sun); }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-placeholder"></div>
+
+  <div class="comm-layout">
+
+    <!-- SIDEBAR -->
+    <div class="comm-sidebar">
+      <div class="sidebar-card">
+        <h4>Categories</h4>
+        <button class="cat-btn active" onclick="filterCat('',this)">📋 All Posts</button>
+        <button class="cat-btn" onclick="filterCat('general',this)">💬 General</button>
+        <button class="cat-btn" onclick="filterCat('homework',this)">✏️ Homework Help</button>
+        <button class="cat-btn" onclick="filterCat('maths',this)">🔢 Mathematics</button>
+        <button class="cat-btn" onclick="filterCat('science',this)">🔬 Science</button>
+        <button class="cat-btn" onclick="filterCat('english',this)">📖 English</button>
+        <button class="cat-btn" onclick="filterCat('study_tips',this)">💡 Study Tips</button>
+        <button class="cat-btn" onclick="filterCat('books',this)">📚 Books</button>
+      </div>
+      <div class="sidebar-card">
+        <h4>Community Rules</h4>
+        <p style="font-size:0.78rem;color:var(--muted);line-height:1.6">
+          ✅ Be respectful<br>
+          ✅ Help each other learn<br>
+          ✅ Stay on topic<br>
+          ❌ No spam or abuse<br>
+          ❌ No personal information
+        </p>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div>
+
+      <!-- POSTS LIST VIEW -->
+      <div class="posts-list" id="posts-list">
+        <div class="comm-header">
+          <h1>💬 <span>Community</span></h1>
+          <button class="btn btn-primary" onclick="openNewPost()">✏️ New Post</button>
+        </div>
+        <div class="search-row">
+          <input id="search-input" type="text" placeholder="🔍 Search posts..." oninput="debounceSearch()">
+        </div>
+        <div id="posts-container">
+          <div class="loading-state">⏳ Loading posts...</div>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+      <!-- POST DETAIL VIEW -->
+      <div class="post-detail" id="post-detail">
+        <button class="back-btn" onclick="showList()">← Back to Community</button>
+        <div id="detail-container"></div>
+        <div class="replies-section" id="replies-section"></div>
+        <div class="reply-form" id="reply-form">
+          <h4>💬 Add a Reply</h4>
+          <div class="alert alert-error" id="reply-err"></div>
+          <textarea id="reply-body" placeholder="Write your reply..."></textarea>
+          <div style="margin-top:0.8rem;text-align:right">
+            <button class="btn btn-primary" onclick="submitReply()">Post Reply</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- NEW POST MODAL -->
+<div class="modal-overlay" id="modal-new-post">
+  <div class="modal-box">
+    <h3>✏️ Create New Post</h3>
+    <div class="alert alert-error" id="post-err"></div>
+    <div class="field">
+      <label>Title</label>
+      <input id="new-title" type="text" placeholder="What's your question or topic?">
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <select id="new-cat">
+        <option value="general">💬 General</option>
+        <option value="homework">✏️ Homework Help</option>
+        <option value="maths">🔢 Mathematics</option>
+        <option value="science">🔬 Science</option>
+        <option value="english">📖 English</option>
+        <option value="study_tips">💡 Study Tips</option>
+        <option value="books">📚 Books</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Your Post</label>
+      <textarea id="new-body" placeholder="Describe your question or share your thoughts in detail..."></textarea>
+    </div>
+    <div class="modal-row">
+      <button class="btn btn-secondary" onclick="closeNewPost()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitNewPost()">Publish Post</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/scripts/data.js"></script>
+<script>
+const API = '/api';
+let student   = null;
+let currentCat    = '';
+let currentPage   = 1;
+let currentPostId = null;
+let searchTimer   = null;
+
+const CAT_LABELS = {
+  general:'💬 General', homework:'✏️ Homework Help', maths:'🔢 Mathematics',
+  science:'🔬 Science', english:'📖 English', study_tips:'💡 Study Tips',
+  books:'📚 Books', announcements:'📢 Announcements'
+};
+
+window.addEventListener('load', async () => {
+  student = requireAuth();
+  if (!student) return;
+  document.getElementById('nav-placeholder').innerHTML = buildNav(student, 'community');
+
+  // Verify the session is still valid on the server
+  const token = localStorage.getItem('edustar_token');
+  if (token) {
+    try {
+      const vres = await fetch('/api/auth.php?action=me', {
+        headers: { 'Authorization': 'Bearer ' + token, 'X-Auth-Token': token }
+      });
+      const vdata = await vres.json();
+      if (!vdata.ok) {
+        // Session expired on server — clear and redirect to login
+        localStorage.removeItem('edustar_token');
+        localStorage.removeItem('edustar_current');
+        window.location.href = '/index.html?msg=session_expired';
+        return;
+      }
+    } catch(e) { /* Network error — allow page to load anyway */ }
+  }
+
+  loadPosts();
+});
+
+// ── LOAD POSTS ──────────────────────────────────────────────────
+async function loadPosts(page=1) {
+  currentPage = page;
+  const search = document.getElementById('search-input').value.trim();
+  const url = `${API}/community.php?action=list&page=${page}`
+    + (currentCat ? `&category=${currentCat}` : '')
+    + (search     ? `&search=${encodeURIComponent(search)}` : '');
+  const container = document.getElementById('posts-container');
+  container.innerHTML = '<div class="loading-state">⏳ Loading...</div>';
+  try {
+    const res  = await authFetch('GET', url);
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    renderPosts(data.posts || []);
+    renderPagination(data.pages || 1, page);
+  } catch(e) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${e.message}</p></div>`;
+  }
+}
+
+function renderPosts(posts) {
+  const c = document.getElementById('posts-container');
+  if (!posts.length) {
+    c.innerHTML = `<div class="empty-state"><div class="icon">💬</div><p>No posts yet in this category.<br>Be the first to start a discussion!</p></div>`;
+    return;
+  }
+  c.innerHTML = posts.map(p => `
+    <div class="post-card${p.is_pinned?'  pinned':''}" onclick="openPost(${p.id})">
+      ${p.is_pinned ? '<div style="font-size:0.72rem;color:var(--gold);margin-bottom:0.5rem">📌 Pinned</div>' : ''}
+      <div class="post-top">
+        <div class="post-avatar">${p.author_avatar || '🎓'}</div>
+        <div class="post-meta">
+          <div class="post-title">${escHtml(p.title)}</div>
+          <div class="post-preview">${escHtml(p.body)}</div>
+        </div>
+      </div>
+      <div class="post-footer">
+        <span class="cat-tag">${CAT_LABELS[p.category] || p.category}</span>
+        <span class="post-author">by <strong>${escHtml(p.author_name)}</strong> · ${timeAgo(p.created_at)}</span>
+        <div class="post-stats">
+          <span class="post-stat">❤️ ${p.likes||0}</span>
+          <span class="post-stat">💬 ${p.reply_count||0}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPagination(pages, current) {
+  const c = document.getElementById('pagination');
+  if (pages <= 1) { c.innerHTML=''; return; }
+  let html = '';
+  for (let i=1; i<=pages; i++) {
+    html += `<button class="page-btn${i===current?' active':''}" onclick="loadPosts(${i})">${i}</button>`;
+  }
+  c.innerHTML = html;
+}
+
+// ── OPEN POST DETAIL ─────────────────────────────────────────────
+async function openPost(id) {
+  currentPostId = id;
+  document.getElementById('posts-list').classList.add('hide');
+  document.getElementById('post-detail').classList.add('open');
+  document.getElementById('detail-container').innerHTML = '<div class="loading-state">⏳ Loading post...</div>';
+  document.getElementById('replies-section').innerHTML = '';
+  try {
+    const res  = await authFetch('GET', `${API}/community.php?action=get&id=${id}`);
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    renderDetail(data.post);
+    renderReplies(data.replies || []);
+  } catch(e) {
+    document.getElementById('detail-container').innerHTML = `<div class="empty-state"><p>${e.message}</p></div>`;
+  }
+}
+
+function renderDetail(p) {
+  const isLiked = (localStorage.getItem(`liked_post_${p.id}`) === '1');
+  document.getElementById('detail-container').innerHTML = `
+    <div class="detail-card">
+      ${p.is_pinned ? '<div style="font-size:0.78rem;color:var(--gold);margin-bottom:0.6rem">📌 Pinned Post</div>' : ''}
+      <span class="cat-tag" style="margin-bottom:0.8rem;display:inline-block">${CAT_LABELS[p.category]||p.category}</span>
+      <div class="detail-title">${escHtml(p.title)}</div>
+      <div class="detail-body">${escHtml(p.body)}</div>
+      <div class="detail-meta">
+        <div class="post-avatar" style="width:32px;height:32px;font-size:1rem">${p.author_avatar||'🎓'}</div>
+        <span style="font-size:0.82rem">Posted by <strong>${escHtml(p.author_name)}</strong> · ${timeAgo(p.created_at)}</span>
+        <button class="like-btn${isLiked?' liked':''}" id="like-btn-${p.id}" onclick="toggleLike(${p.id})">
+          ❤️ <span id="like-count-${p.id}">${p.likes||0}</span> Like${(p.likes||0)===1?'':'s'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderReplies(replies) {
+  const c = document.getElementById('replies-section');
+  const header = `<h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:1rem">💬 ${replies.length} Repl${replies.length===1?'y':'ies'}</h3>`;
+  if (!replies.length) {
+    c.innerHTML = header + '<div class="empty-state" style="padding:1.5rem"><p style="font-size:0.85rem">No replies yet — be the first to respond!</p></div>';
+    return;
+  }
+  c.innerHTML = header + replies.map(r => `
+    <div class="reply-card">
+      <div class="reply-top">
+        <div class="reply-avatar">${r.author_avatar||'🎓'}</div>
+        <div style="flex:1">
+          <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.4rem">${escHtml(r.author_name)}</div>
+          <div class="reply-body">${escHtml(r.body)}</div>
+          <div class="reply-meta">${timeAgo(r.created_at)}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showList() {
+  document.getElementById('posts-list').classList.remove('hide');
+  document.getElementById('post-detail').classList.remove('open');
+  document.getElementById('reply-body').value = '';
+  currentPostId = null;
+}
+
+// ── LIKE / UNLIKE ────────────────────────────────────────────────
+async function toggleLike(postId) {
+  try {
+    const res  = await authFetch('POST', `${API}/community.php?action=like`, { post_id: postId });
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    const btn  = document.getElementById(`like-btn-${postId}`);
+    const cnt  = document.getElementById(`like-count-${postId}`);
+    if (data.liked) { btn.classList.add('liked'); localStorage.setItem(`liked_post_${postId}`, '1'); }
+    else            { btn.classList.remove('liked'); localStorage.removeItem(`liked_post_${postId}`); }
+    cnt.textContent = data.likes;
+  } catch(e) { toast('❌ ' + e.message, 'error'); }
+}
+
+// ── SUBMIT REPLY ─────────────────────────────────────────────────
+async function submitReply() {
+  const body = document.getElementById('reply-body').value.trim();
+  const errEl = document.getElementById('reply-err');
+  if (!body) { showAlertEl(errEl, '⚠️ Reply cannot be empty.'); return; }
+  if (!currentPostId) return;
+  try {
+    const res  = await authFetch('POST', `${API}/community.php?action=reply`, { post_id: currentPostId, body });
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    document.getElementById('reply-body').value = '';
+    toast('✅ Reply posted!', 'success');
+    openPost(currentPostId); // Refresh
+  } catch(e) { showAlertEl(errEl, '❌ ' + e.message); }
+}
+
+// ── NEW POST MODAL ────────────────────────────────────────────────
+function openNewPost()  { document.getElementById('modal-new-post').classList.add('open'); }
+function closeNewPost() { document.getElementById('modal-new-post').classList.remove('open'); }
+
+async function submitNewPost() {
+  const title = document.getElementById('new-title').value.trim();
+  const body  = document.getElementById('new-body').value.trim();
+  const cat   = document.getElementById('new-cat').value;
+  const errEl = document.getElementById('post-err');
+  if (!title) { showAlertEl(errEl, '⚠️ Title is required.'); return; }
+  if (!body)  { showAlertEl(errEl, '⚠️ Post body is required.'); return; }
+  if (body.length < 10) { showAlertEl(errEl, '⚠️ Please write a bit more detail.'); return; }
+  try {
+    const res  = await authFetch('POST', `${API}/community.php?action=create`, { title, body, category: cat });
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    document.getElementById('new-title').value = '';
+    document.getElementById('new-body').value  = '';
+    closeNewPost();
+    toast('✅ Post published!', 'success');
+    loadPosts();
+  } catch(e) {
+    if (e.message.toLowerCase().includes('unauthori') || e.message.toLowerCase().includes('session')) {
+      errEl.innerHTML = '❌ Session expired — <a href="/index.html" style="color:var(--sun);font-weight:600">click here to log in again</a>.';
+      errEl.classList.add('show');
+    } else {
+      showAlertEl(errEl, '❌ ' + e.message);
+    }
+  }
+}
+
+// ── FILTER / SEARCH ───────────────────────────────────────────────
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadPosts(1);
+}
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadPosts(1), 400);
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+async function authFetch(method, url, body) {
+  const token = localStorage.getItem('edustar_token');
+  const opts  = { method, headers: { 'Content-Type':'application/json' } };
+
+  if (token) {
+    // Send via all channels — LiteSpeed may strip headers but can't strip body/URL
+    opts.headers['Authorization'] = 'Bearer ' + token;
+    opts.headers['X-Auth-Token']  = token;
+
+    // Inject into body for POST/PUT/DELETE only (URL token triggers InfinityFree WAF)
+    if (body) {
+      body._token = token;
+    } else if (method !== 'GET') {
+      body = { _token: token };
+    }
+  }
+
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(url, opts);
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+function showAlertEl(el, msg) {
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+function toast(msg, type) {
+  const c  = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type||'success');
+  el.textContent = msg;
+  c.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => el.remove(), 4000);
+}
+</script>
+</body>
+</html>

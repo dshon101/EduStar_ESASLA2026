@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EduStar – Free AI-powered learning platform for African students. Access curriculum-aligned lessons, textbooks, and a peer community — tailored to your country and grade.">
+  <meta name="author" content="Demetrious Shoniwa">
+  <meta property="og:title" content="EduStar – Smart Learning for Africa">
+  <meta property="og:description" content="Free AI-powered education for every African student. Curriculum-aligned lessons, free textbooks, and a supportive learning community.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://[username].github.io/wdd231/final/index.html">
+  <title>EduStar – Smart Learning for Africa</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    /* ── HERO ───────────────────────────────────────── */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      padding: 5rem 0 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255, 107, 43, 0.12);
+      border: 1px solid rgba(255, 107, 43, 0.28);
+      color: var(--sun);
+      border-radius: 50px;
+      padding: 0.32rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 1.4rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    /* ── FLAGS PANEL ────────────────────────────────── */
+    .hero-panel {
+      background: rgba(26, 26, 46, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .panel-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+    }
+
+    .flag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .flag-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.32rem 0.85rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-lbl {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ── FEATURES ───────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      transition: all 0.25s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(255, 107, 43, 0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.65;
+    }
+
+    /* ── COUNTRIES SECTION ──────────────────────────── */
+    .countries-section {
+      background: linear-gradient(135deg, rgba(255, 107, 43, 0.06), rgba(0, 201, 167, 0.04));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .countries-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .country-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.5rem 1.1rem;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .country-badge:hover {
+      border-color: rgba(255, 107, 43, 0.3);
+      background: rgba(255, 107, 43, 0.08);
+    }
+
+    /* ── CTA BANNER ─────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      border-radius: 24px;
+      padding: 3.5rem;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-banner h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .cta-banner p {
+      font-size: 1rem;
+      opacity: 0.88;
+      margin-bottom: 2rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    .btn-white {
+      background: white;
+      color: var(--sun);
+      font-weight: 700;
+    }
+
+    .btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 800px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero { min-height: auto; padding: 3rem 0; }
+      .cta-banner { padding: 2.5rem 1.5rem; }
+      .countries-section { padding: 2rem 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVIGATION -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <a class="nav-logo" href="index.html" aria-label="EduStar home">⚡ EduStar</a>
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="main-nav">☰</button>
+    <div class="nav-links" id="main-nav" role="list">
+      <a href="index.html" data-page="home" role="listitem">Home</a>
+      <a href="books.html" data-page="books" role="listitem">Books</a>
+      <a href="join.html" data-page="join" role="listitem">Join</a>
+      <a href="about.html" data-page="about" role="listitem">About</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="hero-inner">
+          <div class="hero-content">
+            <div class="hero-tag">🌍 Free for every African student</div>
+            <h1 id="hero-heading">
+              Quality Education,<br><em>Powered by AI</em>
+            </h1>
+            <p class="hero-desc">
+              Access curriculum-aligned lessons, free textbooks, and a peer-learning community — all personalised to your country, grade, and pace.
+            </p>
+            <div class="hero-cta">
+              <a href="join.html" class="btn btn-primary">✨ Get Started Free</a>
+              <a href="books.html" class="btn btn-secondary">📚 Browse Books</a>
+            </div>
+          </div>
+
+          <div class="hero-panel" aria-label="Supported countries and statistics">
+            <div class="panel-title">Supported Across Africa</div>
+            <div class="flag-grid" aria-label="Countries supported">
+              <span class="flag-chip">🇰🇪 Kenya</span>
+              <span class="flag-chip">🇳🇬 Nigeria</span>
+              <span class="flag-chip">🇿🇦 South Africa</span>
+              <span class="flag-chip">🇹🇿 Tanzania</span>
+              <span class="flag-chip">🇺🇬 Uganda</span>
+              <span class="flag-chip">🇬🇭 Ghana</span>
+              <span class="flag-chip">🇿🇼 Zimbabwe</span>
+              <span class="flag-chip">🇿🇲 Zambia</span>
+              <span class="flag-chip">🇪🇹 Ethiopia</span>
+              <span class="flag-chip">🇷🇼 Rwanda</span>
+              <span class="flag-chip">+ More</span>
+            </div>
+            <div class="stats-row">
+              <div class="stat-box">
+                <div class="stat-num" id="stat-books">30+</div>
+                <div class="stat-lbl">Free Books</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">10+</div>
+                <div class="stat-lbl">Countries</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">20+</div>
+                <div class="stat-lbl">Subjects</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" aria-labelledby="features-heading">
+      <div class="container">
+        <div style="text-align:center; margin-bottom:3rem;">
+          <div class="section-label">What We Offer</div>
+          <h2 class="section-title" id="features-heading">
+            Everything a student needs,<br><em>in one place</em>
+          </h2>
+          <p class="section-sub" style="margin: 0 auto;">
+            EduStar combines free textbooks, AI-powered tools, and a community — designed for the African classroom.
+          </p>
+        </div>
+        <div class="features-grid" id="features-grid" aria-label="Platform features">
+          <!-- injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- COUNTRIES -->
+    <section class="section" aria-labelledby="countries-heading">
+      <div class="container">
+        <div class="countries-section">
+          <div class="section-label">Our Reach</div>
+          <h2 class="section-title" id="countries-heading">
+            Built for <em>your</em> curriculum
+          </h2>
+          <p class="section-sub" style="margin: 0.8rem auto 0;">
+            EduStar supports national curricula including ZIMSEC, NECTA, WAEC, KCSE, NECO, ECZ, CAPS, and more.
+          </p>
+          <div class="countries-list" aria-label="List of supported countries">
+            <span class="country-badge">🇰🇪 Kenya (CBC/KCSE)</span>
+            <span class="country-badge">🇳🇬 Nigeria (WAEC/NECO)</span>
+            <span class="country-badge">🇿🇦 South Africa (CAPS/NSC)</span>
+            <span class="country-badge">🇹🇿 Tanzania (NECTA)</span>
+            <span class="country-badge">🇺🇬 Uganda (UNEB)</span>
+            <span class="country-badge">🇬🇭 Ghana (WASSCE)</span>
+            <span class="country-badge">🇿🇼 Zimbabwe (ZIMSEC)</span>
+            <span class="country-badge">🇿🇲 Zambia (ECZ)</span>
+            <span class="country-badge">🇪🇹 Ethiopia (MoE)</span>
+            <span class="country-badge">🇷🇼 Rwanda (REB)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" aria-labelledby="cta-heading">
+      <div class="container">
+        <div class="cta-banner">
+          <h2 id="cta-heading">Ready to start learning?</h2>
+          <p>Join thousands of students across Africa who are taking control of their education — for free, right now.</p>
+          <a href="join.html" class="btn btn-white">🚀 Create Your Free Account</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="books.html">Books</a>
+      <a href="join.html">Join</a>
+      <a href="about.html">About</a>
+      <a href="attributions.html">Attributions</a>
+    </div>
+    <p><strong>EduStar</strong> — Smart Learning for Africa &copy; 2026</p>
+    <p>Textbook sources: <a href="https://www.siyavula.com" target="_blank" rel="noopener">Siyavula</a> · <a href="https://openstax.org" target="_blank" rel="noopener">OpenStax</a> · <a href="https://www.maktaba.org" target="_blank" rel="noopener">Maktaba</a></p>
+    <p><a href="https://youtu.be/placeholder" target="_blank" rel="noopener">📹 Project Demo Video</a></p>
+  </footer>
+
+  <div class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+  // nav inlined below
+  (function initNav(activePage) {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      if (link.dataset.page === activePage) {
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
+      }
+    });
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => {
+        const open = navLinks.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', open);
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.site-nav')) {
+          navLinks.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  })('home');
+    initNav('home');
+
+    // ── Features data rendered with template literals & map ──
+    const FEATURES = [
+      { icon: '📚', title: 'Free Textbook Library', desc: 'Over 30 free, legal textbooks from Siyavula, OpenStax, and Maktaba — filtered for your country and grade.' },
+      { icon: '🤖', title: 'AI-Powered Lessons', desc: 'Curriculum-aligned lessons and explanations generated with AI and tailored to your learning pace.' },
+      { icon: '🧠', title: 'Adaptive Quizzes', desc: 'Test your knowledge with smart quizzes that adapt to your level and help you identify gaps.' },
+      { icon: '💬', title: 'Peer Community', desc: 'Ask questions, share notes, and connect with students across Africa who are studying the same subjects.' },
+      { icon: '📊', title: 'Progress Tracking', desc: 'Track your learning progress, XP points, and subject completion from your personal dashboard.' },
+      { icon: '🌍', title: 'Multi-Curriculum Support', desc: 'Supports ZIMSEC, WAEC, KCSE, NECTA, CAPS, ECZ, and more — all in one place.' },
+    ];
+
+    const grid = document.getElementById('features-grid');
+    if (grid) {
+      grid.innerHTML = FEATURES.map(f => `
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true">${f.icon}</div>
+          <h3>${f.title}</h3>
+          <p>${f.desc}</p>
+        </article>`).join('');
+    }
+
+    // ── Animate stat counters ────────────────────────────────
+    function animateCounter(el, target, suffix = '') {
+      let start = 0;
+      const step = Math.ceil(target / 40);
+      const interval = setInterval(() => {
+        start = Math.min(start + step, target);
+        el.textContent = start + suffix;
+        if (start >= target) clearInterval(interval);
+      }, 40);
+    }
+
+    // Use IntersectionObserver to trigger on scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(document.getElementById('stat-books'), 30, '+');
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    const statEl = document.getElementById('stat-books');
+    if (statEl) observer.observe(statEl);
+
+    // ── Persist last visited page in localStorage ────────────
+    localStorage.setItem('edustar_last_page', 'home');
+  </script>
+</body>
+
+</html>

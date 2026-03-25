@@ -1,4 +1,27 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+echo "<pre style='font-family:monospace;font-size:13px;padding:20px;background:#0d0d1a;color:#f0f0ff'>";
+
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/helpers.php';
+
+// ── DIAGNOSE ──────────────────────────────────────────────────────
+echo "=== DIAGNOSING books.php stats error ===\n";
+$tests = [
+    'book_downloads exists'  => "SELECT COUNT(*) FROM book_downloads",
+    'books exists'           => "SELECT COUNT(*) FROM books",
+    'book_chapters exists'   => "SELECT COUNT(*) FROM book_chapters",
+];
+foreach ($tests as $label => $sql) {
+    try { $r = db()->query($sql)->fetchColumn(); echo "  $label: ✅ ($r rows)\n"; }
+    catch (Exception $e) { echo "  $label: ❌ " . $e->getMessage() . "\n"; }
+}
+
+// ── REWRITE books.php WITH SAFE try/catch ON EVERY QUERY ──────────
+echo "\n=== REWRITING api/books.php ===\n";
+
+file_put_contents(__DIR__ . '/api/books.php', '<?php
 error_reporting(0);
 ini_set("display_errors", 0);
 require_once __DIR__ . "/../config/db.php";
@@ -72,7 +95,7 @@ if ($action === "list") {
     try {
         $country = trim($_GET["country"] ?? "");
         if ($country) {
-            $s = db()->prepare("SELECT * FROM books WHERE (country=? OR country='continental') AND is_active=1 ORDER BY title");
+            $s = db()->prepare("SELECT * FROM books WHERE (country=? OR country=\'continental\') AND is_active=1 ORDER BY title");
             $s->execute([$country]);
         } else {
             $s = db()->prepare("SELECT * FROM books WHERE is_active=1 ORDER BY country,title");
@@ -139,3 +162,31 @@ if ($action === "delete") {
 }
 
 fail("Unknown action", 404);
+');
+
+echo "  api/books.php ✅\n";
+
+// ── TEST THE STATS ENDPOINT DIRECTLY ─────────────────────────────
+echo "\n=== TESTING stats query directly ===\n";
+try {
+    $total = (int)db()->query("SELECT COUNT(*) FROM book_downloads")->fetchColumn();
+    echo "  Total downloads: $total ✅\n";
+    $byC = db()->query("SELECT country, COUNT(*) as cnt FROM book_downloads GROUP BY country ORDER BY cnt DESC LIMIT 5")->fetchAll();
+    echo "  byCountry query: ✅ (" . count($byC) . " rows)\n";
+    $recent = db()->query("SELECT bd.title, bd.country, bd.subject, bd.downloaded_at, u.name as user_name FROM book_downloads bd LEFT JOIN users u ON u.id=bd.user_id ORDER BY bd.downloaded_at DESC LIMIT 5")->fetchAll();
+    echo "  recent query: ✅ (" . count($recent) . " rows)\n";
+    echo "\n  Result: " . json_encode(["total"=>$total,"byCountry"=>$byC]) . "\n";
+} catch (Exception $e) {
+    echo "  ❌ Error: " . $e->getMessage() . "\n";
+}
+
+// ── ALSO CHECK users section WORKS ───────────────────────────────
+echo "\n=== TESTING /admin/users.php ===\n";
+$uf = __DIR__ . '/api/admin/users.php';
+echo "  File exists: " . (file_exists($uf) ? "✅" : "❌") . "\n";
+echo "  File size: " . (file_exists($uf) ? filesize($uf) . " bytes" : "N/A") . "\n";
+
+echo "\n✅ Done! Delete install10.php then Ctrl+Shift+R on admin.\n";
+echo "  - Books section: fixed (no more 500 error)\n";
+echo "  - Users section: should show all 7 users\n";
+echo "</pre><p style='color:red;font-weight:bold;font-family:monospace;padding:20px'>⚠️ DELETE install10.php immediately!</p>";

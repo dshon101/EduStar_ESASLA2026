@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/shared.css">
+  <style>
+    /* ── Layout ──────────────────────────────────────────────────── */
+    .settings-layout { display:grid; grid-template-columns:240px 1fr; gap:2rem; max-width:1000px; margin:0 auto; padding:2rem; }
+    @media(max-width:700px){ .settings-layout{grid-template-columns:1fr} .settings-sidebar{display:flex;flex-wrap:wrap;gap:0.4rem} }
+
+    /* Sidebar — FIX: use position:sticky with correct top offset, NOT fixed */
+    .settings-sidebar { position:sticky; top:74px; height:fit-content; align-self:start; }
+    .settings-nav-item { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 1rem; border-radius:var(--radius-sm); color:var(--muted); font-size:0.88rem; cursor:pointer; border:1px solid transparent; transition:all 0.2s; margin-bottom:0.25rem; user-select:none; }
+    .settings-nav-item:hover { background:rgba(255,255,255,0.05); color:var(--text); }
+    .settings-nav-item.active { background:rgba(255,107,43,0.1); border-color:rgba(255,107,43,0.25); color:var(--sun); }
+    .settings-panel { display:none; }
+    .settings-panel.active { display:block; }
+    .settings-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.8rem; margin-bottom:1.5rem; }
+    .settings-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:0.4rem; }
+    .settings-card .sub { color:var(--muted); font-size:0.82rem; margin-bottom:1.4rem; }
+    .field { margin-bottom:1.1rem; }
+    .field label { display:block; font-size:0.77rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.4rem; font-weight:600; }
+    .field input, .field select { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.75rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; transition:border-color 0.2s; }
+    .field input:focus, .field select:focus { border-color:rgba(255,107,43,0.5); }
+    .field select option { background:#1A1A2E; }
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:500px){ .field-row{grid-template-columns:1fr} }
+    .alert { border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.83rem; margin-bottom:1rem; display:none; }
+    .alert.show { display:block; }
+    .alert-success { background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.28); color:var(--teal); }
+    .alert-error   { background:rgba(255,71,87,0.1);  border:1px solid rgba(255,71,87,0.3);  color:#FF6B7A; }
+
+    /* Avatar picker */
+    .avatar-grid { display:flex; flex-wrap:wrap; gap:0.7rem; margin-top:0.5rem; }
+    .av-btn { font-size:2rem; width:54px; height:54px; border-radius:50%; border:2px solid var(--border); background:rgba(255,255,255,0.04); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+    .av-btn:hover { border-color:var(--sun); transform:scale(1.1); }
+    .av-btn.selected { border-color:var(--sun); background:rgba(255,107,43,0.15); box-shadow:0 0 0 3px rgba(255,107,43,0.2); }
+
+    /* Theme swatches */
+    .theme-grid { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:0.5rem; }
+    .theme-swatch { width:70px; height:48px; border-radius:10px; cursor:pointer; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.65rem; color:rgba(255,255,255,0.85); font-weight:700; transition:all 0.2s; }
+    .theme-swatch:hover { transform:scale(1.07); }
+    .theme-swatch.selected { border-color:var(--sun); box-shadow:0 0 0 3px rgba(255,107,43,0.25); }
+
+    /* Toggles */
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:0.9rem 0; border-bottom:1px solid var(--border); }
+    .toggle-row:last-child { border-bottom:none; }
+    .toggle-info strong { font-size:0.9rem; display:block; margin-bottom:0.2rem; }
+    .toggle-info span { font-size:0.78rem; color:var(--muted); }
+    .toggle { position:relative; width:44px; height:24px; flex-shrink:0; }
+    .toggle input { display:none; }
+    .toggle-track { position:absolute; inset:0; background:rgba(255,255,255,0.1); border-radius:50px; cursor:pointer; transition:background 0.2s; border:1px solid var(--border); }
+    .toggle input:checked + .toggle-track { background:linear-gradient(135deg,var(--sun),var(--gold)); border-color:transparent; }
+    .toggle-thumb { position:absolute; top:2px; left:2px; width:18px; height:18px; background:white; border-radius:50%; transition:left 0.2s; pointer-events:none; }
+    .toggle input:checked ~ .toggle-thumb { left:22px; }
+
+    /* Profile top */
+    .profile-top { display:flex; align-items:center; gap:1.2rem; margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+    .profile-avatar-lg { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--sun),var(--gold)); display:flex; align-items:center; justify-content:center; font-size:2.2rem; flex-shrink:0; }
+    .profile-meta strong { font-family:'Syne',sans-serif; font-size:1.15rem; display:block; }
+    .profile-meta span { font-size:0.82rem; color:var(--muted); }
+
+    /* Danger zone */
+    .danger-card { background:rgba(255,71,87,0.05); border:1px solid rgba(255,71,87,0.2); border-radius:var(--radius); padding:1.8rem; }
+    .danger-card h3 { color:#FF6B7A; font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:0.4rem; }
+    .btn-danger { background:rgba(255,71,87,0.12); color:#FF6B7A; border:1px solid rgba(255,71,87,0.3); border-radius:50px; padding:0.6rem 1.4rem; font-size:0.85rem; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
+    .btn-danger:hover { background:rgba(255,71,87,0.22); }
+
+    /* Mini stats */
+    .mini-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.8rem; margin-top:1rem; }
+    .mini-stat { background:rgba(255,255,255,0.03); border-radius:var(--radius-sm); padding:0.8rem; text-align:center; }
+    .mini-stat .n { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:var(--gold); }
+    .mini-stat .l { font-size:0.7rem; color:var(--muted); margin-top:0.15rem; }
+
+    /* Modal confirm */
+    .confirm-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:600; display:none; align-items:center; justify-content:center; padding:1rem; }
+    .confirm-overlay.open { display:flex; }
+    .confirm-box { background:var(--sky); border:1px solid rgba(255,71,87,0.3); border-radius:var(--radius); padding:2rem; max-width:420px; width:100%; }
+    .confirm-box h3 { font-family:'Syne',sans-serif; color:#FF6B7A; margin-bottom:0.8rem; }
+    .confirm-box p { color:var(--muted); font-size:0.88rem; line-height:1.6; margin-bottom:1.2rem; }
+    .confirm-row { display:flex; gap:0.8rem; justify-content:flex-end; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-placeholder"></div>
+
+  <div class="settings-layout">
+    <!-- Sidebar Nav -->
+    <div class="settings-sidebar">
+      <div class="settings-nav-item active" onclick="showPanel('profile')"  id="nav-profile">👤 Profile</div>
+      <div class="settings-nav-item"        onclick="showPanel('account')"  id="nav-account">🔐 Account &amp; Security</div>
+      <div class="settings-nav-item"        onclick="showPanel('appearance')" id="nav-appearance">🎨 Appearance</div>
+      <div class="settings-nav-item"        onclick="showPanel('notifications')" id="nav-notifications">🔔 Notifications</div>
+      <div class="settings-nav-item"        onclick="showPanel('danger')"   id="nav-danger">⚠️ Danger Zone</div>
+    </div>
+
+    <!-- Panels -->
+    <div>
+
+      <!-- PROFILE PANEL -->
+      <div class="settings-panel active" id="panel-profile">
+        <div class="settings-card">
+          <div class="profile-top">
+            <div class="profile-avatar-lg" id="display-avatar">🎓</div>
+            <div class="profile-meta">
+              <strong id="display-name">Loading...</strong>
+              <span id="display-email">—</span>
+            </div>
+          </div>
+          <h3>Edit Profile</h3>
+          <p class="sub">Update your name, country, and grade level.</p>
+          <div class="alert alert-success" id="profile-ok">✅ Profile updated!</div>
+          <div class="alert alert-error"   id="profile-err"></div>
+          <div class="field-row">
+            <div class="field"><label>Full Name</label><input id="p-name" type="text" placeholder="Your name"></div>
+            <div class="field"><label>Email</label><input id="p-email" type="email" disabled style="opacity:0.5;cursor:not-allowed" title="Email cannot be changed"></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Country</label>
+              <select id="p-country">
+                <option value="KE">🇰🇪 Kenya</option><option value="NG">🇳🇬 Nigeria</option>
+                <option value="ZA">🇿🇦 South Africa</option><option value="TZ">🇹🇿 Tanzania</option>
+                <option value="UG">🇺🇬 Uganda</option><option value="GH">🇬🇭 Ghana</option>
+                <option value="ZW">🇿🇼 Zimbabwe</option><option value="ZM">🇿🇲 Zambia</option>
+                <option value="ET">🇪🇹 Ethiopia</option><option value="RW">🇷🇼 Rwanda</option>
+                <option value="BW">🇧🇼 Botswana</option><option value="MW">🇲🇼 Malawi</option>
+                <option value="MZ">🇲🇿 Mozambique</option>
+              </select>
+            </div>
+            <div class="field"><label>Grade / Year</label><input id="p-grade" type="text" placeholder="e.g. Form 5, Grade 10"></div>
+          </div>
+          <div class="field">
+            <label>Choose Avatar</label>
+            <div class="avatar-grid" id="avatar-grid"></div>
+          </div>
+          <div class="mini-stats" id="mini-stats"></div>
+          <br>
+          <button class="btn btn-primary" onclick="saveProfile()">💾 Save Profile</button>
+        </div>
+      </div>
+
+      <!-- ACCOUNT PANEL -->
+      <div class="settings-panel" id="panel-account">
+        <div class="settings-card">
+          <h3>🔐 Change Password</h3>
+          <p class="sub">Choose a strong password you don't use anywhere else.</p>
+          <div class="alert alert-success" id="pw-ok">✅ Password changed successfully!</div>
+          <div class="alert alert-error"   id="pw-err"></div>
+          <div class="field"><label>Current Password</label><input id="pw-current" type="password" placeholder="Your current password"></div>
+          <div class="field-row">
+            <div class="field"><label>New Password</label><input id="pw-new" type="password" placeholder="At least 6 characters"></div>
+            <div class="field"><label>Confirm New Password</label><input id="pw-confirm" type="password" placeholder="Repeat new password"></div>
+          </div>
+          <button class="btn btn-primary" onclick="changePassword()">🔑 Update Password</button>
+        </div>
+        <div class="settings-card">
+          <h3>📱 Active Sessions</h3>
+          <p class="sub">You are currently logged in. Logging out will clear your session token from all devices.</p>
+          <button class="btn btn-secondary" onclick="logout()">↩ Log Out</button>
+        </div>
+      </div>
+
+      <!-- APPEARANCE PANEL -->
+      <div class="settings-panel" id="panel-appearance">
+        <div class="settings-card">
+          <h3>🎨 Theme</h3>
+          <p class="sub">Choose your colour theme — it will apply to <strong>every page</strong> instantly.</p>
+          <div class="alert alert-success" id="theme-ok">✅ Theme applied to all pages!</div>
+          <div class="theme-grid" id="theme-grid"></div>
+        </div>
+        <div class="settings-card">
+          <h3>🔤 Text Size</h3>
+          <p class="sub">Adjust how large text appears across the app.</p>
+          <div class="theme-grid" id="font-grid"></div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS PANEL -->
+      <div class="settings-panel" id="panel-notifications">
+        <div class="settings-card">
+          <h3>🔔 Notification Preferences</h3>
+          <p class="sub">Control which email notifications you receive from EduStar.</p>
+          <div class="alert alert-success" id="notif-ok">✅ Preferences saved!</div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>New Device Login Alerts</strong>
+              <span>Email when your account is accessed from a new device (no IP shown)</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-login" checked onchange="saveNotifications()">
+              <div class="toggle-track"></div><div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>Daily Study Reminders</strong>
+              <span>Get reminded to complete your daily lessons</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-daily" checked onchange="saveNotifications()">
+              <div class="toggle-track"></div><div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>Quiz Results</strong>
+              <span>Notified when quiz scores are processed</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-quiz" checked onchange="saveNotifications()">
+              <div class="toggle-track"></div><div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>Leaderboard Updates</strong>
+              <span>Know when you move up or down the rankings</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-lb" onchange="saveNotifications()">
+              <div class="toggle-track"></div><div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>New Books &amp; Lessons</strong>
+              <span>Alerts when new content is added</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-content" checked onchange="saveNotifications()">
+              <div class="toggle-track"></div><div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <strong>Community Replies</strong>
+              <span>When someone replies to your posts</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-community" checked onchange="saveNotifications()">
+              <div class="toggle-track"></div><div class="toggle-thumb"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DANGER ZONE -->
+      <div class="settings-panel" id="panel-danger">
+        <div class="danger-card">
+          <h3>⚠️ Danger Zone</h3>
+          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.4rem">These actions are permanent and cannot be undone. Please be careful.</p>
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(255,255,255,0.02);border-radius:var(--radius-sm);border:1px solid rgba(255,71,87,0.1)">
+              <div>
+                <strong style="font-size:0.9rem">Clear Learning Progress</strong>
+                <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem">Remove all completed lessons and reset your XP to 0</p>
+              </div>
+              <button class="btn-danger" onclick="openResetConfirm()">Reset Progress</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;background:rgba(255,255,255,0.02);border-radius:var(--radius-sm);border:1px solid rgba(255,71,87,0.1)">
+              <div>
+                <strong style="font-size:0.9rem">Delete Account</strong>
+                <p style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem">Permanently delete your account and all associated data</p>
+              </div>
+              <button class="btn-danger" onclick="openDeleteConfirm()">Delete Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- RESET PROGRESS CONFIRM MODAL -->
+<div class="confirm-overlay" id="modal-reset">
+  <div class="confirm-box">
+    <h3>⚠️ Reset All Progress?</h3>
+    <p>This will delete all completed lessons, quiz scores, and reset your points and level to zero. This <strong>cannot be undone</strong>.</p>
+    <div class="confirm-row">
+      <button class="btn btn-secondary" onclick="closeModal('modal-reset')">Cancel</button>
+      <button class="btn-danger" onclick="doResetProgress()">Yes, Reset Everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE ACCOUNT CONFIRM MODAL -->
+<div class="confirm-overlay" id="modal-delete">
+  <div class="confirm-box">
+    <h3>🗑️ Delete Account?</h3>
+    <p>This will permanently delete your account, all progress, and all data. You cannot undo this.</p>
+    <p style="margin-bottom:0.8rem">Enter your password to confirm:</p>
+    <div class="field"><input id="delete-pw" type="password" placeholder="Your password"></div>
+    <div class="alert alert-error" id="delete-err"></div>
+    <div class="confirm-row">
+      <button class="btn btn-secondary" onclick="closeModal('modal-delete')">Cancel</button>
+      <button class="btn-danger" onclick="doDeleteAccount()">Delete My Account</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script src="/scripts/data.js"></script>
+<script>
+const API = '/api';
+const AVATARS = ['🎓','🦁','🐘','🦒','🌍','⭐','🚀','💡','🔬','📚','🏆','🌟','🎯','💪','🦅','🌺'];
+const THEMES = [
+  { id:'dark',     label:'Dark',     bg:'#0D0D1A', accent:'#FF6B2B' },
+  { id:'midnight', label:'Midnight', bg:'#0A0A18', accent:'#7B68EE' },
+  { id:'forest',   label:'Forest',   bg:'#0A1A0F', accent:'#00C9A7' },
+  { id:'sunset',   label:'Sunset',   bg:'#1A0D0D', accent:'#F5A623' },
+  { id:'ocean',    label:'Ocean',    bg:'#050F1A', accent:'#00B4D8' },
+  { id:'paper',    label:'Paper',    bg:'#F5F0E8', accent:'#D4580A' },
+  { id:'sky',      label:'Sky',      bg:'#EAF4FB', accent:'#0077B6' },
+  { id:'sage',     label:'Sage',     bg:'#EDF2EC', accent:'#2D6A4F' },
+];
+const FONT_SIZES = [
+  { id:'small',  label:'Small',  css:'14px' },
+  { id:'normal', label:'Normal', css:'16px' },
+  { id:'large',  label:'Large',  css:'18px' },
+];
+
+let student = null;
+
+window.addEventListener('load', () => {
+  student = requireAuth();
+  if (!student) return;
+  document.getElementById('nav-placeholder').innerHTML = buildNav(student, 'settings');
+  document.getElementById('p-name').value    = student.name || '';
+  document.getElementById('p-email').value   = student.email || '';
+  document.getElementById('p-country').value = student.country || 'ZM';
+  document.getElementById('p-grade').value   = student.grade || '';
+  document.getElementById('display-name').textContent  = student.name;
+  document.getElementById('display-email').textContent = student.email;
+  document.getElementById('display-avatar').textContent = student.avatar || '🎓';
+  document.getElementById('mini-stats').innerHTML = `
+    <div class="mini-stat"><div class="n">${student.points||0}</div><div class="l">Points</div></div>
+    <div class="mini-stat"><div class="n">Lv.${student.level||1}</div><div class="l">Level</div></div>
+    <div class="mini-stat"><div class="n">${(student.completed||[]).length}</div><div class="l">Lessons Done</div></div>
+  `;
+  buildAvatarGrid();
+  buildThemeGrid();
+  buildFontGrid();
+  loadNotifPrefs();
+});
+
+// ── PANEL NAV ──────────────────────────────────────────────────────
+function showPanel(id) {
+  document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+}
+
+// ── AVATAR ─────────────────────────────────────────────────────────
+function buildAvatarGrid() {
+  const current = student.avatar || '🎓';
+  document.getElementById('avatar-grid').innerHTML = AVATARS.map(a =>
+    `<button class="av-btn${a===current?' selected':''}" onclick="selectAvatar(this,'${a}')">${a}</button>`
+  ).join('');
+}
+function selectAvatar(btn, av) {
+  document.querySelectorAll('.av-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('display-avatar').textContent = av;
+}
+
+// ── THEME (applies to ALL pages via localStorage + data-theme on <html>) ─
+const LIGHT_THEMES = new Set(['paper','sky','sage']);
+function buildThemeGrid() {
+  const current = localStorage.getItem('edustar_theme') || student.theme || 'dark';
+  document.getElementById('theme-grid').innerHTML = THEMES.map(t => {
+    const isLight = LIGHT_THEMES.has(t.id);
+    const labelColor = isLight ? 'rgba(0,0,0,0.75)' : 'rgba(255,255,255,0.85)';
+    return `<div class="theme-swatch${t.id===current?' selected':''}"
+          style="background:${t.bg};border-color:${t.id===current?t.accent:(isLight?'rgba(0,0,0,0.15)':'rgba(255,255,255,0.1)')};color:${labelColor}"
+          onclick="selectTheme(this,'${t.id}','${t.accent}')">${t.label}</div>`;
+  }).join('');
+}
+function selectTheme(el, id, accent) {
+  document.querySelectorAll('.theme-swatch').forEach(s => { s.classList.remove('selected'); s.style.borderColor='rgba(255,255,255,0.1)'; });
+  el.classList.add('selected');
+  el.style.borderColor = accent;
+  // Apply immediately AND persist globally
+  document.documentElement.setAttribute('data-theme', id);
+  localStorage.setItem('edustar_theme', id);
+  student.theme = id;
+  saveStudent(student);
+  apiFetch('PUT', '/auth.php?action=update', { theme: id }).catch(()=>{});
+  showAlert('theme-ok');
+}
+
+// ── FONT SIZE (applies to ALL pages) ──────────────────────────────
+function buildFontGrid() {
+  const current = localStorage.getItem('edustar_font') || 'normal';
+  document.getElementById('font-grid').innerHTML = FONT_SIZES.map(f =>
+    `<div class="theme-swatch${f.id===current?' selected':''}"
+          style="font-size:${f.css};width:76px;height:48px"
+          onclick="selectFont(this,'${f.id}')">${f.label}</div>`
+  ).join('');
+}
+function selectFont(el, id) {
+  document.querySelectorAll('#font-grid .theme-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  document.documentElement.setAttribute('data-font', id);
+  localStorage.setItem('edustar_font', id);
+}
+
+// ── SAVE PROFILE ───────────────────────────────────────────────────
+async function saveProfile() {
+  const name    = document.getElementById('p-name').value.trim();
+  const country = document.getElementById('p-country').value;
+  const grade   = document.getElementById('p-grade').value.trim();
+  const avatar  = document.querySelector('.av-btn.selected')?.textContent || student.avatar || '🎓';
+  if (!name) { showAlert('profile-err', '⚠️ Name cannot be empty.'); return; }
+  try {
+    const data = await apiFetch('PUT', '/auth.php?action=update', { name, country, grade, avatar });
+    Object.assign(student, data.user);
+    saveStudent(student);
+    document.getElementById('display-name').textContent  = name;
+    document.getElementById('display-avatar').textContent = avatar;
+    showAlert('profile-ok');
+  } catch(e) { showAlert('profile-err', '❌ ' + e.message); }
+}
+
+// ── CHANGE PASSWORD ────────────────────────────────────────────────
+async function changePassword() {
+  const current = document.getElementById('pw-current').value;
+  const nw      = document.getElementById('pw-new').value;
+  const confirm = document.getElementById('pw-confirm').value;
+  if (!current || !nw)   { showAlert('pw-err', '⚠️ Fill in all password fields.'); return; }
+  if (nw !== confirm)    { showAlert('pw-err', '❌ New passwords do not match.'); return; }
+  if (nw.length < 6)     { showAlert('pw-err', '⚠️ Password must be at least 6 characters.'); return; }
+  try {
+    await apiFetch('PUT', '/auth.php?action=update', { currentPassword: current, newPassword: nw });
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value     = '';
+    document.getElementById('pw-confirm').value = '';
+    showAlert('pw-ok');
+  } catch(e) { showAlert('pw-err', '❌ ' + e.message); }
+}
+
+// ── NOTIFICATIONS ──────────────────────────────────────────────────
+function loadNotifPrefs() {
+  const prefs = JSON.parse(localStorage.getItem('edustar_notifs') || '{}');
+  document.getElementById('notif-login').checked     = prefs.login     !== false;
+  document.getElementById('notif-daily').checked     = prefs.daily     !== false;
+  document.getElementById('notif-quiz').checked      = prefs.quiz      !== false;
+  document.getElementById('notif-lb').checked        = prefs.lb        === true;
+  document.getElementById('notif-content').checked   = prefs.content   !== false;
+  document.getElementById('notif-community').checked = prefs.community !== false;
+}
+function saveNotifications() {
+  const prefs = {
+    login:     document.getElementById('notif-login').checked,
+    daily:     document.getElementById('notif-daily').checked,
+    quiz:      document.getElementById('notif-quiz').checked,
+    lb:        document.getElementById('notif-lb').checked,
+    content:   document.getElementById('notif-content').checked,
+    community: document.getElementById('notif-community').checked,
+  };
+  localStorage.setItem('edustar_notifs', JSON.stringify(prefs));
+  showAlert('notif-ok');
+}
+
+// ── DANGER ZONE ────────────────────────────────────────────────────
+function openResetConfirm()  { document.getElementById('modal-reset').classList.add('open'); }
+function openDeleteConfirm() { document.getElementById('modal-delete').classList.add('open'); }
+function closeModal(id)      { document.getElementById(id).classList.remove('open'); }
+
+async function doResetProgress() {
+  try {
+    const data = await apiFetch('POST', '/auth.php?action=reset_progress', {});
+    Object.assign(student, data.user);
+    student.completed = [];
+    saveStudent(student);
+    closeModal('modal-reset');
+    document.getElementById('mini-stats').innerHTML = `
+      <div class="mini-stat"><div class="n">0</div><div class="l">Points</div></div>
+      <div class="mini-stat"><div class="n">Lv.1</div><div class="l">Level</div></div>
+      <div class="mini-stat"><div class="n">0</div><div class="l">Lessons Done</div></div>
+    `;
+    toast('✅ Progress cleared. Starting fresh!', 'success');
+  } catch(e) { toast('❌ ' + e.message, 'error'); }
+}
+
+async function doDeleteAccount() {
+  const pw = document.getElementById('delete-pw').value;
+  if (!pw) { showAlertEl(document.getElementById('delete-err'), '⚠️ Enter your password.'); return; }
+  try {
+    await apiFetch('DELETE', '/auth.php?action=delete', { password: pw });
+    localStorage.clear();
+    window.location.href = '/index.html';
+  } catch(e) { showAlertEl(document.getElementById('delete-err'), '❌ ' + e.message); }
+}
+
+// ── API HELPERS ────────────────────────────────────────────────────
+async function apiFetch(method, path, data) {
+  const token   = localStorage.getItem('edustar_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+    headers['X-Auth-Token']  = token;
+    // Token in body only (URL injection triggers InfinityFree WAF)
+    if (data) data._token = token;
+    else if (method !== 'GET') data = { _token: token };
+  }
+  const res  = await fetch(API + path, { method, headers, body: data ? JSON.stringify(data) : undefined });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Server error');
+  return json;
+}
+function showAlert(id, msg) {
+  const el = document.getElementById(id);
+  if (msg) el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+function showAlertEl(el, msg) {
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+function toast(msg, type) {
+  const c  = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || 'success');
+  el.textContent = msg;
+  c.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => el.remove(), 4200);
+}
+</script>
+</body>
+</html>

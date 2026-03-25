@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduStar — Support Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/shared.css">
+  <style>
+    .support-layout { max-width:960px; margin:0 auto; padding:2rem; }
+    .page-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.9rem; margin-bottom:0.4rem; }
+    .page-title span { background:linear-gradient(135deg,var(--sun),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-sub { color:var(--muted); font-size:0.93rem; margin-bottom:2rem; }
+
+    /* Tabs */
+    .tab-row { display:flex; gap:0.4rem; margin-bottom:1.8rem; border-bottom:1px solid var(--border); }
+    .tab { padding:0.65rem 1.3rem; font-size:0.88rem; font-family:'DM Sans',sans-serif; cursor:pointer; border:none; background:transparent; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.2s; }
+    .tab:hover { color:var(--text); }
+    .tab.active { color:var(--sun); border-bottom-color:var(--sun); }
+
+    /* FAQ */
+    .faq-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; margin-bottom:2rem; }
+    .faq-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.4rem; cursor:pointer; transition:all 0.2s; }
+    .faq-card:hover { border-color:rgba(255,107,43,0.3); transform:translateY(-2px); }
+    .faq-card .icon { font-size:1.8rem; margin-bottom:0.6rem; }
+    .faq-card h4 { font-family:'Syne',sans-serif; font-weight:700; font-size:0.92rem; margin-bottom:0.4rem; }
+    .faq-card p { font-size:0.8rem; color:var(--muted); line-height:1.55; }
+
+    /* FORM */
+    .form-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; }
+    .form-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:0.4rem; }
+    .form-card .sub { color:var(--muted); font-size:0.83rem; margin-bottom:1.5rem; }
+    .field { margin-bottom:1.1rem; }
+    .field label { display:block; font-size:0.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:0.4rem; font-weight:600; }
+    .field input, .field select, .field textarea { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.75rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; transition:border-color 0.2s; }
+    .field input:focus,.field select:focus,.field textarea:focus { border-color:rgba(255,107,43,0.5); }
+    .field select option { background:#1A1A2E; }
+    .field textarea { min-height:130px; resize:vertical; }
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:520px){ .field-row{grid-template-columns:1fr} }
+    .alert { border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.83rem; margin-bottom:1rem; display:none; }
+    .alert.show { display:block; }
+    .alert-success { background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.28); color:var(--teal); }
+    .alert-error   { background:rgba(255,71,87,0.1);  border:1px solid rgba(255,71,87,0.3);  color:#FF6B7A; }
+
+    /* TICKET STATUS */
+    .ticket-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:1rem; }
+    .ticket-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:0.8rem; flex-wrap:wrap; }
+    .ticket-subject { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; }
+    .status-badge { display:inline-block; padding:0.22rem 0.8rem; border-radius:50px; font-size:0.72rem; font-weight:600; }
+    .status-open       { background:rgba(255,107,43,0.12); color:var(--sun); border:1px solid rgba(255,107,43,0.28); }
+    .btn-delete-ticket { background:transparent; border:1px solid rgba(255,71,87,0.3); color:#FF6B7A; border-radius:50px; padding:0.28rem 0.8rem; font-size:0.75rem; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.18s; }
+    .btn-delete-ticket:hover { background:rgba(255,71,87,0.12); }
+    .status-in_progress{ background:rgba(123,104,238,0.12); color:#A78BFA; border:1px solid rgba(123,104,238,0.28); }
+    .status-resolved   { background:rgba(0,201,167,0.12); color:var(--teal); border:1px solid rgba(0,201,167,0.28); }
+    .status-closed     { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
+    .ticket-meta { font-size:0.76rem; color:var(--muted); margin-bottom:0.6rem; }
+    .ticket-message { font-size:0.85rem; color:rgba(240,237,232,0.75); line-height:1.65; padding:0.8rem; background:rgba(255,255,255,0.02); border-radius:var(--radius-sm); margin-bottom:0.8rem; white-space:pre-wrap; }
+    .admin-reply { background:rgba(255,107,43,0.06); border:1px solid rgba(255,107,43,0.15); border-radius:var(--radius-sm); padding:1rem; margin-top:0.5rem; }
+    .admin-reply .label { font-size:0.72rem; color:var(--sun); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:0.4rem; }
+    .admin-reply p { font-size:0.85rem; color:rgba(240,237,232,0.85); line-height:1.65; white-space:pre-wrap; }
+
+    /* Status lookup */
+    .lookup-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.8rem; margin-bottom:1.5rem; }
+    .lookup-card h3 { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:0.4rem; }
+    .lookup-card p { color:var(--muted); font-size:0.83rem; margin-bottom:1.2rem; }
+    .lookup-row { display:flex; gap:0.7rem; }
+    .lookup-row input { flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.7rem 1rem; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none; }
+    .lookup-row input:focus { border-color:rgba(255,107,43,0.5); }
+
+    .success-screen { text-align:center; padding:2rem; display:none; }
+    .success-screen .icon { font-size:3rem; margin-bottom:1rem; }
+    .success-screen h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.3rem; margin-bottom:0.5rem; }
+    .success-screen p { color:var(--muted); font-size:0.88rem; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="nav-placeholder"></div>
+
+  <div class="support-layout">
+    <div class="page-title">🎧 <span>Support Center</span></div>
+    <p class="page-sub">Get help, check your ticket status, or browse common answers below.</p>
+
+    <!-- TABS -->
+    <div class="tab-row">
+      <button class="tab active" onclick="showTab('faq',this)">❓ FAQ</button>
+      <button class="tab" onclick="showTab('submit',this)">📨 Submit Ticket</button>
+      <button class="tab" onclick="showTab('status',this)">📋 My Tickets</button>
+    </div>
+
+    <!-- FAQ TAB -->
+    <div id="tab-faq">
+      <div class="faq-grid">
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">🔑</div>
+          <h4>I forgot my password</h4>
+          <p>Go to Settings → Account &amp; Security → Change Password. You'll need your current password. If locked out, submit a support ticket.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">📚</div>
+          <h4>A book link isn't working</h4>
+          <p>Some books link to external sites (Siyavula, OpenStax). If a link is broken, please submit a ticket with the book name and we'll fix it.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">🎓</div>
+          <h4>My progress isn't saving</h4>
+          <p>Make sure you're logged in. Progress saves to the server automatically. If problems persist, check your internet connection and try again.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">🌍</div>
+          <h4>My country isn't listed</h4>
+          <p>We currently support 13 African countries. More are being added regularly. Let us know your country via a support ticket and we'll prioritise it.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">🎨</div>
+          <h4>How do I change the theme?</h4>
+          <p>Go to Settings → Appearance. Choose from Dark, Midnight, Forest, Sunset, or Ocean. The theme applies to all pages instantly.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">🗑️</div>
+          <h4>How do I delete my account?</h4>
+          <p>Go to Settings → Danger Zone → Delete Account. You'll need to confirm with your password. This is permanent and cannot be undone.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">💬</div>
+          <h4>Community rules</h4>
+          <p>Be respectful and helpful. No spam, no sharing personal information, stay on academic topics. Posts violating rules will be removed.</p>
+        </div>
+        <div class="faq-card" onclick="expandFaq(this)">
+          <div class="icon">📧</div>
+          <h4>Why am I getting login emails?</h4>
+          <p>We only send an email when a new device or browser logs into your account. No IP address is included. You can turn this off in Settings → Notifications.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1rem">
+        <p style="color:var(--muted);font-size:0.88rem;margin-bottom:1rem">Can't find your answer?</p>
+        <button class="btn btn-primary" onclick="showTab('submit',document.querySelectorAll('.tab')[1])">📨 Submit a Support Ticket</button>
+      </div>
+    </div>
+
+    <!-- SUBMIT TICKET TAB -->
+    <div id="tab-submit" style="display:none">
+      <div class="form-card">
+        <h3>📨 Submit a Support Ticket</h3>
+        <p class="sub">We typically respond within 24–48 hours. You'll receive email updates on your ticket status.</p>
+
+        <!-- Success screen -->
+        <div class="success-screen" id="submit-success">
+          <div class="icon">✅</div>
+          <h3>Ticket Submitted!</h3>
+          <p id="success-msg">We'll respond to your email shortly. Check <strong>My Tickets</strong> tab for updates.</p>
+          <button class="btn btn-primary" style="margin-top:1.5rem" onclick="resetForm()">Submit Another</button>
+        </div>
+
+        <!-- Form -->
+        <div id="submit-form">
+          <div class="alert alert-error" id="submit-err"></div>
+          <div class="field-row">
+            <div class="field"><label>Your Name</label><input id="t-name" type="text" placeholder="Full name"></div>
+            <div class="field"><label>Email Address</label><input id="t-email" type="email" placeholder="you@email.com"></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Category</label>
+              <select id="t-cat">
+                <option value="general">💬 General Question</option>
+                <option value="technical">🔧 Technical Issue</option>
+                <option value="account">👤 Account Problem</option>
+                <option value="content">📚 Content / Books</option>
+                <option value="feedback">💡 Feedback / Suggestion</option>
+              </select>
+            </div>
+            <div class="field"><label>Subject</label><input id="t-subject" type="text" placeholder="Brief description"></div>
+          </div>
+          <div class="field">
+            <label>Message</label>
+            <textarea id="t-message" placeholder="Describe your issue in detail. Include any error messages, what you were doing when it happened, and your device/browser if it's a technical issue."></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="submitTicket()">📨 Send Ticket</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY TICKETS TAB -->
+    <div id="tab-status" style="display:none">
+      <div class="lookup-card">
+        <h3>🔍 Look Up Your Tickets</h3>
+        <p>Enter the email address you used when submitting, or log in to see your tickets automatically.</p>
+        <div class="lookup-row">
+          <input id="lookup-email" type="email" placeholder="your@email.com" id="lookup-email">
+          <button class="btn btn-primary" onclick="lookupTickets()">Search</button>
+        </div>
+        <div class="alert alert-error" id="lookup-err" style="margin-top:0.8rem"></div>
+      </div>
+      <div id="tickets-container"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/scripts/data.js"></script>
+<script>
+const API = '/api';
+let student = null;
+
+window.addEventListener('load', () => {
+  student = requireAuth();
+  if (!student) return;
+  document.getElementById('nav-placeholder').innerHTML = buildNav(student, 'support');
+  // Pre-fill form with student details
+  document.getElementById('t-name').value  = student.name  || '';
+  document.getElementById('t-email').value = student.email || '';
+  // Pre-fill lookup with student email
+  document.getElementById('lookup-email').value = student.email || '';
+});
+
+// ── TABS ──────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  ['faq','submit','status'].forEach(t => document.getElementById('tab-'+t).style.display='none');
+  document.getElementById('tab-'+id).style.display='block';
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'status') lookupTickets();
+}
+
+// ── FAQ EXPAND ────────────────────────────────────────────────────
+function expandFaq(card) {
+  card.style.borderColor = 'rgba(255,107,43,0.4)';
+  setTimeout(() => card.style.borderColor = '', 1500);
+}
+
+// ── SUBMIT TICKET ─────────────────────────────────────────────────
+async function submitTicket() {
+  const name    = document.getElementById('t-name').value.trim();
+  const email   = document.getElementById('t-email').value.trim();
+  const cat     = document.getElementById('t-cat').value;
+  const subject = document.getElementById('t-subject').value.trim();
+  const message = document.getElementById('t-message').value.trim();
+  const errEl   = document.getElementById('submit-err');
+
+  if (!name || !email || !subject || !message) {
+    showAlertEl(errEl, '⚠️ Please fill in all fields.'); return;
+  }
+  if (message.length < 20) {
+    showAlertEl(errEl, '⚠️ Please describe your issue in more detail.'); return;
+  }
+
+  try {
+    const res  = await authFetch('POST', `${API}/support.php?action=submit`, { name, email, category:cat, subject, message });
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    document.getElementById('submit-form').style.display    = 'none';
+    document.getElementById('submit-success').style.display = 'block';
+    document.getElementById('success-msg').innerHTML =
+      `Ticket <strong>#${data.ticket_id}</strong> submitted! We'll respond to <strong>${escHtml(email)}</strong> within 24–48 hours.`;
+  } catch(e) { showAlertEl(errEl, '❌ ' + e.message); }
+}
+
+function resetForm() {
+  document.getElementById('submit-form').style.display    = 'block';
+  document.getElementById('submit-success').style.display = 'none';
+  document.getElementById('t-subject').value  = '';
+  document.getElementById('t-message').value  = '';
+}
+
+// ── LOOKUP TICKETS ────────────────────────────────────────────────
+async function lookupTickets() {
+  const email = document.getElementById('lookup-email').value.trim();
+  const errEl = document.getElementById('lookup-err');
+  if (!email) { showAlertEl(errEl, '⚠️ Enter your email address.'); return; }
+  const c = document.getElementById('tickets-container');
+  c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)">⏳ Loading...</div>';
+  try {
+    const res  = await authFetch('GET', `${API}/support.php?action=my_tickets&email=${encodeURIComponent(email)}`);
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error);
+    renderTickets(data.tickets || []);
+  } catch(e) {
+    c.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted)">${e.message}</div>`;
+  }
+}
+
+function renderTickets(tickets) {
+  const c = document.getElementById('tickets-container');
+  if (!tickets.length) {
+    c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted)"><p>No tickets found for this email address.</p></div>';
+    return;
+  }
+  c.innerHTML = tickets.map(t => {
+    const canDelete = (t.status === 'open' || t.status === 'closed');
+    const deleteBtn = canDelete
+      ? `<button class="btn-delete-ticket" onclick="deleteTicket(${t.id}, this)">🗑️ Delete</button>`
+      : '';
+    return `
+    <div class="ticket-card" id="ticket-card-${t.id}">
+      <div class="ticket-header">
+        <div class="ticket-subject">${escHtml(t.subject)}</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap">
+          <span class="status-badge status-${t.status}">${statusLabel(t.status)}</span>
+          ${deleteBtn}
+        </div>
+      </div>
+      <div class="ticket-meta">
+        Ticket #${t.id} · ${t.category} · Submitted ${timeAgo(t.created_at)}
+        ${t.updated_at !== t.created_at ? ` · Updated ${timeAgo(t.updated_at)}` : ''}
+      </div>
+      ${t.admin_reply ? `
+        <div class="admin-reply">
+          <div class="label">🎧 Support Team Reply</div>
+          <p>${escHtml(t.admin_reply)}</p>
+        </div>
+      ` : '<p style="font-size:0.82rem;color:var(--muted)">Awaiting response from the support team…</p>'}
+    </div>`;
+  }).join('');
+}
+
+async function deleteTicket(id, btn) {
+  if (!confirm('Delete this ticket? This cannot be undone.')) return;
+  btn.disabled = true;
+  btn.textContent = '⏳';
+  try {
+    const res  = await authFetch('DELETE', `${API}/support.php?action=delete_ticket&id=${id}`);
+    const text = await res.text();
+    let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
+    if (!data.ok) throw new Error(data.error || 'Delete failed');
+    // Remove the card from the DOM
+    const card = document.getElementById('ticket-card-' + id);
+    if (card) {
+      card.style.transition = 'opacity 0.3s';
+      card.style.opacity = '0';
+      setTimeout(() => card.remove(), 300);
+    }
+    toast('🗑️ Ticket deleted.', 'success');
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '🗑️ Delete';
+    toast('❌ ' + e.message, 'error');
+  }
+}
+
+function statusLabel(s) {
+  return { open:'🔴 Open', in_progress:'🟡 In Progress', resolved:'🟢 Resolved', closed:'⚫ Closed' }[s] || s;
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────
+async function authFetch(method, url, body) {
+  const token = localStorage.getItem('edustar_token');
+  const opts  = { method, headers: { 'Content-Type':'application/json' } };
+  if (token) {
+    opts.headers['Authorization'] = 'Bearer ' + token;
+    opts.headers['X-Auth-Token']  = token;
+    // Token in body only (URL injection triggers InfinityFree WAF)
+    if (body) { body._token = token; }
+    else if (method !== 'GET') { body = { _token: token }; }
+  }
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(url, opts);
+}
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+  if (diff < 60)    return 'just now';
+  if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+function showAlertEl(el, msg) {
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+function toast(msg, type) {
+  const c  = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type||'success');
+  el.textContent = msg;
+  c.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => el.remove(), 4000);
+}
+</script>
+</body>
+</html>

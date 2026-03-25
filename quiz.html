@@ -6,8 +6,8 @@
   <title>EduStar – Quiz</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/normalize.css">
-  <link rel="stylesheet" href="styles/shared.css">
+  <link rel="stylesheet" href="/styles/normalize.css">
+  <link rel="stylesheet" href="/styles/shared.css">
   <style>
     .quiz-setup { max-width: 600px; margin: 0 auto; }
     .quiz-setup-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; margin-bottom:1.5rem; }
@@ -87,7 +87,7 @@
         <div class="result-actions">
           <button class="btn btn-primary" onclick="restartQuiz()">🔄 Try Again</button>
           <button class="btn btn-secondary" onclick="exitQuiz()">⚙️ Change Subject</button>
-          <a href="dashboard.html#chat-anchor" class="btn btn-teal">🤖 Ask AI Tutor</a>
+          <a href="/dashboard.html#chat-anchor" class="btn btn-teal">🤖 Ask AI Tutor</a>
         </div>
         <div class="leaderboard">
           <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">🏆 Your Best Scores</h3>
@@ -100,10 +100,10 @@
   <footer><p>Built with ❤️ for students across Africa · <strong>EduStar AI</strong></p></footer>
 </div>
 <div class="toast-container" id="toasts"></div>
-<script src="scripts/data.js"></script>
-<script src="scripts/api.js"></script>
+<script src="/scripts/data.js"></script>
+<script src="/scripts/api.js"></script>
 <script>
-let student = requireAuth();
+let student = null;
 let selectedSubject = null;
 let selectedCount   = 5;
 let quiz = null;
@@ -114,6 +114,8 @@ let liveCorrect    = 0;
 const QUIZ_SUBJECTS = ['math','english','science','biology','chemistry','physics','history','geography','economics','accounting','computer','literature'];
 
 function init() {
+  student = requireAuth();
+  if (!student) { window.location.href = '/index.html'; return; }
   document.getElementById('nav-container').innerHTML = buildNav(student, 'quiz');
   const flag = COUNTRY_FLAGS[student.country]||'🌍';
   document.getElementById('hero-desc').textContent = `${flag} ${COUNTRY_NAMES[student.country]||'Africa'} · ${student.grade} curriculum questions · +2 pts per correct answer`;

@@ -1,81 +1,37 @@
 <?php
-// ================================================================
-// EduStar API — /api/quiz.php
-// POST /api/quiz.php?action=save   — save a quiz result
-// GET  /api/quiz.php?action=scores — get my best scores
-// GET  /api/quiz.php?action=leaderboard — top 20 globally
-// ================================================================
-require_once __DIR__ . '/../config/helpers.php';
+error_reporting(0); ini_set("display_errors",0);
+require_once __DIR__."/../config/db.php";
+require_once __DIR__."/../config/helpers.php";
 jsonHeaders();
+$action = $_GET["action"] ?? "";
 
-$action = $_GET['action'] ?? '';
-$method = $_SERVER['REQUEST_METHOD'];
-
-// ── SAVE QUIZ SCORE ──────────────────────────────────────────────
-if ($action === 'save' && $method === 'POST') {
+if ($action === "leaderboard") {
+    $rows = db()->query("SELECT id,name,country,points,level,quizzes_taken FROM users WHERE is_active=1 ORDER BY points DESC LIMIT 20")->fetchAll();
+    ok(["leaderboard"=>$rows]); exit;
+}
+if ($action === "submit" && $_SERVER["REQUEST_METHOD"]==="POST") {
+    $user = requireAuth(); $b = body();
+    $sid  = trim($b["subjectId"] ?? ""); $sname = trim($b["subjectName"] ?? $sid);
+    $score= max(0,(int)($b["score"]??0)); $total = max(1,(int)($b["total"]??10));
+    $pct  = round($score/$total*100,2);
+    db()->prepare("INSERT INTO quiz_scores (user_id,subject_id,subject_name,score,total,percentage) VALUES (?,?,?,?,?,?)")
+       ->execute([$user["id"],$sid,$sname,$score,$total,$pct]);
+    $nq = (int)$user["quizzes_taken"]+1;
+    $pts= (int)$user["points"]+$score*10;
+    $lvl= max(1,(int)floor($pts/500)+1);
+    db()->prepare("UPDATE users SET quizzes_taken=?,points=?,level=? WHERE id=?")->execute([$nq,$pts,$lvl,$user["id"]]);
+    ok(["score"=>$score,"total"=>$total,"percentage"=>$pct,"pointsEarned"=>$score*10]); exit;
+}
+if ($action === "history") {
     $user = requireAuth();
-    $b    = body();
-
-    $subjectId   = str('subjectId', $b);
-    $subjectName = str('subjectName', $b);
-    $scorePct    = intVal('pct', $b);
-    $pts         = intVal('pts', $b);
-    $correct     = intVal('correct', $b);
-    $total       = intVal('total', $b);
-    $timeSecs    = intVal('timeSecs', $b);
-
-    if (!$subjectId || $total < 1) fail('Missing required fields.');
-
-    db()->prepare('
-        INSERT INTO quiz_scores
-          (user_id, subject_id, subject_name, score_pct, points_earned, correct, total, time_secs)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ')->execute([$user['id'], $subjectId, $subjectName, $scorePct, $pts, $correct, $total, $timeSecs]);
-
-    // Update user points + level
-    db()->prepare('
-        UPDATE users
-        SET points = points + ?,
-            quizzes_taken = quizzes_taken + 1,
-            level = GREATEST(1, FLOOR((points + ?) / 200) + 1)
-        WHERE id = ?
-    ')->execute([$pts, $pts, $user['id']]);
-
-    ok(['message' => 'Score saved.']);
+    $s = db()->prepare("SELECT * FROM quiz_scores WHERE user_id=? ORDER BY taken_at DESC LIMIT 50");
+    $s->execute([$user["id"]]); ok(["history"=>$s->fetchAll()]); exit;
 }
-
-// ── MY BEST SCORES ────────────────────────────────────────────────
-if ($action === 'scores' && $method === 'GET') {
-    $user = requireAuth();
-
-    $stmt = db()->prepare('
-        SELECT subject_id, subject_name, MAX(score_pct) AS best_pct,
-               SUM(points_earned) AS total_pts, COUNT(*) AS attempts,
-               MIN(time_secs) AS best_time, MAX(taken_at) AS last_taken
-        FROM quiz_scores
-        WHERE user_id = ?
-        GROUP BY subject_id, subject_name
-        ORDER BY best_pct DESC
-        LIMIT 20
-    ');
-    $stmt->execute([$user['id']]);
-    ok(['scores' => $stmt->fetchAll()]);
+if ($action === "admin_stats") {
+    requireAdmin();
+    $total = db()->query("SELECT COUNT(*) FROM quiz_scores")->fetchColumn();
+    $avg   = db()->query("SELECT AVG(percentage) FROM quiz_scores")->fetchColumn();
+    $bysub = db()->query("SELECT subject_name,COUNT(*) as cnt,AVG(percentage) as avg_pct FROM quiz_scores GROUP BY subject_name ORDER BY cnt DESC LIMIT 10")->fetchAll();
+    ok(["total"=>(int)$total,"avgScore"=>round($avg,1),"bySubject"=>$bysub]); exit;
 }
-
-// ── GLOBAL LEADERBOARD ────────────────────────────────────────────
-if ($action === 'leaderboard' && $method === 'GET') {
-    $stmt = db()->prepare('
-        SELECT u.name, u.country, u.points, u.level,
-               COUNT(DISTINCT qs.id) AS quizzes_taken
-        FROM users u
-        LEFT JOIN quiz_scores qs ON qs.user_id = u.id
-        WHERE u.is_active = 1
-        GROUP BY u.id
-        ORDER BY u.points DESC
-        LIMIT 20
-    ');
-    $stmt->execute();
-    ok(['leaderboard' => $stmt->fetchAll()]);
-}
-
-fail('Unknown action or method.', 404);
+fail("Unknown action",404);

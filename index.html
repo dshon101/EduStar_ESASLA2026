@@ -620,12 +620,19 @@
     }
 
     // ── API helpers ──────────────────────────────────────────────
-    const API = '/edustar/api';
+    const API = '/api';
 
     async function apiFetch(method, path, data) {
       const token = localStorage.getItem('edustar_token');
       const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        headers['X-Auth-Token']  = token;
+        const sep = path.includes('?') ? '&' : '?';
+        path = path + sep + '_token=' + encodeURIComponent(token);
+        if (data) data._token = token;
+        else if (method !== 'GET') data = { _token: token };
+      }
       const res  = await fetch(API + path, { method, headers, body: data ? JSON.stringify(data) : undefined });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || 'Server error');
@@ -649,7 +656,7 @@
       try {
         const data = await apiFetch('POST', '/auth.php?action=login', { email, password: pw });
         cacheUser(data.token, data.user);
-        window.location.href = '/edustar/dashboard.html';
+        window.location.href = '/dashboard.html';
       } catch (e) {
         showError('login-error', '❌ ' + e.message);
       }
@@ -659,7 +666,7 @@
       const guest = { name: 'Guest Student', email: 'guest@edustar.ai', country: 'KE',
                       grade: 'Grade 7', points: 0, level: 1, completed: [], quizzesTaken: 0, isGuest: true };
       localStorage.setItem('edustar_current', JSON.stringify(guest));
-      window.location.href = '/edustar/dashboard.html';
+      window.location.href = '/dashboard.html';
     }
 
     async function doSignup() {
@@ -680,7 +687,7 @@
         const data = await apiFetch('POST', '/auth.php?action=register',
           { name: fname + ' ' + lname, email, country, grade, password: pw });
         cacheUser(data.token, data.user);
-        window.location.href = '/edustar/dashboard.html';
+        window.location.href = '/dashboard.html';
       } catch (e) {
         showError('signup-error', '❌ ' + e.message);
       }
@@ -693,14 +700,14 @@
         try {
           const data = await apiFetch('GET', '/auth.php?action=me');
           cacheUser(token, data.user);
-          window.location.href = '/edustar/dashboard.html';
+          window.location.href = '/dashboard.html';
         } catch (e) {
           localStorage.removeItem('edustar_token');
           localStorage.removeItem('edustar_current');
         }
       } else if (localStorage.getItem('edustar_current')) {
         // Legacy: already had localStorage session (guest or old session)
-        window.location.href = '/edustar/dashboard.html';
+        window.location.href = '/dashboard.html';
       }
     });
   </script>

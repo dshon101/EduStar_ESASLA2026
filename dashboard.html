@@ -6,8 +6,8 @@
   <title>EduStar – Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/normalize.css">
-  <link rel="stylesheet" href="styles/shared.css">
+  <link rel="stylesheet" href="/styles/normalize.css">
+  <link rel="stylesheet" href="/styles/shared.css">
 </head>
 <body>
 <div class="app">
@@ -19,9 +19,9 @@
     <h1 id="hero-title">Welcome back!<br><em id="hero-name">Student</em></h1>
     <p id="hero-desc">Your personalised learning dashboard. Continue where you left off.</p>
     <div class="hero-cta" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
-      <a href="/edustar/subjects.html" class="btn btn-primary">📚 Browse Subjects</a>
-      <a href="/edustar/quiz.html" class="btn btn-secondary">🧠 Take a Quiz</a>
-      <a href="/edustar/books.html" class="btn btn-teal">📖 School Books</a>
+      <a href="/subjects.html" class="btn btn-primary">📚 Browse Subjects</a>
+      <a href="/quiz.html" class="btn btn-secondary">🧠 Take a Quiz</a>
+      <a href="/books.html" class="btn btn-teal">📖 School Books</a>
     </div>
   </section>
 
@@ -54,36 +54,10 @@
     <!-- Quick Subjects -->
     <div class="section-header">
       <div class="section-title">Popular <span>Subjects</span></div>
-      <a href="/edustar/subjects.html" class="btn btn-sm btn-secondary">View All →</a>
+      <a href="/subjects.html" class="btn btn-sm btn-secondary">View All →</a>
     </div>
     <div class="subjects-grid" id="subjects-grid"></div>
 
-    <!-- AI TUTOR CHAT -->
-    <div class="section-header" id="chat-anchor">
-      <div class="section-title">AI <span>Tutor Chat</span></div>
-      <span style="font-size:0.78rem;color:var(--muted)">Ask anything about your studies</span>
-    </div>
-    <div class="chat-section">
-      <div class="chat-header">
-        <div class="ai-avatar">🤖</div>
-        <div class="chat-header-info">
-          <h3>EduStar AI Tutor</h3>
-          <p><span class="online-dot"></span> Always here to help</p>
-        </div>
-        <div style="margin-left:auto;font-size:0.75rem;color:var(--muted)" id="chat-grade-info"></div>
-      </div>
-      <div class="chat-messages" id="chat-messages">
-        <div class="msg ai">
-          <div class="msg-avatar ai">🤖</div>
-          <div class="msg-bubble" id="welcome-msg">👋 Loading your personalised tutor...</div>
-        </div>
-      </div>
-      <div class="chat-suggestions" id="chat-suggestions"></div>
-      <div class="chat-input-area">
-        <textarea class="chat-input" id="chat-input" placeholder="Ask your question here..." rows="1"></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
-      </div>
-    </div>
 
   </div>
 
@@ -96,15 +70,17 @@
 
 <div class="toast-container" id="toasts"></div>
 
-<script src="scripts/data.js"></script>
-<script src="scripts/api.js"></script>
+<script src="/scripts/data.js"></script>
+<script src="/scripts/api.js"></script>
 <script>
-let student = requireAuth();
-let chatHistory = [];
-let chatBusy = false;
+let student = null;
 const QUICK_SUBJECTS = ['math','english','science','history','geography','biology','chemistry','physics','economics','accounting','computer','literature'];
 
 function init() {
+  // Get student - redirect to login if not found
+  student = requireAuth();
+  if (!student) { window.location.href = '/index.html'; return; }
+
   // Nav
   document.getElementById('nav-container').innerHTML = buildNav(student, 'dashboard');
   // Hero
@@ -117,17 +93,6 @@ function init() {
   updateStats();
   // Subjects grid
   renderSubjects();
-  // Chat welcome
-  const curriculum = COUNTRY_CURRICULUM[student.country] || {};
-  document.getElementById('chat-grade-info').textContent = student.grade + ' · ' + (curriculum.system || '');
-  document.getElementById('welcome-msg').textContent =
-    `👋 Hujambo, ${student.name}! I'm your personal AI tutor. I know the ${COUNTRY_NAMES[student.country] || 'African'} curriculum for ${student.grade} inside out. What are you studying today?`;
-  // Suggestions
-  renderSuggestions();
-  // Chat input
-  const ci = document.getElementById('chat-input');
-  ci.addEventListener('keydown', e => { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} });
-  ci.addEventListener('input', () => { ci.style.height='auto'; ci.style.height=Math.min(ci.scrollHeight,100)+'px'; });
 }
 
 function updateStats() {
@@ -153,7 +118,7 @@ function renderSubjects() {
   const grid = document.getElementById('subjects-grid');
   const displayed = ALL_SUBJECTS.filter(s => QUICK_SUBJECTS.includes(s.id)).slice(0, 12);
   grid.innerHTML = displayed.map(s => `
-    <a href="lesson.html?subject=${s.id}" class="subject-card">
+    <a href="/lesson.html?subject=${s.id}" class="subject-card">
       <div class="subject-icon">${s.icon}</div>
       <div class="subject-name">${s.name}</div>
       <div class="subject-desc">${s.desc}</div>
@@ -161,87 +126,8 @@ function renderSubjects() {
     </a>`).join('');
 }
 
-function renderSuggestions() {
-  const country = COUNTRY_NAMES[student.country] || 'Africa';
-  const suggestions = [
-    `Help me with ${student.grade} Mathematics`,
-    `Explain photosynthesis`,
-    `What are the key topics for my grade?`,
-    `Tell me about African history`,
-    `How do I write a good essay?`,
-    `${country} geography questions`,
-  ];
-  document.getElementById('chat-suggestions').innerHTML = suggestions.map(s =>
-    `<div class="suggestion-chip" onclick="useSuggestion(this)">${s}</div>`
-  ).join('');
-}
 
-function useSuggestion(el) {
-  document.getElementById('chat-input').value = el.textContent;
-  sendMessage();
-}
 
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if (!msg || chatBusy) return;
-  input.value = ''; input.style.height = 'auto';
-  addMsg('user', msg);
-  chatHistory.push({ role:'user', content:msg });
-  document.getElementById('chat-suggestions').style.display = 'none';
-  await getReply();
-}
-
-async function getReply() {
-  chatBusy = true;
-  document.getElementById('send-btn').disabled = true;
-  const typing = document.createElement('div');
-  typing.className = 'msg ai'; typing.id = 'typing';
-  typing.innerHTML = `<div class="msg-avatar ai">🤖</div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
-  document.getElementById('chat-messages').appendChild(typing);
-  scrollChat();
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:1000,
-        system: buildSystemPrompt(student),
-        messages: chatHistory
-      })
-    });
-    const data = await res.json();
-    const reply = data.content?.map(c=>c.text||'').join('') || "I couldn't process that — please try again!";
-    chatHistory.push({role:'assistant',content:reply});
-    document.getElementById('typing')?.remove();
-    addMsg('ai', reply);
-    // Award points for using AI tutor
-    if (chatHistory.filter(m=>m.role==='user').length % 5 === 0) {
-      student.points = (student.points||0) + 5;
-      saveStudent(student);
-      toast('💬 +5 pts for engaging with your AI tutor!');
-      updateStats();
-    }
-  } catch (e) {
-    document.getElementById('typing')?.remove();
-    addMsg('ai', "I'm having trouble connecting right now. Please check your internet and try again! 🌐");
-  }
-  chatBusy = false;
-  document.getElementById('send-btn').disabled = false;
-}
-
-function addMsg(role, text) {
-  const wrap = document.createElement('div');
-  wrap.className = `msg ${role}`;
-  wrap.innerHTML = `<div class="msg-avatar ${role==='ai'?'ai':'user-av'}">${role==='ai'?'🤖':'👤'}</div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
-  document.getElementById('chat-messages').appendChild(wrap);
-  scrollChat();
-}
-
-function scrollChat() {
-  const el = document.getElementById('chat-messages');
-  el.scrollTop = el.scrollHeight;
-}
 
 window.addEventListener('load', init);
 </script>
