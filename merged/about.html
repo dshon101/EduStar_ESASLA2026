@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Learn about EduStar — the free AI-powered learning platform built to bring quality education to every student across Africa.">
-  <meta name="author" content="Demetrious Shoniwa">
+  <meta name="author" content="EduStar">
   <meta property="og:title" content="About EduStar – Our Mission and Story">
   <meta property="og:description" content="EduStar is a free AI-powered education platform for African students, supporting 10+ countries and 20+ curricula.">
   <meta property="og:type" content="website">
@@ -14,258 +14,9 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/main.css">
-  <style>
-    /* ── HERO BANNER ─────────────────────────────────── */
-    .about-hero {
-      position: relative;
-      z-index: 1;
-      padding: 5rem 0 4rem;
-      text-align: center;
-    }
-
-    .about-hero h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      margin-bottom: 1.2rem;
-    }
-
-    .about-hero h1 em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--sun), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .about-hero p {
-      color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.8;
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-
-    /* ── MISSION BLOCK ───────────────────────────────── */
-    .mission-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
-      align-items: center;
-    }
-
-    .mission-text h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 1.2rem;
-    }
-
-    .mission-text h2 em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--sun), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .mission-text p {
-      color: var(--muted);
-      font-size: 0.96rem;
-      line-height: 1.85;
-      margin-bottom: 1rem;
-    }
-
-    .mission-stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-
-    .mission-stat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.4rem;
-      text-align: center;
-    }
-
-    .mission-stat .num {
-      font-family: 'Syne', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--sun), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .mission-stat .lbl {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 0.25rem;
-    }
-
-    /* ── CURRICULA TABLE ─────────────────────────────── */
-    .curricula-section {
-      background: linear-gradient(135deg, rgba(255,107,43,0.06), rgba(0,201,167,0.04));
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 2.5rem;
-    }
-
-    .curricula-section h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-
-    .curricula-section h2 em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--sun), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .curricula-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .curriculum-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 1rem 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      transition: all 0.2s;
-    }
-
-    .curriculum-card:hover {
-      border-color: rgba(255,107,43,0.35);
-      background: rgba(255,107,43,0.06);
-    }
-
-    .curriculum-flag { font-size: 1.5rem; flex-shrink: 0; }
-
-    .curriculum-info strong {
-      display: block;
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
-
-    .curriculum-info span {
-      font-size: 0.72rem;
-      color: var(--muted);
-    }
-
-    /* ── HOW IT WORKS ────────────────────────────────── */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .step-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.8rem;
-      position: relative;
-    }
-
-    .step-number {
-      font-family: 'Syne', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, rgba(255,107,43,0.2), rgba(245,166,35,0.2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-      line-height: 1;
-    }
-
-    .step-card h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .step-card p {
-      color: var(--muted);
-      font-size: 0.85rem;
-      line-height: 1.65;
-    }
-
-    /* ── SOURCES / PARTNERS ──────────────────────────── */
-    .sources-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .source-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.8rem;
-      text-align: center;
-      transition: all 0.25s;
-    }
-
-    .source-card:hover {
-      border-color: rgba(255,107,43,0.35);
-      transform: translateY(-3px);
-    }
-
-    .source-card .source-icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.8rem;
-    }
-
-    .source-card h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-    }
-
-    .source-card p {
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.6;
-    }
-
-    .source-card a {
-      display: inline-block;
-      margin-top: 0.8rem;
-      font-size: 0.78rem;
-      color: var(--sun);
-      text-decoration: none;
-    }
-
-    /* ── RESPONSIVE ──────────────────────────────────── */
-    @media (max-width: 800px) {
-      .mission-grid { grid-template-columns: 1fr; }
-      .mission-stats { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 500px) {
-      .curricula-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles/normalize.css">
+  <link rel="stylesheet" href="styles/small.css">
+  <link rel="stylesheet" href="styles/large.css">
 </head>
 
 <body>
@@ -278,6 +29,7 @@
       <a href="books.html" data-page="books" role="listitem">Books</a>
       <a href="join.html" data-page="join" role="listitem">Join</a>
       <a href="about.html" data-page="about" role="listitem">About</a>
+      <a href="https://edustar.my-board.org" data-page="login" role="listitem" style="font-weight:600;">🔑 Log In</a>
     </div>
   </nav>
 
@@ -433,18 +185,8 @@
 
   <div class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
 
-  <script>
-  (function initNav(activePage) {
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      if (link.dataset.page === activePage) { link.classList.add('active'); link.setAttribute('aria-current','page'); }
-    });
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks  = document.querySelector('.nav-links');
-    if (hamburger && navLinks) {
-      hamburger.addEventListener('click', () => { const open = navLinks.classList.toggle('open'); hamburger.setAttribute('aria-expanded', open); });
-      document.addEventListener('click', (e) => { if (!e.target.closest('.site-nav')) { navLinks.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); } });
-    }
-  })('about');
+  <script type="module">
+    import { initNav } from './scripts/nav.js';
     initNav('about');
 
     // ── Curricula list — rendered with template literals + map ──

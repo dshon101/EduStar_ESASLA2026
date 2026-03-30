@@ -324,7 +324,9 @@ async function deleteTicket(id, btn) {
   btn.disabled = true;
   btn.textContent = '⏳';
   try {
-    const res  = await authFetch('DELETE', `${API}/support.php?action=delete_ticket&id=${id}`);
+    const token = localStorage.getItem('edustar_token');
+    const tokenParam = token ? `&_token=${encodeURIComponent(token)}` : '';
+    const res  = await authFetch('DELETE', `${API}/support.php?action=delete_ticket&id=${id}${tokenParam}`);
     const text = await res.text();
     let data; try { data = JSON.parse(text); } catch(_) { throw new Error('Server error — please try again later.'); }
     if (!data.ok) throw new Error(data.error || 'Delete failed');

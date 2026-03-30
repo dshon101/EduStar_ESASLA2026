@@ -7,11 +7,12 @@
 
 define('SMTP_HOST',     'smtp.gmail.com');
 define('SMTP_PORT',     587);
-define('SMTP_USER',     'dmshoniwa@gmail.com');
-define('SMTP_PASS',     'mswbgjflnnpjidaa');
-define('MAIL_FROM',     'dmshoniwa@gmail.com');
+define('SMTP_USER',     'edustarai.info@gmail.com');
+define('SMTP_PASS',     'autgjvnhupmdlqon');
+define('MAIL_FROM',     'edustarai.info@gmail.com');
 define('MAIL_FROM_NAME','EduStar AI');
-define('MAIL_ADMIN',    'dmshoniwa@gmail.com');
+define('MAIL_ADMIN',    'edustarai.info@gmail.com');
+define('MAIL_SUPPORT',  'edustarsupport@gmail.com');
 
 /**
  * Send email via Gmail SMTP using cURL (works on InfinityFree)
@@ -93,7 +94,7 @@ function emailTemplate(string $title, string $body): string {
   </div>
   <div class="content">' . $body . '</div>
   <div class="footer">
-    <p>&copy; 2026 EduStar AI &middot; <a href="https://shonz.great-site.net" style="color:#FF6B2B">shonz.great-site.net</a></p>
+    <p>&copy; 2026 EduStar AI &middot; <a href="https://edustar.my-board.org" style="color:#FF6B2B">edustar.my-board.org</a></p>
     <p style="margin-top:6px">This is an automated message. Please do not reply.</p>
   </div>
 </div>
@@ -118,7 +119,7 @@ function sendWelcomeEmail(string $to, string $name, string $country, string $gra
           Browse curriculum-aligned lessons, take adaptive quizzes, chat with your AI tutor, and download school books.
         </p>
         <p style='text-align:center;margin-top:24px'>
-          <a href='https://shonz.great-site.net/dashboard.html' class='btn'>Go to Dashboard</a>
+          <a href='https://edustar.my-board.org/dashboard.html' class='btn'>Go to Dashboard</a>
         </p>
         <p style='font-size:13px;color:#888;margin-top:16px'>
           If you did not create this account, please ignore this email.
@@ -137,7 +138,7 @@ function sendWelcomeEmail(string $to, string $name, string $country, string $gra
              <strong>Time:</strong> " . date('Y-m-d H:i:s') . "</p>
         </div>
         <p style='text-align:center'>
-          <a href='https://shonz.great-site.net/admin/' class='btn'>View Admin Panel</a>
+          <a href='https://edustar.my-board.org/admin/' class='btn'>View Admin Panel</a>
         </p>
     ");
     @sendEmail(MAIL_ADMIN, "New EduStar Registration: {$name}", $adminBody);
@@ -160,7 +161,7 @@ function sendLoginAlert(string $to, string $name, string $deviceInfo, bool $isNe
         <p>If this was you, no action is needed — your new device has been saved.</p>
         <p>If you did <strong>not</strong> log in, please change your password immediately.</p>
         <p style='text-align:center;margin-top:24px'>
-          <a href='https://shonz.great-site.net/settings.html' class='btn'>Secure My Account</a>
+          <a href='https://edustar.my-board.org/settings.html' class='btn'>Secure My Account</a>
         </p>
     ");
     @sendEmail($to, $subject, $body);
@@ -176,11 +177,27 @@ function sendTicketConfirmation(string $to, string $name, int $ticketId, string 
              <strong>Subject:</strong> {$subject}<br>
              <strong>Status:</strong> Open</p>
         </div>
+        <p>You can also reach our support team directly at <strong>" . MAIL_SUPPORT . "</strong>.</p>
         <p style='text-align:center;margin-top:24px'>
-          <a href='https://shonz.great-site.net/support.html' class='btn'>View Ticket Status</a>
+          <a href='https://edustar.my-board.org/support.html' class='btn'>View Ticket Status</a>
         </p>
     ");
     @sendEmail($to, "EduStar Support Ticket #{$ticketId} Received", $body);
+
+    // Notify support team of new ticket
+    $supportBody = emailTemplate('New Support Ticket', "
+        <h2>New Support Ticket Submitted</h2>
+        <div class='highlight'>
+          <p><strong>Ticket #:</strong> {$ticketId}<br>
+             <strong>From:</strong> {$name} ({$to})<br>
+             <strong>Subject:</strong> {$subject}<br>
+             <strong>Time:</strong> " . date('Y-m-d H:i:s') . "</p>
+        </div>
+        <p style='text-align:center'>
+          <a href='https://edustar.my-board.org/admin/' class='btn'>View in Admin Panel</a>
+        </p>
+    ");
+    @sendEmail(MAIL_SUPPORT, "New Support Ticket #{$ticketId}: {$subject}", $supportBody);
 }
 
 // ── TICKET REPLY NOTIFICATION ─────────────────────────────────────
@@ -193,7 +210,7 @@ function sendTicketReplyNotification(string $to, string $name, int $ticketId, st
              <strong>Subject:</strong> {$subject}</p>
         </div>
         <p style='text-align:center;margin-top:24px'>
-          <a href='https://shonz.great-site.net/support.html' class='btn'>View Reply</a>
+          <a href='https://edustar.my-board.org/support.html' class='btn'>View Reply</a>
         </p>
     ");
     @sendEmail($to, "EduStar — Reply to Ticket #{$ticketId}", $body);

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Join EduStar for free — create your student account and access curriculum-aligned books, AI lessons, and a peer community across Africa.">
-  <meta name="author" content="Demetrious Shoniwa">
+  <meta name="author" content="EduStar">
   <meta property="og:title" content="Join EduStar – Create Your Free Student Account">
   <meta property="og:description" content="Sign up for free and start accessing free textbooks, AI lessons, and the EduStar peer community today.">
   <meta property="og:type" content="website">
@@ -14,221 +14,9 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/main.css">
-  <style>
-    /* ── JOIN LAYOUT ─────────────────────────────────── */
-    .join-wrap {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      min-height: calc(100vh - 65px);
-    }
-
-    /* ── LEFT PANEL ──────────────────────────────────── */
-    .join-left {
-      background: linear-gradient(145deg, rgba(255,107,43,0.12), rgba(0,201,167,0.06));
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 4rem 3rem;
-    }
-
-    .join-left h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.5px;
-      margin-bottom: 1rem;
-    }
-
-    .join-left h2 em {
-      font-style: normal;
-      background: linear-gradient(135deg, var(--sun), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .join-left p {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.75;
-      max-width: 380px;
-      margin-bottom: 2rem;
-    }
-
-    .perks {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .perk {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.9rem;
-    }
-
-    .perk-icon {
-      font-size: 1.3rem;
-      flex-shrink: 0;
-      margin-top: 0.1rem;
-    }
-
-    .perk-text strong {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 0.2rem;
-    }
-
-    .perk-text span {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    /* ── RIGHT: FORM PANEL ───────────────────────────── */
-    .join-right {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 2rem;
-    }
-
-    .join-card {
-      background: rgba(26, 26, 46, 0.85);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 480px;
-      backdrop-filter: blur(20px);
-    }
-
-    .join-card h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-bottom: 0.35rem;
-    }
-
-    .join-subtitle {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-bottom: 2rem;
-      line-height: 1.5;
-    }
-
-    /* ── FORM SPECIFICS ──────────────────────────────── */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .error-msg {
-      background: rgba(255, 71, 87, 0.1);
-      border: 1px solid rgba(255, 71, 87, 0.3);
-      border-radius: 10px;
-      padding: 0.8rem 1rem;
-      font-size: 0.85rem;
-      color: #ff6b7a;
-      margin-bottom: 1rem;
-      display: none;
-    }
-
-    .error-msg.show { display: block; }
-
-    .grade-hint {
-      background: rgba(0, 201, 167, 0.08);
-      border: 1px solid rgba(0, 201, 167, 0.2);
-      border-radius: 10px;
-      padding: 0.7rem 1rem;
-      font-size: 0.78rem;
-      color: var(--teal);
-      margin-top: 0.5rem;
-      display: none;
-      line-height: 1.5;
-    }
-
-    .grade-hint.show { display: block; }
-
-    .checkbox-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.7rem;
-    }
-
-    .checkbox-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-      accent-color: var(--sun);
-    }
-
-    .checkbox-row label {
-      font-size: 0.82rem;
-      color: var(--muted);
-      text-transform: none;
-      letter-spacing: 0;
-      font-weight: 400;
-    }
-
-    .checkbox-row label a {
-      color: var(--sun);
-      text-decoration: none;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 0.95rem;
-      border-radius: 50px;
-      background: linear-gradient(135deg, var(--sun), var(--gold));
-      color: white;
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 0.3rem;
-      transition: all 0.25s;
-      box-shadow: 0 4px 20px rgba(255, 107, 43, 0.35);
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(255, 107, 43, 0.5);
-    }
-
-    .already-link {
-      text-align: center;
-      margin-top: 1.2rem;
-      font-size: 0.83rem;
-      color: var(--muted);
-    }
-
-    .already-link a {
-      color: var(--sun);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    /* ── RESPONSIVE ──────────────────────────────────── */
-    @media (max-width: 800px) {
-      .join-wrap { grid-template-columns: 1fr; }
-      .join-left { display: none; }
-      .join-right { padding: 2rem 1.2rem; }
-      .join-card { padding: 2rem; border-radius: 20px; }
-    }
-
-    @media (max-width: 400px) {
-      .form-row { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles/normalize.css">
+  <link rel="stylesheet" href="styles/small.css">
+  <link rel="stylesheet" href="styles/large.css">
 </head>
 
 <body>
@@ -241,6 +29,7 @@
       <a href="books.html" data-page="books" role="listitem">Books</a>
       <a href="join.html" data-page="join" role="listitem">Join</a>
       <a href="about.html" data-page="about" role="listitem">About</a>
+      <a href="https://edustar.my-board.org" data-page="login" role="listitem" style="font-weight:600;">🔑 Log In</a>
     </div>
   </nav>
 
@@ -363,7 +152,7 @@
             <button type="submit" class="submit-btn">🚀 Create My Free Account</button>
           </form>
 
-          <p class="already-link">Already have an account? <a href="index.html">Log in here</a></p>
+          <p class="already-link">Already have an account? <a href="https://edustar.my-board.org">Log in here →</a></p>
         </div>
       </main>
     </div>

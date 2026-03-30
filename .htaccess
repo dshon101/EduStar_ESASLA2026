@@ -1,0 +1,138 @@
+# ================================================================
+# EduStar .htaccess — InfinityFree / LiteSpeed
+# Tuned to match helpers.php getBearerToken() fallback chain
+# ================================================================
+
+Options -Indexes
+ServerSignature Off
+
+# ================================================================
+# 1. REWRITE ENGINE
+# ================================================================
+RewriteEngine On
+
+# ── 1a. HTTPS redirect ──────────────────────────────────────────
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# ── 1b. Pass Authorization header through LiteSpeed ─────────────
+# InfinityFree uses LiteSpeed which strips the Authorization header
+# before PHP sees it. These rules restore it into the env vars
+# that helpers.php checks: HTTP_AUTHORIZATION and
+# REDIRECT_HTTP_AUTHORIZATION.
+RewriteCond %{HTTP:Authorization} .+
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+RewriteCond %{HTTP:Authorization} .+
+RewriteRule ^ - [E=REDIRECT_HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+# ── 1c. Also expose X-Auth-Token (our custom fallback header) ───
+# api.js sends both Authorization AND X-Auth-Token on every request.
+# This ensures HTTP_X_AUTH_TOKEN is always populated in $_SERVER.
+RewriteCond %{HTTP:X-Auth-Token} .+
+RewriteRule ^ - [E=HTTP_X_AUTH_TOKEN:%{HTTP:X-Auth-Token},L]
+
+# ── 1d. OPTIONS preflight — return 204 immediately ──────────────
+# Prevents CORS preflight from hitting PHP unnecessarily.
+RewriteCond %{REQUEST_METHOD} ^OPTIONS$
+RewriteRule ^ - [R=204,L]
+
+# ── 1e. Remove trailing slashes ─────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} /+$
+RewriteRule ^(.*?)/+$ /$1 [R=301,L]
+
+# ================================================================
+# 2. SECURITY — Block sensitive paths
+# ================================================================
+
+# ── Block entire config/ folder ─────────────────────────────────
+RewriteRule ^config(/|$) - [F,L]
+
+# ── Block install scripts ────────────────────────────────────────
+RewriteRule ^install[0-9]+\.php$ - [F,L]
+
+# ── Block SQL files ──────────────────────────────────────────────
+<FilesMatch "\.sql$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ── Block one-time setup tools ───────────────────────────────────
+<FilesMatch "^(add_admins_helper\.php|add_admins\.sql|test\.php)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ── Block hidden files (.env, .git, etc.) ────────────────────────
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ================================================================
+# 3. CORS HEADERS FOR API
+# ================================================================
+<IfModule mod_headers.c>
+    <FilesMatch "\.php$">
+        Header always set Access-Control-Allow-Origin "https://edustar.my-board.org"
+        Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Auth-Token"
+        Header always set Access-Control-Max-Age "86400"
+    </FilesMatch>
+</IfModule>
+
+# ================================================================
+# 4. PHP SETTINGS
+# ================================================================
+<IfModule mod_php.c>
+    php_value upload_max_filesize 50M
+    php_value post_max_size       52M
+    php_value max_execution_time  120
+    php_value memory_limit        128M
+    php_flag  display_errors      Off
+    php_flag  log_errors          On
+</IfModule>
+
+# ================================================================
+# 5. ERROR PAGES
+# ================================================================
+ErrorDocument 403 /index.html
+ErrorDocument 404 /index.html
+
+# ================================================================
+# 6. PERFORMANCE — Compression + Caching
+# ================================================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE \
+        text/html \
+        text/css \
+        text/javascript \
+        application/javascript \
+        application/json \
+        image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html              "access plus 0 seconds"
+    ExpiresByType application/json       "access plus 0 seconds"
+    ExpiresByType text/css               "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/jpeg             "access plus 30 days"
+    ExpiresByType image/png              "access plus 30 days"
+    ExpiresByType image/gif              "access plus 30 days"
+    ExpiresByType image/svg+xml          "access plus 7 days"
+    ExpiresByType font/woff2             "access plus 1 year"
+    ExpiresByType font/woff              "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(php|html)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+        Header set Pragma "no-cache"
+    </FilesMatch>
+    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|woff|woff2)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>

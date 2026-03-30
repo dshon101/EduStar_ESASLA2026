@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EduStar Site Plan — WDD231 Individual Project Planning Document">
+  <meta name="author" content="EduStar">
+  <title>EduStar – Site Plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── CSS Custom Properties — EduStar Color Scheme ── */
+    :root {
+      --bg:       #0f1117;
+      --surface:  #181d27;
+      --card:     #1e2535;
+      --border:   #2a3347;
+      --sun:      #ff6b2b;
+      --gold:     #ffb347;
+      --teal:     #00c9a7;
+      --text:     #e8edf5;
+      --muted:    #8a96aa;
+      --white:    #ffffff;
+      --radius:   12px;
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* ── Layout ── */
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      text-align: center;
+      padding: 4rem 1rem 3rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3.5rem;
+    }
+
+    .cover .logo {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .cover h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: var(--white);
+    }
+
+    .cover h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--sun), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cover .subtitle {
+      margin-top: 0.8rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cover .tag {
+      display: inline-block;
+      margin-top: 1.2rem;
+      background: rgba(255,107,43,0.12);
+      color: var(--sun);
+      border: 1px solid rgba(255,107,43,0.3);
+      border-radius: 999px;
+      padding: 0.3rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .section > h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section > h2 em {
+      font-style: normal;
+      color: var(--sun);
+    }
+
+    .section p {
+      color: var(--text);
+      margin-bottom: 0.8rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Scenarios ── */
+    .scenario-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    .scenario-list li {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.8rem;
+      color: var(--text);
+    }
+
+    .scenario-list li::before {
+      content: "❓ ";
+    }
+
+    /* ── Color Swatches ── */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .swatch {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .swatch-color {
+      height: 70px;
+    }
+
+    .swatch-info {
+      background: var(--card);
+      padding: 0.7rem 0.9rem;
+    }
+
+    .swatch-info strong {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .swatch-info span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+
+    .swatch-info p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── Typography Specimens ── */
+    .font-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .font-card .font-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .font-card .font-sample-syne {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    .font-card .font-sample-dm {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-top: 0.4rem;
+    }
+
+    .font-card .font-meta {
+      margin-top: 0.7rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── Wireframe ── */
+    .wireframe-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 580px) {
+      .wireframe-grid { grid-template-columns: 1fr; }
+    }
+
+    .wireframe-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+
+    .wireframe-box h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* SVG wireframes */
+    .wireframe-box svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── Domain Note ── */
+    .domain-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0,201,167,0.08);
+      border: 1px solid rgba(0,201,167,0.25);
+      border-radius: 999px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.8rem;
+      color: var(--teal);
+      margin-top: 0.7rem;
+    }
+
+    /* ── Table of Contents ── */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 3rem;
+    }
+
+    .toc h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 1rem;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .toc ol {
+      padding-left: 1.2rem;
+    }
+
+    .toc li {
+      margin-bottom: 0.4rem;
+    }
+
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .toc a:hover {
+      color: var(--teal);
+    }
+
+    /* ── Inline highlight ── */
+    mark {
+      background: rgba(255,107,43,0.18);
+      color: var(--sun);
+      border-radius: 4px;
+      padding: 0.1rem 0.35rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      text-align: center;
+      border-top: 1px solid var(--border);
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ── COVER ──────────────────────────────────── -->
+  <header class="cover">
+    <div class="logo" aria-hidden="true">⭐</div>
+    <h1>EduStar — <em>Site Plan</em></h1>
+    <p class="subtitle">WDD231 · Web Frontend Development I · Individual Project</p>
+    <span class="tag">🌍 Smart Learning for Africa</span>
+  </header>
+
+  <!-- ── TABLE OF CONTENTS ──────────────────────── -->
+  <nav class="toc" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#site-name">Site Name</a></li>
+      <li><a href="#site-purpose">Site Purpose</a></li>
+      <li><a href="#scenarios">Scenarios</a></li>
+      <li><a href="#color-scheme">Color Scheme</a></li>
+      <li><a href="#typography">Typography</a></li>
+      <li><a href="#wireframe">Wireframes</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── 1. SITE NAME ───────────────────────────── -->
+  <section class="section" id="site-name" aria-labelledby="name-heading">
+    <p class="section-label">Section 01</p>
+    <h2 id="name-heading">Site <em>Name</em></h2>
+
+    <div class="card">
+      <h3>⚡ EduStar</h3>
+      <p>
+        <strong>EduStar</strong> fuses <em>Education</em> and <em>Star</em> — a name that communicates
+        academic aspiration and positions learners as the stars of their own journey. The word is short,
+        memorable, and works equally well in English across all 10+ target countries on the continent.
+        The star symbol (⭐) doubles as a universally understood mark of excellence and achievement,
+        making it ideal for a learning platform aimed at students striving toward national examinations.
+      </p>
+      <span class="domain-note">🌐 Suggested domain: <strong>edustar.africa</strong></span>
+    </div>
+  </section>
+
+  <!-- ── 2. SITE PURPOSE ────────────────────────── -->
+  <section class="section" id="site-purpose" aria-labelledby="purpose-heading">
+    <p class="section-label">Section 02</p>
+    <h2 id="purpose-heading">Site <em>Purpose</em></h2>
+
+    <p>
+      EduStar is a free, AI-powered learning platform for secondary school students (Grades 8–12) across
+      sub-Saharan Africa. Millions of students prepare annually for high-stakes national examinations —
+      ZIMSEC, WAEC, KCSE, NECTA, ECZ, CAPS, and more — often without access to reliable textbooks or
+      structured study support.
+    </p>
+
+    <p>
+      The site serves as a centralised hub offering three core services:
+    </p>
+
+    <div class="card">
+      <h3>📚 Free Textbook Library</h3>
+      <p>
+        A dynamically loaded digital library of 30+ open-access textbooks sourced from Siyavula,
+        OpenStax, and Maktaba — filterable by country, grade, and subject. Students can view
+        details and open books directly in their browser at no cost.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>🤖 AI-Powered Learning</h3>
+      <p>
+        Curriculum-aligned lessons, adaptive quizzes, and study explanations generated with AI,
+        personalised to the student's country, grade, and subject choices.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>💬 Peer Community & Registration</h3>
+      <p>
+        A registration system allowing students to create a free account and join a cross-African peer
+        community where they can ask questions, share notes, and support one another.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── 3. SCENARIOS ───────────────────────────── -->
+  <section class="section" id="scenarios" aria-labelledby="scenarios-heading">
+    <p class="section-label">Section 03</p>
+    <h2 id="scenarios-heading"><em>Scenarios</em></h2>
+
+    <p>
+      The following questions represent the kinds of things a target site visitor — a secondary school
+      student in Africa — might ask when arriving on EduStar for the first time.
+    </p>
+
+    <ul class="scenario-list" aria-label="User scenarios">
+      <li>I am sitting ZIMSEC O-Level Mathematics next term — where can I find a free textbook that matches my syllabus?</li>
+      <li>I live in Zambia and study under the ECZ curriculum. Does EduStar have resources specifically for my grade and country?</li>
+      <li>I don't have a tutor. Can I use EduStar to get explanations of topics I don't understand in Physics?</li>
+      <li>How do I create a free account so I can save my progress and connect with other students across Africa?</li>
+      <li>Can I filter the book library to show only Grade 10 Biology books available for Nigeria (WAEC)?</li>
+    </ul>
+  </section>
+
+  <!-- ── 4. COLOR SCHEME ────────────────────────── -->
+  <section class="section" id="color-scheme" aria-labelledby="color-heading">
+    <p class="section-label">Section 04</p>
+    <h2 id="color-heading">Color <em>Scheme</em></h2>
+
+    <p>
+      The palette draws on the energy of the African sun (orange/gold) and the cool clarity of technology
+      (teal/blue). A deep navy background reduces eye strain during late-night study sessions — a practical
+      choice for the target audience.
+    </p>
+
+    <div class="color-grid" role="list" aria-label="Color palette">
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#0f1117;"></div>
+        <div class="swatch-info">
+          <strong>Background</strong>
+          <span>#0f1117</span>
+          <p>Page background — deep navy. Reduces eye strain for extended study sessions.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#1e2535;"></div>
+        <div class="swatch-info">
+          <strong>Surface / Card</strong>
+          <span>#1e2535</span>
+          <p>Cards, panels, and form fields — slightly lighter than BG to create depth.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#ff6b2b;"></div>
+        <div class="swatch-info">
+          <strong>Sun Orange — Primary</strong>
+          <span>#ff6b2b</span>
+          <p>Primary buttons, CTAs, active nav links, key headings and gradient accents.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#ffb347;"></div>
+        <div class="swatch-info">
+          <strong>Gold — Secondary</strong>
+          <span>#ffb347</span>
+          <p>Gradient partner to orange; used in headline gradients and card headings.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#00c9a7;"></div>
+        <div class="swatch-info">
+          <strong>Teal — Accent</strong>
+          <span>#00c9a7</span>
+          <p>Section labels, border accents, badges, and hover states.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#e8edf5;"></div>
+        <div class="swatch-info">
+          <strong>Text</strong>
+          <span>#e8edf5</span>
+          <p>Primary body text — off-white for softer contrast against dark background.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#8a96aa;"></div>
+        <div class="swatch-info">
+          <strong>Muted Text</strong>
+          <span>#8a96aa</span>
+          <p>Subtitles, metadata, placeholder text, and secondary descriptions.</p>
+        </div>
+      </div>
+
+      <div class="swatch" role="listitem">
+        <div class="swatch-color" style="background:#2a3347; border: 1px solid #444;"></div>
+        <div class="swatch-info">
+          <strong>Border</strong>
+          <span>#2a3347</span>
+          <p>Card borders, dividers, input outlines — subtle separation without harsh lines.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── 5. TYPOGRAPHY ──────────────────────────── -->
+  <section class="section" id="typography" aria-labelledby="type-heading">
+    <p class="section-label">Section 05</p>
+    <h2 id="type-heading"><em>Typography</em></h2>
+
+    <p>
+      Two Google Fonts are selected — one high-impact display face for headings and one highly legible
+      sans-serif for body copy. Both are served via Google Fonts with a <code>preconnect</code> hint
+      for performance.
+    </p>
+
+    <!-- Font 1 -->
+    <div class="font-card">
+      <p class="font-label">Font 1 — Display / Headings</p>
+      <div class="font-sample-syne">Syne — Quality Education, Powered by AI</div>
+      <p class="font-meta">
+        <strong>Family:</strong> Syne &nbsp;·&nbsp;
+        <strong>Weights used:</strong> 700, 800 &nbsp;·&nbsp;
+        <strong>Source:</strong> Google Fonts (OFL)
+      </p>
+      <p class="font-meta">
+        <strong>Used for:</strong> Page headings (h1–h3), navigation logo, section titles, button labels,
+        stat numbers, and any large display text requiring strong visual impact.
+      </p>
+      <p class="font-meta">
+        <strong>Why Syne:</strong> Its wide, geometric uppercase letterforms convey confidence and
+        modernity — positioning EduStar as a forward-looking platform, not a traditional textbook publisher.
+      </p>
+    </div>
+
+    <!-- Font 2 -->
+    <div class="font-card">
+      <p class="font-label">Font 2 — Body / UI</p>
+      <div class="font-sample-dm">
+        DM Sans — Access curriculum-aligned lessons, free textbooks, and a peer-learning community
+        tailored to your country, grade, and pace.
+      </div>
+      <p class="font-meta">
+        <strong>Family:</strong> DM Sans &nbsp;·&nbsp;
+        <strong>Weights used:</strong> 300, 400, 500, 600 &nbsp;·&nbsp;
+        <strong>Source:</strong> Google Fonts (OFL)
+      </p>
+      <p class="font-meta">
+        <strong>Used for:</strong> Body paragraphs, form labels, input fields, card descriptions,
+        footer text, badges, and all UI copy at smaller sizes.
+      </p>
+      <p class="font-meta">
+        <strong>Why DM Sans:</strong> Designed for digital interfaces, DM Sans is highly legible at both
+        large and small sizes. Its neutral character pairs cleanly with Syne without competing for attention.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>📐 Type Scale</h3>
+      <p><mark>Display (h1)</mark> — Syne 800 · clamp(2rem, 5vw, 3.5rem) · Headings and hero titles</p>
+      <p><mark>Heading (h2)</mark> — Syne 800 · clamp(1.4rem, 3vw, 2rem) · Section titles</p>
+      <p><mark>Subheading (h3)</mark> — Syne 700 · 1rem–1.1rem · Card headings</p>
+      <p><mark>Body</mark> — DM Sans 400 · 1rem · Paragraphs and descriptions</p>
+      <p><mark>Small / Meta</mark> — DM Sans 400–500 · 0.78rem–0.88rem · Labels, badges, captions</p>
+      <p><mark>Label</mark> — DM Sans 700 · 0.72rem · Uppercase section labels (teal, 2px letter-spacing)</p>
+    </div>
+  </section>
+
+  <!-- ── 6. WIREFRAMES ──────────────────────────── -->
+  <section class="section" id="wireframe" aria-labelledby="wire-heading">
+    <p class="section-label">Section 06</p>
+    <h2 id="wire-heading"><em>Wireframes</em> — Home Page</h2>
+
+    <p>
+      The wireframes below represent the home page (<code>index.html</code>) layout in both mobile
+      (single-column) and desktop (two-column) viewports. Shaded blocks represent content areas;
+      labels indicate the component type.
+    </p>
+
+    <div class="wireframe-grid">
+
+      <!-- MOBILE wireframe -->
+      <div class="wireframe-box">
+        <h3>📱 Mobile (&lt; 601px)</h3>
+        <svg viewBox="0 0 220 520" xmlns="http://www.w3.org/2000/svg" aria-label="Mobile wireframe for EduStar home page" role="img">
+          <defs>
+            <style>
+              .wf-bg   { fill: #1e2535; }
+              .wf-nav  { fill: #2a3347; }
+              .wf-hero { fill: #263040; }
+              .wf-feat { fill: #223050; }
+              .wf-cta  { fill: rgba(255,107,43,0.25); }
+              .wf-ft   { fill: #181d27; }
+              .wf-lbl  { fill: #8a96aa; font-family: sans-serif; font-size: 8px; }
+              .wf-acc  { fill: #ff6b2b; }
+              .wf-teal { fill: #00c9a7; }
+              .wf-btn  { fill: #ff6b2b; rx: 4; }
+            </style>
+          </defs>
+
+          <!-- page bg -->
+          <rect width="220" height="520" fill="#0f1117" rx="8"/>
+
+          <!-- NAV bar -->
+          <rect x="0" y="0" width="220" height="30" class="wf-nav"/>
+          <text x="10" y="19" class="wf-lbl" fill="#e8edf5" font-size="9" font-weight="700">⚡ EduStar</text>
+          <text x="195" y="19" class="wf-lbl" fill="#e8edf5" font-size="11">☰</text>
+          <text x="70" y="37" class="wf-lbl" text-anchor="middle">Navigation Bar</text>
+
+          <!-- HERO -->
+          <rect x="10" y="40" width="200" height="130" class="wf-hero" rx="6"/>
+          <!-- hero content blocks -->
+          <rect x="20" y="52" width="80" height="7" rx="3" fill="#00c9a7" opacity="0.6"/>
+          <rect x="20" y="65" width="160" height="12" rx="3" fill="#e8edf5" opacity="0.3"/>
+          <rect x="20" y="81" width="130" height="12" rx="3" fill="#e8edf5" opacity="0.2"/>
+          <rect x="20" y="98" width="180" height="6" rx="2" fill="#8a96aa" opacity="0.4"/>
+          <rect x="20" y="107" width="170" height="6" rx="2" fill="#8a96aa" opacity="0.3"/>
+          <!-- buttons -->
+          <rect x="20" y="120" width="80" height="18" rx="5" fill="#ff6b2b"/>
+          <rect x="108" y="120" width="80" height="18" rx="5" fill="#2a3347"/>
+          <text x="60" y="132" class="wf-lbl" fill="#fff" text-anchor="middle" font-size="7">Get Started Free</text>
+          <text x="148" y="132" class="wf-lbl" fill="#8a96aa" text-anchor="middle" font-size="7">Browse Books</text>
+          <text x="110" y="185" class="wf-lbl" text-anchor="middle">Hero Section (full width)</text>
+
+          <!-- HERO PANEL (flags + stats) -->
+          <rect x="10" y="178" width="200" height="72" class="wf-feat" rx="6"/>
+          <rect x="20" y="186" width="180" height="24" rx="4" fill="#2a3347" opacity="0.6"/>
+          <text x="110" y="200" class="wf-lbl" text-anchor="middle" fill="#e8edf5" font-size="7">🇰🇪 🇳🇬 🇿🇦 🇹🇿 🇺🇬 🇬🇭 🇿🇼 🇿🇲 + More</text>
+          <!-- stat boxes -->
+          <rect x="20" y="215" width="56" height="26" rx="4" fill="#2a3347"/>
+          <rect x="82" y="215" width="56" height="26" rx="4" fill="#2a3347"/>
+          <rect x="144" y="215" width="56" height="26" rx="4" fill="#2a3347"/>
+          <text x="48"  y="228" class="wf-lbl" fill="#ff6b2b" text-anchor="middle" font-size="9" font-weight="700">30+</text>
+          <text x="110" y="228" class="wf-lbl" fill="#ff6b2b" text-anchor="middle" font-size="9" font-weight="700">10+</text>
+          <text x="172" y="228" class="wf-lbl" fill="#ff6b2b" text-anchor="middle" font-size="9" font-weight="700">20+</text>
+          <text x="48"  y="237" class="wf-lbl" text-anchor="middle" font-size="6">Books</text>
+          <text x="110" y="237" class="wf-lbl" text-anchor="middle" font-size="6">Countries</text>
+          <text x="172" y="237" class="wf-lbl" text-anchor="middle" font-size="6">Subjects</text>
+          <text x="110" y="260" class="wf-lbl" text-anchor="middle">Stats &amp; Flags Panel</text>
+
+          <!-- FEATURES section -->
+          <text x="110" y="277" class="wf-lbl" fill="#00c9a7" text-anchor="middle" font-size="7">WHAT WE OFFER</text>
+          <rect x="10" y="282" width="200" height="42" class="wf-feat" rx="6"/>
+          <rect x="10" y="329" width="200" height="42" class="wf-feat" rx="6"/>
+          <rect x="10" y="376" width="200" height="42" class="wf-feat" rx="6"/>
+          <text x="110" y="306" class="wf-lbl" text-anchor="middle">Feature Card 1</text>
+          <text x="110" y="353" class="wf-lbl" text-anchor="middle">Feature Card 2</text>
+          <text x="110" y="400" class="wf-lbl" text-anchor="middle">Feature Card 3 (stacked)</text>
+
+          <!-- CTA banner -->
+          <rect x="10" y="424" width="200" height="50" rx="8" fill="rgba(255,107,43,0.15)" stroke="#ff6b2b" stroke-width="1"/>
+          <rect x="60" y="450" width="100" height="16" rx="5" fill="#ff6b2b"/>
+          <text x="110" y="460" class="wf-lbl" fill="#fff" text-anchor="middle" font-size="7">Create Free Account</text>
+          <text x="110" y="480" class="wf-lbl" text-anchor="middle">CTA Banner</text>
+
+          <!-- FOOTER -->
+          <rect x="0" y="490" width="220" height="30" class="wf-ft"/>
+          <text x="110" y="508" class="wf-lbl" text-anchor="middle">Footer — Links + Copyright</text>
+        </svg>
+      </div>
+
+      <!-- DESKTOP wireframe -->
+      <div class="wireframe-box">
+        <h3>🖥 Desktop (&gt; 801px)</h3>
+        <svg viewBox="0 0 320 520" xmlns="http://www.w3.org/2000/svg" aria-label="Desktop wireframe for EduStar home page" role="img">
+          <defs>
+            <style>
+              .wd-bg   { fill: #0f1117; }
+              .wd-nav  { fill: #2a3347; }
+              .wd-hero { fill: #263040; }
+              .wd-feat { fill: #223050; }
+              .wd-lbl  { fill: #8a96aa; font-family: sans-serif; font-size: 7.5px; }
+            </style>
+          </defs>
+
+          <!-- page bg -->
+          <rect width="320" height="520" fill="#0f1117" rx="8"/>
+
+          <!-- NAV — horizontal -->
+          <rect x="0" y="0" width="320" height="28" class="wd-nav"/>
+          <text x="12" y="18" class="wd-lbl" fill="#e8edf5" font-size="9" font-weight="700">⚡ EduStar</text>
+          <!-- nav links -->
+          <rect x="180" y="8" width="28" height="12" rx="4" fill="#1e2535"/>
+          <rect x="212" y="8" width="28" height="12" rx="4" fill="#1e2535"/>
+          <rect x="244" y="8" width="28" height="12" rx="4" fill="#ff6b2b" opacity="0.8"/>
+          <rect x="276" y="8" width="28" height="12" rx="4" fill="#1e2535"/>
+          <text x="194" y="17" class="wd-lbl" text-anchor="middle" font-size="6.5">Home</text>
+          <text x="226" y="17" class="wd-lbl" text-anchor="middle" font-size="6.5">Books</text>
+          <text x="258" y="17" class="wd-lbl" fill="#fff" text-anchor="middle" font-size="6.5">Join</text>
+          <text x="290" y="17" class="wd-lbl" text-anchor="middle" font-size="6.5">About</text>
+          <text x="160" y="36" class="wd-lbl" text-anchor="middle">Navigation (horizontal, hamburger hidden)</text>
+
+          <!-- HERO — 2 columns -->
+          <rect x="8"   y="40" width="148" height="138" class="wd-hero" rx="6"/>
+          <rect x="162" y="40" width="148" height="138" class="wd-feat" rx="6"/>
+
+          <!-- left: text -->
+          <rect x="16" y="52" width="55" height="6" rx="2" fill="#00c9a7" opacity="0.6"/>
+          <rect x="16" y="63" width="130" height="10" rx="2" fill="#e8edf5" opacity="0.3"/>
+          <rect x="16" y="77" width="110" height="10" rx="2" fill="#e8edf5" opacity="0.2"/>
+          <rect x="16" y="92" width="128" height="5" rx="2" fill="#8a96aa" opacity="0.4"/>
+          <rect x="16" y="100" width="120" height="5" rx="2" fill="#8a96aa" opacity="0.3"/>
+          <rect x="16" y="115" width="58" height="14" rx="4" fill="#ff6b2b"/>
+          <rect x="80" y="115" width="58" height="14" rx="4" fill="#2a3347"/>
+          <text x="45" y="124" class="wd-lbl" fill="#fff" text-anchor="middle" font-size="6">Get Started</text>
+          <text x="109" y="124" class="wd-lbl" fill="#8a96aa" text-anchor="middle" font-size="6">Browse Books</text>
+          <text x="82" y="188" class="wd-lbl" text-anchor="middle">Hero — Copy Column</text>
+
+          <!-- right: flags + stats panel -->
+          <rect x="170" y="48" width="132" height="30" rx="4" fill="#2a3347" opacity="0.5"/>
+          <text x="236" y="66" class="wd-lbl" text-anchor="middle" font-size="6">🇰🇪 🇳🇬 🇿🇦 🇹🇿 🇺🇬 + More</text>
+          <rect x="170" y="84" width="38" height="24" rx="3" fill="#2a3347"/>
+          <rect x="213" y="84" width="38" height="24" rx="3" fill="#2a3347"/>
+          <rect x="256" y="84" width="38" height="24" rx="3" fill="#2a3347"/>
+          <text x="189" y="97" class="wd-lbl" fill="#ff6b2b" text-anchor="middle" font-size="9">30+</text>
+          <text x="232" y="97" class="wd-lbl" fill="#ff6b2b" text-anchor="middle" font-size="9">10+</text>
+          <text x="275" y="97" class="wd-lbl" fill="#ff6b2b" text-anchor="middle" font-size="9">20+</text>
+          <text x="189" y="106" class="wd-lbl" text-anchor="middle" font-size="5.5">Books</text>
+          <text x="232" y="106" class="wd-lbl" text-anchor="middle" font-size="5.5">Countries</text>
+          <text x="275" y="106" class="wd-lbl" text-anchor="middle" font-size="5.5">Subjects</text>
+          <text x="236" y="188" class="wd-lbl" text-anchor="middle">Hero — Stats &amp; Flags Panel</text>
+
+          <!-- FEATURES — 3 column grid -->
+          <text x="160" y="205" class="wd-lbl" fill="#00c9a7" text-anchor="middle" font-size="6.5">WHAT WE OFFER</text>
+          <rect x="8"   y="212" width="95" height="50" class="wd-feat" rx="5"/>
+          <rect x="113" y="212" width="95" height="50" class="wd-feat" rx="5"/>
+          <rect x="218" y="212" width="95" height="50" class="wd-feat" rx="5"/>
+          <rect x="8"   y="268" width="95" height="50" class="wd-feat" rx="5"/>
+          <rect x="113" y="268" width="95" height="50" class="wd-feat" rx="5"/>
+          <rect x="218" y="268" width="95" height="50" class="wd-feat" rx="5"/>
+          <text x="55"  y="240" class="wd-lbl" text-anchor="middle">📚 Books</text>
+          <text x="160" y="240" class="wd-lbl" text-anchor="middle">🤖 AI Lessons</text>
+          <text x="265" y="240" class="wd-lbl" text-anchor="middle">🧠 Quizzes</text>
+          <text x="55"  y="296" class="wd-lbl" text-anchor="middle">💬 Community</text>
+          <text x="160" y="296" class="wd-lbl" text-anchor="middle">📊 Progress</text>
+          <text x="265" y="296" class="wd-lbl" text-anchor="middle">🌍 Curricula</text>
+          <text x="160" y="330" class="wd-lbl" text-anchor="middle">Features Grid (3 columns, auto-fit)</text>
+
+          <!-- COUNTRIES section -->
+          <rect x="8" y="338" width="304" height="52" rx="6" fill="#1e2535" stroke="#2a3347" stroke-width="1"/>
+          <text x="160" y="367" class="wd-lbl" text-anchor="middle">Countries / Curricula Section (full width)</text>
+
+          <!-- CTA banner -->
+          <rect x="8" y="400" width="304" height="55" rx="8" fill="rgba(255,107,43,0.12)" stroke="#ff6b2b" stroke-width="1"/>
+          <rect x="110" y="432" width="100" height="16" rx="5" fill="#ff6b2b"/>
+          <text x="160" y="442" class="wd-lbl" fill="#fff" text-anchor="middle" font-size="7">Create Free Account</text>
+          <text x="160" y="464" class="wd-lbl" text-anchor="middle">CTA Banner (centred, full width)</text>
+
+          <!-- FOOTER -->
+          <rect x="0" y="475" width="320" height="45" fill="#181d27"/>
+          <rect x="60" y="487" width="200" height="8" rx="3" fill="#2a3347" opacity="0.8"/>
+          <text x="160" y="505" class="wd-lbl" text-anchor="middle">Footer — Nav Links · Sources · Copyright</text>
+        </svg>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <h3>🗒 Wireframe Notes</h3>
+      <p><strong>Mobile:</strong> Single-column layout. Navigation collapses to hamburger. Hero content stacks vertically. Feature cards stack one per row.</p>
+      <p><strong>Desktop (801px+):</strong> Two-column hero (text left, panel right) using CSS Grid. Feature cards display in a 3-column auto-fit grid. Full horizontal navigation bar replaces hamburger.</p>
+      <p><strong>Breakpoints:</strong> <mark>601px</mark> — navigation goes horizontal, 2-col feature grid. <mark>801px</mark> — hero switches to 2-column, max layout applied.</p>
+    </div>
+  </section>
+
+</div><!-- .page-wrap -->
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <p><strong>EduStar Site Plan</strong> · WDD231 Individual Project &copy; 2026</p>
+  <p style="margin-top:0.4rem;">Built with semantic HTML · Google Fonts (Syne + DM Sans) · No frameworks</p>
+</footer>
+
+</body>
+</html>

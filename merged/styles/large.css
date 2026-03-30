@@ -1,0 +1,211 @@
+/* ================================================================
+   large.css — Large Screen Layout Overrides
+   EduStar WDD231 Project
+   Loaded by every page. Overrides small.css for wider viewports.
+   ================================================================ */
+
+
+/* ── NAVIGATION (601px+) ───────────────────────────────────── */
+@media (min-width: 601px) {
+  .site-nav {
+    padding: 1rem 2rem;
+  }
+
+  /* Hide hamburger on larger screens */
+  .hamburger {
+    display: none;
+  }
+
+  /* Nav links always visible and horizontal */
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+    width: auto;
+    padding: 0;
+    border-top: none;
+    margin-top: 0;
+  }
+
+  .nav-links a {
+    width: auto;
+    padding: 0.4rem 0.85rem;
+  }
+}
+
+
+/* ── LAYOUT (601px+) ───────────────────────────────────────── */
+@media (min-width: 601px) {
+  .container { padding: 0 1.5rem; }
+  .section   { padding: 4rem 0; }
+  .footer-links { gap: 1.5rem; }
+}
+
+
+/* ── index.html (601px+) ───────────────────────────────────── */
+@media (min-width: 601px) {
+  .features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card { padding: 1.8rem; }
+
+  .countries-section { padding: 3rem; }
+  .cta-banner        { padding: 3.5rem; }
+  .hero-panel        { padding: 2rem; }
+  .loading-grid      { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+}
+
+/* index.html two-column hero (801px+) */
+@media (min-width: 801px) {
+  .hero {
+    min-height: 90vh;
+    padding: 5rem 0 4rem;
+  }
+
+  .hero-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+
+/* ── books.html (601px+) ───────────────────────────────────── */
+@media (min-width: 601px) {
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .filters-bar   { padding: 1.2rem; }
+  .filter-select { min-width: 160px; }
+
+  .loading-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+
+/* ── join.html (801px+) ────────────────────────────────────── */
+@media (min-width: 801px) {
+  .join-wrap {
+    grid-template-columns: 1fr 1.1fr;
+  }
+
+  /* Reveal left panel on larger screens */
+  .join-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3rem;
+    background: linear-gradient(145deg, rgba(255,107,43,0.12), rgba(0,201,167,0.06));
+    border-right: 1px solid var(--border);
+  }
+
+  .join-left h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 1rem;
+  }
+
+  .join-left h2 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--sun), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .join-left p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    max-width: 380px;
+    margin-bottom: 2rem;
+  }
+
+  .perks          { display: flex; flex-direction: column; gap: 1rem; }
+  .perk           { display: flex; align-items: flex-start; gap: 0.9rem; }
+  .perk-icon      { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .perk-text strong { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .perk-text span   { font-size: 0.8rem; color: var(--muted); }
+
+  .join-right { padding: 3rem 2rem; }
+
+  .join-card {
+    border-radius: 24px;
+    padding: 2.5rem;
+  }
+
+  /* Two-column name row */
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+
+/* ── join-confirm.html (501px+) ────────────────────────────── */
+@media (min-width: 501px) {
+  .confirm-card {
+    border-radius: 24px;
+    padding: 3rem;
+  }
+
+  .confirm-card h1 { font-size: 2rem; }
+
+  /* Two-column data rows on wider screens */
+  .data-row {
+    grid-template-columns: 140px 1fr;
+    gap: 0.5rem;
+  }
+
+  .data-label { align-self: center; }
+
+  .data-table { padding: 1.5rem; }
+}
+
+
+/* ── about.html (801px+) ───────────────────────────────────── */
+@media (min-width: 801px) {
+  .about-hero { padding: 5rem 0 4rem; }
+
+  /* Mission side-by-side */
+  .mission-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .curricula-section { padding: 2.5rem; }
+
+  /* Curricula 3-column+ grid */
+  .curricula-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .curriculum-card { padding: 1rem 1.2rem; }
+  .curriculum-flag { font-size: 1.5rem; }
+  .curriculum-info strong { font-size: 0.88rem; }
+  .curriculum-info span   { font-size: 0.72rem; }
+
+  /* Steps and sources multi-column */
+  .steps-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .step-card { padding: 1.8rem; }
+
+  .sources-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+}

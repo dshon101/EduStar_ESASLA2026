@@ -17,7 +17,8 @@ define('UPLOAD_URL_BASE', '/uploads/books/');
 define('MAX_FILE_BYTES',  50 * 1024 * 1024);
 define('ALLOWED_TYPES',   ['application/pdf', 'image/jpeg', 'image/png', 'image/gif']);
 
-define('CORS_ORIGIN', 'https://shonz.great-site.net');
+// ✅ Updated CORS origin to new domain
+define('CORS_ORIGIN', 'https://edustar.my-board.org');
 
 function db(): PDO {
     static $pdo = null;
