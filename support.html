@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EduStar — Support Center</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles/shared.css">
@@ -73,6 +74,13 @@
     .success-screen .icon { font-size:3rem; margin-bottom:1rem; }
     .success-screen h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.3rem; margin-bottom:0.5rem; }
     .success-screen p { color:var(--muted); font-size:0.88rem; }
+
+    /* FEEDBACK */
+    .fb-type-btn { background:rgba(255,255,255,0.04); border:1.5px solid var(--border); border-radius:50px; padding:0.4rem 1rem; font-size:0.82rem; font-family:'DM Sans',sans-serif; color:var(--text); cursor:pointer; transition:all 0.2s; }
+    .fb-type-btn:hover { border-color:rgba(255,107,43,0.4); background:rgba(255,107,43,0.07); }
+    .fb-type-btn.selected { border-color:var(--sun); background:rgba(255,107,43,0.12); color:var(--sun); }
+    #star-rating span { transition:color 0.1s; user-select:none; }
+    #star-rating span.lit { color:var(--gold); }
   </style>
 </head>
 <body>
@@ -88,6 +96,7 @@
       <button class="tab active" onclick="showTab('faq',this)">❓ FAQ</button>
       <button class="tab" onclick="showTab('submit',this)">📨 Submit Ticket</button>
       <button class="tab" onclick="showTab('status',this)">📋 My Tickets</button>
+      <button class="tab" onclick="showTab('feedback',this)">💬 Feedback</button>
     </div>
 
     <!-- FAQ TAB -->
@@ -197,6 +206,86 @@
       <div id="tickets-container"></div>
     </div>
 
+    <!-- FEEDBACK TAB -->
+    <div id="tab-feedback" style="display:none">
+      <div class="form-card">
+        <h3>💬 Share Your Feedback</h3>
+        <p class="sub">Help us improve EduStar. Your feedback is reviewed by the team and shapes future updates.</p>
+
+        <div class="success-screen" id="fb-success">
+          <div class="icon">🙏</div>
+          <h3>Thank You!</h3>
+          <p>Your feedback means a lot. We read every submission and use it to make EduStar better for students across Africa.</p>
+          <button class="btn btn-primary" style="margin-top:1.5rem" onclick="resetFeedback()">Send More Feedback</button>
+        </div>
+
+        <div id="fb-form">
+          <div class="alert alert-error" id="fb-err"></div>
+
+          <!-- Star rating -->
+          <div class="field">
+            <label>Overall Rating</label>
+            <div id="star-rating" style="display:flex;gap:0.4rem;font-size:2rem;cursor:pointer;margin-bottom:0.3rem">
+              <span data-v="1" onclick="setRating(1)">☆</span>
+              <span data-v="2" onclick="setRating(2)">☆</span>
+              <span data-v="3" onclick="setRating(3)">☆</span>
+              <span data-v="4" onclick="setRating(4)">☆</span>
+              <span data-v="5" onclick="setRating(5)">☆</span>
+            </div>
+            <div id="rating-label" style="font-size:0.78rem;color:var(--muted)">Click a star to rate</div>
+          </div>
+
+          <!-- Feedback type -->
+          <div class="field">
+            <label>Feedback Type</label>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.2rem" id="fb-type-btns">
+              <button type="button" class="fb-type-btn" onclick="selectFbType(this,'idea')">💡 Feature Idea</button>
+              <button type="button" class="fb-type-btn" onclick="selectFbType(this,'bug')">🐛 Bug Report</button>
+              <button type="button" class="fb-type-btn" onclick="selectFbType(this,'content')">📚 Content Issue</button>
+              <button type="button" class="fb-type-btn" onclick="selectFbType(this,'praise')">🌟 Praise</button>
+              <button type="button" class="fb-type-btn" onclick="selectFbType(this,'other')">💬 Other</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Your Feedback</label>
+            <textarea id="fb-message" placeholder="Tell us what you think, what's working, what's not, or what you'd love to see added..." style="min-height:140px"></textarea>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Name <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+              <input id="fb-name" type="text" placeholder="Your name">
+            </div>
+            <div class="field">
+              <label>Email <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+              <input id="fb-email" type="email" placeholder="For follow-up (optional)">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="submitFeedback()">💬 Send Feedback</button>
+        </div>
+      </div>
+
+      <!-- Recent community feedback summary (read-only) -->
+      <div class="form-card" style="margin-top:1.5rem">
+        <h3 style="margin-bottom:0.8rem">📊 Feedback Stats</h3>
+        <div id="fb-stats" style="display:flex;flex-wrap:wrap;gap:1rem">
+          <div style="flex:1;min-width:120px;background:rgba(255,107,43,0.07);border:1px solid rgba(255,107,43,0.15);border-radius:var(--radius-sm);padding:1rem;text-align:center">
+            <div style="font-size:1.6rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--sun)" id="stat-avg">–</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.2rem">Avg Rating</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:rgba(0,201,167,0.07);border:1px solid rgba(0,201,167,0.15);border-radius:var(--radius-sm);padding:1rem;text-align:center">
+            <div style="font-size:1.6rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--teal)" id="stat-count">–</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.2rem">Total Responses</div>
+          </div>
+          <div style="flex:1;min-width:120px;background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-sm);padding:1rem;text-align:center">
+            <div style="font-size:1.6rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--gold)" id="stat-top">–</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.2rem">Top Request</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -219,11 +308,12 @@ window.addEventListener('load', () => {
 
 // ── TABS ──────────────────────────────────────────────────────────
 function showTab(id, btn) {
-  ['faq','submit','status'].forEach(t => document.getElementById('tab-'+t).style.display='none');
+  ['faq','submit','status','feedback'].forEach(t => document.getElementById('tab-'+t).style.display='none');
   document.getElementById('tab-'+id).style.display='block';
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (id === 'status') lookupTickets();
+  if (id === 'feedback') loadFbStats();
 }
 
 // ── FAQ EXPAND ────────────────────────────────────────────────────
@@ -385,6 +475,89 @@ function toast(msg, type) {
   c.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
   setTimeout(() => el.remove(), 4000);
+}
+
+// ── FEEDBACK ──────────────────────────────────────────────────────
+let fbRating = 0;
+let fbType   = '';
+
+function setRating(v) {
+  fbRating = v;
+  const labels = ['','😞 Poor','😐 Fair','🙂 Okay','😊 Good','🌟 Excellent'];
+  document.getElementById('rating-label').textContent = labels[v] || '';
+  document.querySelectorAll('#star-rating span').forEach((s,i) => {
+    s.textContent = i < v ? '★' : '☆';
+    s.classList.toggle('lit', i < v);
+  });
+}
+
+function selectFbType(btn, type) {
+  fbType = type;
+  document.querySelectorAll('.fb-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+async function submitFeedback() {
+  const message = document.getElementById('fb-message').value.trim();
+  const errEl   = document.getElementById('fb-err');
+  if (!message || message.length < 10) {
+    showAlertEl(errEl, '⚠️ Please write at least a sentence of feedback.'); return;
+  }
+  const payload = {
+    rating:  fbRating,
+    type:    fbType || 'general',
+    message,
+    name:    document.getElementById('fb-name').value.trim(),
+    email:   document.getElementById('fb-email').value.trim(),
+  };
+  // Save locally and optionally post to support endpoint under category=feedback
+  const localKey = 'edustar_feedback';
+  let stored = [];
+  try { stored = JSON.parse(localStorage.getItem(localKey)||'[]'); } catch {}
+  stored.push({ ...payload, date: new Date().toISOString() });
+  localStorage.setItem(localKey, JSON.stringify(stored.slice(-20)));
+
+  // Try posting to support ticket endpoint as feedback category
+  try {
+    await authFetch('POST', `${API}/support.php?action=submit`, {
+      name: payload.name || (student && student.name) || 'Anonymous',
+      email: payload.email || (student && student.email) || 'feedback@edustar.ai',
+      category: 'feedback',
+      subject: `[Feedback] ${fbType||'general'} · ${fbRating ? fbRating+'★' : 'no rating'}`,
+      message: payload.message
+    });
+  } catch(e) { /* offline — saved locally */ }
+
+  document.getElementById('fb-form').style.display = 'none';
+  document.getElementById('fb-success').style.display = 'block';
+  loadFbStats();
+}
+
+function resetFeedback() {
+  fbRating = 0; fbType = '';
+  document.getElementById('fb-form').style.display    = 'block';
+  document.getElementById('fb-success').style.display = 'none';
+  document.getElementById('fb-message').value = '';
+  document.getElementById('fb-name').value    = '';
+  document.getElementById('fb-email').value   = '';
+  document.querySelectorAll('.fb-type-btn').forEach(b => b.classList.remove('selected'));
+  setRating(0);
+}
+
+function loadFbStats() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('edustar_feedback')||'[]');
+    if (!stored.length) return;
+    const rated  = stored.filter(f => f.rating > 0);
+    const avg    = rated.length ? (rated.reduce((a,f)=>a+f.rating,0)/rated.length).toFixed(1) : '–';
+    const types  = {};
+    stored.forEach(f => { types[f.type||'general'] = (types[f.type||'general']||0)+1; });
+    const topType = Object.entries(types).sort((a,b)=>b[1]-a[1])[0];
+    const typeEmoji = {idea:'💡',bug:'🐛',content:'📚',praise:'🌟',other:'💬',general:'💬'};
+    document.getElementById('stat-avg').textContent   = avg !== '–' ? avg+'★' : '–';
+    document.getElementById('stat-count').textContent = stored.length;
+    document.getElementById('stat-top').textContent   = topType ? (typeEmoji[topType[0]]||'💬') : '–';
+  } catch(e) {}
 }
 </script>
 </body>

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EduStar – Books Library</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles/shared.css">
@@ -35,7 +36,7 @@
     .book-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;transition:border-color .2s,transform .2s;display:flex;flex-direction:column;gap:0.8rem}
     .book-card:hover{border-color:rgba(255,107,43,0.3);transform:translateY(-2px)}
     .book-card-top{display:flex;gap:1rem;align-items:flex-start}
-    .book-icon{font-size:2.2rem;flex-shrink:0}
+    .book-icon{width:60px;height:80px;flex-shrink:0;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
     .book-meta{flex:1}
     .book-title{font-weight:600;font-size:0.95rem;line-height:1.4;margin-bottom:0.3rem}
     .book-badges{display:flex;flex-wrap:wrap;gap:0.4rem}
@@ -249,6 +250,35 @@ function clearFilters() {
   applyFilters();
 }
 
+
+function getBookCoverSVG(subject, title) {
+  const colors = {
+    'Mathematics': ['#FF6B2B','#F5A623'],
+    'Science':     ['#00C9A7','#0088cc'],
+    'Biology':     ['#2ecc71','#27ae60'],
+    'English':     ['#A78BFA','#7c3aed'],
+    'Commerce':    ['#F5A623','#e67e22'],
+    'Technology':  ['#4FC3F7','#0288d1'],
+  };
+  const c = colors[subject] || ['#8A8A9A','#555'];
+  const abbr = (title||subject||'?').replace(/[^A-Z0-9]/g,'').slice(0,2) || subject.slice(0,2).toUpperCase();
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80" width="60" height="80">
+    <defs>
+      <linearGradient id="bg${abbr}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${c[0]}"/>
+        <stop offset="100%" stop-color="${c[1]}"/>
+      </linearGradient>
+    </defs>
+    <rect width="60" height="80" rx="6" fill="url(#bg${abbr})"/>
+    <rect x="4" y="4" width="4" height="72" rx="2" fill="rgba(0,0,0,0.25)"/>
+    <rect x="10" y="12" width="40" height="2" rx="1" fill="rgba(255,255,255,0.5)"/>
+    <rect x="10" y="17" width="30" height="2" rx="1" fill="rgba(255,255,255,0.35)"/>
+    <rect x="10" y="22" width="35" height="2" rx="1" fill="rgba(255,255,255,0.35)"/>
+    <text x="30" y="50" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="14" fill="white" opacity="0.95">${abbr}</text>
+    <rect x="10" y="60" width="40" height="2" rx="1" fill="rgba(255,255,255,0.3)"/>
+    <rect x="10" y="65" width="28" height="2" rx="1" fill="rgba(255,255,255,0.2)"/>
+  </svg>`;
+}
 function renderBooks(list) {
   const grid  = document.getElementById('books-grid');
   const empty = document.getElementById('empty-state');
@@ -259,7 +289,7 @@ function renderBooks(list) {
     const isAll   = b.country === 'All Africa';
     return `<div class="book-card">
       <div class="book-card-top">
-        <div class="book-icon">${b.icon}</div>
+        <div class="book-icon">${getBookCoverSVG(b.subject, b.title)}</div>
         <div class="book-meta">
           <div class="book-title">${b.title}</div>
           <div class="book-badges">
